@@ -1,0 +1,8 @@
+.build
+.mbed
+projectfiles
+*.py*
+mbed-os
+BUILD
+
+pm2_drivers
