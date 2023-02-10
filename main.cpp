@@ -2,13 +2,13 @@
 
 #include "PM2_Drivers.h"
 
-# define M_PI 3.14159265358979323846 // number pi, an example and in case you need it
+# define M_PI 3.14159265358979323846 // number pi, an example in case you need it
 
 
 bool do_execute_main_task = false; // this variable will be toggled via the user button (blue button) and decides whether to execute the main task or not
 bool do_reset_all_once = false;    // this variable is used to reset certain variables and objects and shows how you can run a code segment only once
 
-// objects for user button handling on nucleo board
+// objects for user button (blue button) handling on nucleo board
 Timer user_button_timer;         // create Timer object which we use to check if user button was pressed for a certain time (robust against signal bouncing)
 InterruptIn user_button(PC_13);  // create InterruptIn interface object to evaluate user button falling and rising edge (no blocking code in ISR)
 void user_button_pressed_fcn();  // custom functions which get executed when user button gets pressed and released, definition below
@@ -30,9 +30,9 @@ int main()
     user_button.fall(&user_button_pressed_fcn);
     user_button.rise(&user_button_released_fcn);
 
-    // while loop gets executed every main_task_period_ms milliseconds (simple aproach to repeatadly execute main)
+    // while loop gets executed every main_task_period_ms milliseconds (simple aproach to repeatedly execute main)
     const int main_task_period_ms = 50; // define main task period time in ms e.g. 50 ms -> main task runs 20 times per second
-    Timer main_task_timer;              // create Timer object which we use to run the main task every main task period time in ms
+    Timer main_task_timer;              // create Timer object which we use to run the main task every main_task_period_ms
 
 
     // led on nucleo board
@@ -53,19 +53,18 @@ int main()
 
 
     // Futaba Servo S3001 20mm 3kg Analog
-    Servo servo_S1(PB_2);                     // create servo objects
+    Servo servo_S1(PB_2);     // create servo objects
     Servo servo_S2(PC_8);
-    float servo_S1_angle = 0;                 // servo S1 normalized input: 0...1
+    float servo_S1_angle = 0; // servo S1 normalized input: 0...1
     float servo_S2_angle = 0;
     
-    int servo_counter = 0;                    // define servo counter, this is an additional variable to make the servos move
-    const int loops_per_seconds = static_cast<int>(ceilf(1.0f/(0.001f*(float)main_task_period_ms))); // define loops per second
+    int servo_counter = 0;    // define servo counter, this is an additional variable to make the servos move
+    const int loops_per_seconds = static_cast<int>(ceilf( 1.0f / (0.001f * (float)main_task_period_ms) ));
 
 
     // 78:1, 100:1, ... Metal Gearmotor 20Dx44L mm 12V CB
     DigitalOut enable_motors(PB_15); // create DigitalOut object to enable dc motors
 
-    //const int pwm_period_mus = 50; // define pwm period time in seconds and create FastPWM objects to command dc motor M1
     FastPWM pwm_M1(PB_13); // motor M1 is used open-loop
     FastPWM pwm_M2(PA_9);  // motor M2 is closed-loop speed controlled (angle velocity)
     FastPWM pwm_M3(PA_10); // motor M3 is closed-loop position controlled (angle controlled)
@@ -77,32 +76,21 @@ int main()
     // create SpeedController and PositionController objects, default parametrization is for 78.125:1 gear box
     const float max_voltage = 12.0f;               // define maximum voltage of battery packs, adjust this to 6.0f V if you only use one batterypack
     const float counts_per_turn = 20.0f * 78.125f; // define counts per turn at gearbox end: counts/turn * gearratio
-    const float kn = 180.0f / 12.0f;               // define motor constant in rpm per V
+    const float kn = 180.0f / 12.0f;               // define motor constant in RPM/V
     const float k_gear = 100.0f / 78.125f;         // define additional ratio in case you are using a dc motor with a different gear box, e.g. 100:1
     const float kp = 0.1f;                         // define custom kp, this is the default speed controller gain for gear box 78.125:1
 
     SpeedController speedController_M2(counts_per_turn, kn, max_voltage, pwm_M2, encoder_M2); // default 78.125:1 gear box  with default contoller parameters
     // SpeedController speedController_M2(counts_per_turn * k_gear, kn / k_gear, max_voltage, pwm_M2, encoder_M2); // parameters adjusted to 100:1 gear
 
-    float max_speed_rps = 0.5f;                 // define maximum speed that the position controller is changig the speed, has to be smaller or equal to kn * max_voltage
     // PositionController positionController_M3(counts_per_turn, kn, max_voltage, pwm_M3, encoder_M3); // default 78.125:1 gear with default contoller parameters
     PositionController positionController_M3(counts_per_turn * k_gear, kn / k_gear, max_voltage, pwm_M3, encoder_M3); // parameters adjusted to 100:1 gear, we need a different speed controller gain here
     positionController_M3.setSpeedCntrlGain(kp * k_gear);   // adjust internal speed controller gain, this is just an example
+    float max_speed_rps = 0.5f; // define maximum speed that the position controller is changig the speed, has to be smaller or equal to kn * max_voltage
     positionController_M3.setMaxVelocityRPS(max_speed_rps); // adjust max velocity for internal speed controller
 
 
-    // Groove Ultrasonic Ranger V2.0
-    float us_distance_cm = 0.0f;    // define variable to store measurement
-    RangeFinder us_range_finder(PB_12, 5782.0f, 0.02f, 17500); // create range finder object (ultra sonic distance sensor), 20 Hz parametrization <-> main_task_period_ms = 50 ms
-    // RangeFinder us_range_finder(PB_12, 5782.0f, 0.02f,  7000); // create range finder object (ultra sonic distance sensor), 50 Hz parametrization <-> main_task_period_ms = 20 ms
-
-
-    // LSM9DS1 IMU, carefull: not all PES boards have an imu (chip shortage)
-    // LSM9DS1 imu(PC_9, PA_8); // create LSM9DS1 comunication object, if you want to be able to use the imu you need to #include "LSM9DS1_i2c.h"
-
-    
-    // start the main_task_timer and enable brushless motor outputs
-    main_task_timer.start(); // start timer
+    main_task_timer.start();
     
     // this loop will run forever
     while (true) {
@@ -184,9 +172,6 @@ int main()
                     break;
             }
 
-            // read ultra sonic distance sensor
-            us_distance_cm = us_range_finder.read_cm();
-
         } else {
 
             if (do_reset_all_once) {
@@ -204,8 +189,6 @@ int main()
                 servo_S1.disable();
                 servo_S2.disable();
 
-                us_distance_cm = 0.0f;
-
                 additional_led = 0;
             }            
         }
@@ -214,25 +197,16 @@ int main()
         user_led = !user_led;
 
         // do only output via serial what's really necessary, this makes your code slow
-        printf("IR sensor (mV): %3.3f, Encoder M1: %3d, Speed M2 (rps) %3.3f, Position M3 (rot): %3.3f, Servo S1 angle (normalized): %3.3f, Servo S2 angle (normalized): %3.3f, US sensor (cm): %3.3f\r\n",
+        printf("IR sensor (mV): %3.3f, Encoder M1: %3d, Speed M2 (rps) %3.3f, Position M3 (rot): %3.3f, Servo S1 angle (normalized): %3.3f, Servo S2 angle (normalized): %3.3f\r\n",
                ir_distance_mV,
                encoder_M1.read(),
                speedController_M2.getSpeedRPS(),
                positionController_M3.getRotation(),
                servo_S1_angle,
-               servo_S2_angle,
-               us_distance_cm);
-
-        // read out the imu, the actual orientation of the sensor needs to be figured out (xyz-direction)
-        // imu.updateGyro();
-        // imu.updateAcc();
-        // imu.updateMag();
-        // printf("%.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f\r\n", imu.readGyroX(), imu.readGyroY(), imu.readGyroZ(),
-        // imu.readAccX(), imu.readAccY(), imu.readAccZ(), imu.readMagX(), imu.readMagY(), imu.readMagZ());
+               servo_S2_angle);
 
         // read timer and make the main thread sleep for the remaining time span (non blocking)
         int main_task_elapsed_time_ms = std::chrono::duration_cast<std::chrono::milliseconds>(main_task_timer.elapsed_time()).count();
-        printf("%d\r\n", main_task_elapsed_time_ms);
         thread_sleep_for(main_task_period_ms - main_task_elapsed_time_ms);
     }
 }
