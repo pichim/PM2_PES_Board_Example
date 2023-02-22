@@ -9,10 +9,8 @@ bool do_execute_main_task = false; // this variable will be toggled via the user
 bool do_reset_all_once = false;    // this variable is used to reset certain variables and objects and shows how you can run a code segment only once
 
 // objects for user button (blue button) handling on nucleo board
-Timer user_button_timer;         // create Timer object which we use to check if user button was pressed for a certain time (robust against signal bouncing)
-InterruptIn user_button(PC_13);  // create InterruptIn interface object to evaluate user button falling and rising edge (no blocking code in ISR)
-void user_button_pressed_fcn();  // custom functions which get executed when user button gets pressed and released, definition below
-void user_button_released_fcn();
+DebounceIn user_button(PC_13);  // create InterruptIn interface object to evaluate user button falling and rising edge (no blocking code in ISR)
+void user_button_pressed_fcn(); // custom functions which get executed when user button gets pressed, definition below
 
 
 // main runs as an own thread
@@ -26,9 +24,8 @@ int main()
     int robot_state_actual = ROBOT_STATE_INIT;
 
 
-    // attach button fall and rise functions to user button object
+    // attach button fall function to user button object, button has a pull-up resistor
     user_button.fall(&user_button_pressed_fcn);
-    user_button.rise(&user_button_released_fcn);
 
     // while loop gets executed every main_task_period_ms milliseconds (simple aproach to repeatedly execute main)
     const int main_task_period_ms = 50; // define main task period time in ms e.g. 50 ms -> main task runs 20 times per second
@@ -213,17 +210,7 @@ int main()
 
 void user_button_pressed_fcn()
 {
-    user_button_timer.start();
-    user_button_timer.reset();
-}
-
-void user_button_released_fcn()
-{
-    // read timer and toggle do_execute_main_task if the button was pressed longer than the below specified time
-    int user_button_elapsed_time_ms = std::chrono::duration_cast<std::chrono::milliseconds>(user_button_timer.elapsed_time()).count();
-    user_button_timer.stop();
-    if (user_button_elapsed_time_ms > 200) {
-        do_execute_main_task = !do_execute_main_task;
-        if (do_execute_main_task) do_reset_all_once = true;
-    }
+    // do_execute_main_task if the button was pressed
+    do_execute_main_task = !do_execute_main_task;
+    if (do_execute_main_task) do_reset_all_once = true;
 }
