@@ -1,3 +1,4 @@
+#include <cstdio>
 #include <mbed.h>
 
 #include "PM2_Drivers.h"
@@ -76,6 +77,7 @@ int main()
 
         // do only output via serial what's really necessary, this makes your code slow
         printf("IR sensor (mV): %3.3f\r\n", ir_distance_mV);
+        printf("Elapsed time (ms): ");
 
         // read timer and make the main thread sleep for the remaining time span (non blocking)
         int main_task_elapsed_time_ms = std::chrono::duration_cast<std::chrono::milliseconds>(main_task_timer.elapsed_time()).count();
