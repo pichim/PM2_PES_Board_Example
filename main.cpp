@@ -1,5 +1,6 @@
 #include <cstdio>
 #include <mbed.h>
+#include <ctime>
 
 #include "PM2_Drivers.h"
 
@@ -40,7 +41,9 @@ int main()
     // Sharp GP2Y0A41SK0F, 4-40 cm IR Sensor
     float ir_distance_mV = 0.0f; // define variable to store measurement
     //??? // create AnalogIn object to read in infrared distance sensor, 0...3.3V are mapped to 0...1
-
+    AnalogIn ain(PC_2);
+    float mittelwert = 0.0f;
+    
 
     main_task_timer.start();
     
@@ -53,8 +56,20 @@ int main()
 
             if (mechanical_button.read()) {
 
+                ir_distance_mV = ain.read() * 3.3 * 1000.0;
                 // read analog input
                 //ir_distance_mV = ???;
+
+                
+                int anzahlMessungen = 10;
+                mittelwert = 0;
+
+                for (int i = 0; i < anzahlMessungen; ++i) {
+                    mittelwert += ir_distance_mV;
+                    thread_sleep_for(2); // in ms
+                }
+
+                mittelwert /= anzahlMessungen;
 
             }
 
@@ -76,8 +91,7 @@ int main()
         user_led = !user_led;
 
         // do only output via serial what's really necessary, this makes your code slow
-        printf("IR sensor (mV): %3.3f\r\n", ir_distance_mV);
-        printf("Elapsed time (ms): ");
+        printf("IR sensor (mV): %3.3f\t :: IR Filter (mV): %3.3f\r\n", ir_distance_mV, mittelwert);
 
         // read timer and make the main thread sleep for the remaining time span (non blocking)
         int main_task_elapsed_time_ms = std::chrono::duration_cast<std::chrono::milliseconds>(main_task_timer.elapsed_time()).count();
