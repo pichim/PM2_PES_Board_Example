@@ -12,6 +12,7 @@ bool do_reset_all_once = false;    // this variable is used to reset certain var
 DebounceIn user_button(PC_13);  // create InterruptIn interface object to evaluate user button falling and rising edge (no blocking code in ISR)
 void user_button_pressed_fcn(); // custom functions which get executed when user button gets pressed, definition below
 
+float ir_sensor_compensation(float _ir_distance_mV);
 
 // main runs as an own thread
 int main()
@@ -37,9 +38,9 @@ int main()
 
 
     // Sharp GP2Y0A41SK0F, 4-40 cm IR Sensor
-    float ir_distance_mV = 0.0f; // define variable to store measurement
-    //??? // create AnalogIn object to read in infrared distance sensor, 0...3.3V are mapped to 0...1
-
+    float ir_distance_cm = 0.0f; // define variable to store measurement
+    AnalogIn ir_analog_in(PC_2); // create AnalogIn object to read in infrared distance sensor, 0...3.3V are mapped to 0...1
+    
 
     main_task_timer.start();
     
@@ -53,7 +54,7 @@ int main()
             if (mechanical_button.read()) {
 
                 // read analog input
-                //ir_distance_mV = ???;
+                ir_distance_cm = ir_sensor_compensation( 1.0e3f * ir_analog_in.read() * 3.3f );
 
             }
 
@@ -65,7 +66,7 @@ int main()
             if (do_reset_all_once) {
                 do_reset_all_once = false;
 
-                ir_distance_mV = 0.0f;
+                ir_distance_cm = 0.0f;
 
                 additional_led = 0;
             }            
@@ -75,7 +76,7 @@ int main()
         user_led = !user_led;
 
         // do only output via serial what's really necessary, this makes your code slow
-        printf("IR sensor (mV): %3.3f\r\n", ir_distance_mV);
+        printf("IR sensor (mV): %3.3f\r\n", ir_distance_cm);
 
         // read timer and make the main thread sleep for the remaining time span (non blocking)
         int main_task_elapsed_time_ms = std::chrono::duration_cast<std::chrono::milliseconds>(main_task_timer.elapsed_time()).count();
@@ -88,4 +89,16 @@ void user_button_pressed_fcn()
     // do_execute_main_task if the button was pressed
     do_execute_main_task = !do_execute_main_task;
     if (do_execute_main_task) do_reset_all_once = true;
+}
+
+float ir_sensor_compensation(float _ir_distance_mV) {
+
+    static const float a = 2.574e+04f;
+    static const float b = -29.37f;
+
+    static float ir_distance_cm = 0.0f;
+    if (_ir_distance_mV + b == 0) ir_distance_cm = -1.0f;
+    else ir_distance_cm = a / (_ir_distance_mV + b);
+
+    return ir_distance_cm;
 }
