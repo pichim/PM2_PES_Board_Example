@@ -75,7 +75,7 @@ int main()
     const float counts_per_turn = 20.0f * 78.125f; // define counts per turn at gearbox end: counts/turn * gearratio
     const float kn = 180.0f / 12.0f;               // define motor constant in RPM/V
     const float k_gear = 100.0f / 78.125f;         // define additional ratio in case you are using a dc motor with a different gear box, e.g. 100:1
-    const float kp = 0.1f;                         // define custom kp, this is the default speed controller gain for gear box 78.125:1
+    const float kp = 0.2f;                         // define custom kp, this is the default speed controller gain for gear box 78.125:1
 
     SpeedController speedController_M2(counts_per_turn, kn, max_voltage, pwm_M2, encoder_M2); // default 78.125:1 gear box  with default contoller parameters
     // SpeedController speedController_M2(counts_per_turn * k_gear, kn / k_gear, max_voltage, pwm_M2, encoder_M2); // parameters adjusted to 100:1 gear
@@ -106,11 +106,11 @@ int main()
             if (servo_S1.isEnabled() && servo_S1.isEnabled()) {
                 
                 // command servo position, increment normalised angle every second until it reaches 1.0f
-                servo_S1.setNorlalisedAngle(servo_S1_angle);
+                servo_S1.setNormalisedAngle(servo_S1_angle);
                 if (servo_S1_angle < 1.0f & servo_counter%loops_per_seconds == 0 & servo_counter != 0) {
                     servo_S1_angle += 0.01f;
                 }
-                servo_S2.setNorlalisedAngle(servo_S2_angle);
+                servo_S2.setNormalisedAngle(servo_S2_angle);
                 if (servo_S2_angle < 1.0f & servo_counter%loops_per_seconds == 0 & servo_counter != 0) {
                     servo_S2_angle += 0.01f;
                 }
