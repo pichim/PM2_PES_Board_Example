@@ -16,7 +16,7 @@ void user_button_pressed_fcn(); // custom functions which get executed when user
 // main runs as an own thread
 int main()
 {
-    // states and actual state for state machine
+    // states and actual state for state machine , Alle Zustände aus Flussdiagramm kann mit switch case durchgeschaltet werden
     const int ROBOT_STATE_INIT     = 0;
     const int ROBOT_STATE_FORWARD  = 1;
     const int ROBOT_STATE_BACKWARD = 2;
