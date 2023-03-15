@@ -59,17 +59,15 @@ int main()
                 ir_distance_mV = ain.read() * 3.3 * 1000.0;
                 // read analog input
                 //ir_distance_mV = ???;
-
-                
+                /*
                 int anzahlMessungen = 10;
                 mittelwert = 0;
-
                 for (int i = 0; i < anzahlMessungen; ++i) {
                     mittelwert += ir_distance_mV;
                     thread_sleep_for(2); // in ms
                 }
 
-                mittelwert /= anzahlMessungen;
+                mittelwert /= anzahlMessungen;*/
 
             }
 
@@ -91,7 +89,7 @@ int main()
         user_led = !user_led;
 
         // do only output via serial what's really necessary, this makes your code slow
-        printf("IR sensor (mV): %3.3f\t :: IR Filter (mV): %3.3f\r\n", ir_distance_mV, mittelwert);
+        printf("IR sensor (mV): %3.3f\r\n", ir_distance_mV);
 
         // read timer and make the main thread sleep for the remaining time span (non blocking)
         int main_task_elapsed_time_ms = std::chrono::duration_cast<std::chrono::milliseconds>(main_task_timer.elapsed_time()).count();
