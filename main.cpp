@@ -56,7 +56,7 @@ int main()
     float servo_S2_angle = 0;
     
     int servo_counter = 0;    // define servo counter, this is an additional variable to make the servos move
-    const int loops_per_seconds = static_cast<int>(ceilf( 1.0f / (0.001f * (float)main_task_period_ms) ));
+    const int loops_per_seconds = static_cast<int>(ceilf( 1.0f / (0.1f * (float)main_task_period_ms) ));
 
 
     // 78:1, 100:1, ... Metal Gearmotor 20Dx44L mm 12V CB
@@ -128,8 +128,8 @@ int main()
 
                     enable_motors = 1; // enable hardwaredriver dc motors: 0 -> disabled, 1 -> enabled
 
-                    robot_state_actual = ROBOT_STATE_FORWARD;
-                    break;
+                    robot_state_actual = ROBOT_STATE_BACKWARD;
+                    break;  
 
                 case ROBOT_STATE_FORWARD:
 
