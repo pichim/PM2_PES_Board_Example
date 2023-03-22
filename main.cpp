@@ -43,18 +43,24 @@ int main()
     // --- States and actual state for the machine
     // others
 
+    const int GRYPER_STATE_INIT = 0; 
+    const int GRYPER_STATE_ARM_DOWN_1 = 1;
+    const int GRYPER_STATE_FORWARD_1 = 2;
+    const int GRYPER_STATE_SET_ARM = 3;
+    const int GRYPER_STATE_ROTATE = 4;
+    const int GRYPER_STATE_BALANCE = 5;
+    const int GRYPER_STATE_DETACH = 6;
+    const int GRYPER_STATE_ARM_DOWN_2 = 7;
+    const int GRYPER_STATE_FORWARD_2 = 8;
+    const int GRYPER_STATE_FINAL = 9;
+    const int GRYPER_STATE_RESET = 10;
+    int gryper_state_actual = GRYPER_STATE_INIT;
+
     // ----- Motoren ----
 
+    
+    
     // ----- Sensoren ----
-
-
-
-
-
-
-
-
-
 
 
 
@@ -73,6 +79,64 @@ int main()
 
             // visual feedback that the main task is executed, setting this once would actually be enough
             additional_led = 1;
+
+            //state_machine
+            switch(gryper_state_actual){
+
+                case GRYPER_STATE_INIT:
+
+                    if(mechanical_button == 1)
+
+                    gryper_state_actual = GRYPER_STATE_ARM_DOWN_1;
+
+                    else if(button2) {
+                        gryper_state_actual = GRYPER_STATE_RESET;
+                    } else {
+                        gryper_state_actual = GRYPER_STATE_INIT;
+
+                    }
+                    break;
+
+                case GRYPER_STATE_ARM_DOWN_1:
+                
+                    gryper_state_actual = GRYPER_STATE_ROTATE;
+                    break;
+
+                case GRYPER_STATE_ROTATE:
+                
+                    gryper_state_actual = GRYPER_STATE_BALANCE;
+                    break;
+
+                case GRYPER_STATE_BALANCE:
+                
+                    gryper_state_actual = GRYPER_STATE_DETACH;
+                    break;
+
+                case GRYPER_STATE_DETACH:
+                
+                    gryper_state_actual = GRYPER_STATE_ARM_DOWN_2;
+                    break;
+
+                case GRYPER_STATE_ARM_DOWN_2:
+                
+                    gryper_state_actual = GRYPER_STATE_FORWARD_2;
+                    break;
+
+                case GRYPER_STATE_FORWARD_2:
+                
+                    gryper_state_actual = GRYPER_STATE_FINAL;
+                    break;
+
+                case GRYPER_STATE_FINAL:
+                
+                    gryper_state_actual = GRYPER_STATE_INIT;
+                    break;
+
+                case GRYPER_STATE_RESET:
+                
+                    gryper_state_actual = GRYPER_STATE_INIT;
+                    break;
+            }
 
         } else {
 
