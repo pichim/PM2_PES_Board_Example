@@ -21,40 +21,44 @@ bool do_reset_all_once = false;    // this variable is used to reset certain var
 DebounceIn user_button(PC_13);  // create InterruptIn interface object to evaluate user button falling and rising edge (no blocking code in ISR)
 void user_button_pressed_fcn(); // custom functions which get executed when user button gets pressed, definition below
 
-
 // main runs as an own thread
 int main()
 {
     // attach button fall function to user button object, button has a pull-up resistor
     user_button.fall(&user_button_pressed_fcn);
-
     // while loop gets executed every main_task_period_ms milliseconds (simple aproach to repeatedly execute main)
     const int main_task_period_ms = 50; // define main task period time in ms e.g. 50 ms -> main task runs 20 times per second
     Timer main_task_timer;              // create Timer object which we use to run the main task every main_task_period_ms
-
-
     // led on nucleo board
     DigitalOut user_led(LED1);       // create DigitalOut object to command user led
-
     // additional led
     DigitalOut additional_led(PB_9); // create DigitalOut object to command extra led (you need to add an aditional resistor, e.g. 220...500 Ohm)
-
 
     // mechanical button
     DigitalIn mechanical_button(PC_5); // create DigitalIn object to evaluate extra mechanical button, you need to specify the mode for proper usage, see below
     mechanical_button.mode(PullUp);    // set pullup mode: sets pullup between pin and 3.3 V, so that there is a defined potential
 
-
-    // Sharp GP2Y0A41SK0F, 4-40 cm IR Sensor
-    float ir_distance_mV = 0.0f; // define variable to store measurement
-    //??? // create AnalogIn object to read in infrared distance sensor, 0...3.3V are mapped to 0...1
-    AnalogIn ain(PC_2);
-    float mittelwert = 0.0f;
+    // ----- Variablen ----
     
+    // --- States and actual state for the machine
 
-    main_task_timer.start();
-    
-    // this loop will run forever
+    // ----- Motoren ----
+
+    // ----- Sensoren ----
+
+
+
+
+
+
+
+
+
+
+
+
+
+     // this loop will run forever
     while (true) {
 
         main_task_timer.reset();
@@ -63,20 +67,6 @@ int main()
 
             if (mechanical_button.read()) {
 
-                ir_distance_mV = ain.read() * 3.3 * 1000.0;
-                // read analog input
-                //ir_distance_mV = ???;
-
-                
-                int anzahlMessungen = 10;
-                mittelwert = 0;
-
-                for (int i = 0; i < anzahlMessungen; ++i) {
-                    mittelwert += ir_distance_mV;
-                    thread_sleep_for(2); // in ms
-                }
-
-                mittelwert /= anzahlMessungen;
 
             }
 
@@ -88,17 +78,12 @@ int main()
             if (do_reset_all_once) {
                 do_reset_all_once = false;
 
-                ir_distance_mV = 0.0f;
-
                 additional_led = 0;
             }            
         }
 
         // toggling the user led
         user_led = !user_led;
-
-        // do only output via serial what's really necessary, this makes your code slow
-        printf("IR sensor (mV): %3.3f\t :: IR Filter (mV): %3.3f\r\n", ir_distance_mV, mittelwert);
 
         // read timer and make the main thread sleep for the remaining time span (non blocking)
         int main_task_elapsed_time_ms = std::chrono::duration_cast<std::chrono::milliseconds>(main_task_timer.elapsed_time()).count();
