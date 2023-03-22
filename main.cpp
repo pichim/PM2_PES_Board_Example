@@ -41,6 +41,7 @@ int main()
     // ----- Variablen ----
     
     // --- States and actual state for the machine
+    // others
 
     // ----- Motoren ----
 
