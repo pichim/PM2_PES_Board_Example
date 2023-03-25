@@ -34,14 +34,55 @@ int main()
     // additional led
     DigitalOut additional_led(PB_9); // create DigitalOut object to command extra led (you need to add an aditional resistor, e.g. 220...500 Ohm)
 
-    // mechanical button
-    DigitalIn mechanical_button(PC_5); // create DigitalIn object to evaluate extra mechanical button, you need to specify the mode for proper usage, see below
-    mechanical_button.mode(PullUp);    // set pullup mode: sets pullup between pin and 3.3 V, so that there is a defined potential
 
-    // ----- Variablen ----
+
+    // ---------- Variablen ----------
+
+    // ---------- Buttons ----------
+
+    DigitalIn mechanical_button(PC_5); 
+    mechanical_button.mode(PullUp);
+    int button1 = 0;
+    int button2 = 0;
+    int button3 = 0;
+
+    // ---------- Vehicle geometry ----------
+
+    // ---------- Motoren ----------
+    DigitalOut enable_motors(PB_15);                    // create DigitalOut object to enable dc motors
+    const float max_voltage = 12.0f;                    // Voltage for DC-Motors
+
+
+    // ----- M1 (closed-loop position controlled) -----
+    float max_speed_rps = 0.5f;
+    const int M1_gear = 100;
+    const float counts_per_turn = 20.0f * 78.125f;      // define counts per turn at gearbox end: counts/turn * gearratio
+    const float kn = 180.0f / 12.0f;                    // define motor constant in RPM/V
+    const float k_gear = 100.0f / 78.125f;              // define additional ratio in case you are using a dc motor with a different gear box, e.g. 100:1
+    const float kp = 0.1f;
+
+    FastPWM pwm_M1(PB_13);                              // Pin is correct!
+    EncoderCounter  encoder_M1(PA_6, PC_7);             // Pin is correct!
+    PositionController positionController_M1(counts_per_turn * k_gear, kn / k_gear, max_voltage, pwm_M1, encoder_M1);
+    positionController_M1.setSpeedCntrlGain(kp * k_gear);   // adjust internal speed controller gain, this is just an example
+    positionController_M1.setMaxVelocityRPS(max_speed_rps); // adjust max velocity for internal speed controller
+
+
+    // ----- M2 (closed-loop position controlled) -----
+    const int M2_gear = 0;
+    FastPWM pwm_M2(PA_9);                       // Pin is correct!
+    EncoderCounter  encoder_M2(PB_6, PB_7);     // Pin is correct!
     
-    // --- States and actual state for the machine
-    // others
+
+    // ----- M3 (closed-loop position controlled) -----
+    const int M3_gear = 0;
+    FastPWM pwm_M3(PA_10);                      // Pin is correct!
+    EncoderCounter  encoder_M3(PA_0, PA_1);     // Pin is correct!
+
+
+
+    // ---------- Sensoren ----------
+    // ---------- States and actual state for the machine ----------
 
     const int GRYPER_STATE_INIT = 0; 
     const int GRYPER_STATE_ARM_DOWN_1 = 1;
@@ -54,31 +95,27 @@ int main()
     const int GRYPER_STATE_FORWARD_2 = 8;
     const int GRYPER_STATE_FINAL = 9;
     const int GRYPER_STATE_RESET = 10;
+    const int GRYPER_TEST = 11;
     int gryper_state_actual = GRYPER_STATE_INIT;
 
-    // ----- Motoren ----
-
-    
-    
-    // ----- Sensoren ----
-
-
-
 
      // this loop will run forever
     while (true) {
 
-<<<<<<< HEAD
-     // this loop will run forever
-    while (true) {
-=======
         main_task_timer.reset();
 
         if (do_execute_main_task) {
 
             if (mechanical_button.read()) {
+                //printf("\nSTART M1");
+                enable_motors = 1;
+                positionController_M1.setDesiredRotation(1.5f);
 
 
+            }
+            if (positionController_M1.getRotation() >= 1.45f) {
+                printf("\nRESET M1");
+                positionController_M1.setDesiredRotation(0.0f);
             }
 
             // visual feedback that the main task is executed, setting this once would actually be enough
@@ -89,12 +126,9 @@ int main()
 
                 case GRYPER_STATE_INIT:
 
-                    if(mechanical_button == 1)
->>>>>>> ae7b00b18972916dec712214b09bba49ae9299a4
-
-                    gryper_state_actual = GRYPER_STATE_ARM_DOWN_1;
-
-                    else if(button2) {
+                    if(mechanical_button == 1){
+                        gryper_state_actual = GRYPER_STATE_ARM_DOWN_1;
+                    } else if(button2) {
                         gryper_state_actual = GRYPER_STATE_RESET;
                     } else {
                         gryper_state_actual = GRYPER_STATE_INIT;
@@ -143,12 +177,16 @@ int main()
                     break;
             }
 
+            printf("\nEncoder M1: %3d\tPosition M1: %3.3f", encoder_M1.read(), positionController_M1.getRotation());
+
         } else {
 
             if (do_reset_all_once) {
+                printf("\nALL DONE");
                 do_reset_all_once = false;
 
                 additional_led = 0;
+                positionController_M1.setDesiredRotation(0.0f);
             }            
         }
 
