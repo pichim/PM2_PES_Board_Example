@@ -20,6 +20,7 @@ bool do_reset_all_once = false;    // this variable is used to reset certain var
 // objects for user button (blue button) handling on nucleo board
 DebounceIn user_button(PC_13);  // create InterruptIn interface object to evaluate user button falling and rising edge (no blocking code in ISR)
 void user_button_pressed_fcn(); // custom functions which get executed when user button gets pressed, definition below
+float convertDistanceToRadians(float distanceInMillimeters, float gearRatio, float wheelRadiusInMillimeters); //custom function which calculate Radians from Distance
 
 // main runs as an own thread
 int main()
@@ -109,15 +110,15 @@ int main()
             if (mechanical_button.read()) {
                 //printf("\nSTART M1");
                 enable_motors = 1;
-                positionController_M1.setDesiredRotation(1.5f);
+                positionController_M1.setDesiredRotation(1.5f); 
 
 
             }
-            if (positionController_M1.getRotation() >= 1.45f) {
+            if (positionController_M1.getRotation() >= 1.45f) { 
                 printf("\nRESET M1");
                 positionController_M1.setDesiredRotation(0.0f);
             }
-
+    
             // visual feedback that the main task is executed, setting this once would actually be enough
             additional_led = 1;
 
@@ -205,3 +206,10 @@ void user_button_pressed_fcn()
     do_execute_main_task = !do_execute_main_task;
     if (do_execute_main_task) do_reset_all_once = true;
 }
+
+float convertDistanceToRadians(float distanceInMillimeters, float gearRatio, float wheelRadiusInMillimeters) {
+    float wheelCircumference = 2 * M_PI * (wheelRadiusInMillimeters / 1000.0);
+    float revolutions = distanceInMillimeters / wheelCircumference;
+    float radians = revolutions * 2 * M_PI * gearRatio;
+    return radians; 
+}//convertDistanceToRadians(10.0f, 1.0f, 25.0f); // Distance 10mm, gear ratio 1:1, wheelradius 25mm
