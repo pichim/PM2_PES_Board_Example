@@ -6,26 +6,12 @@
 * Version: 0.0.0.0
 */
 #include <cstdio>
-#include <mbed.h>
-#include <ctime>
-
-#include "PM2_Drivers.h"
-
-# define M_PI 3.14159265358979323846 // number pi, an example in case you need it
-
-// ---- Vehicle Variables ----
-# define WHEEL_DIAMETER 50.0 
-
-
-bool do_execute_main_task = false; // this variable will be toggled via the user button (blue button) and decides whether to execute the main task or not
-bool do_reset_all_once = false;    // this variable is used to reset certain variables and objects and shows how you can run a code segment only once
-
-// objects for user button (blue button) handling on nucleo board
-DebounceIn user_button(PC_13);  // create InterruptIn interface object to evaluate user button falling and rising edge (no blocking code in ISR)
-void user_button_pressed_fcn(); // custom functions which get executed when user button gets pressed, definition below
-float convertDistanceToRadians(float distanceInMillimeters); //custom function which calculate Radians from Distance
-
+#include <main.h>
 // main runs as an own thread
+
+
+
+
 int main()
 {
     // attach button fall function to user button object, button has a pull-up resistor
@@ -59,12 +45,12 @@ int main()
 
     // ----- M1 (closed-loop position controlled) -----
     float max_speed_rps = 0.5f;
-    const int M1_gear = 100;
+    const int M1_gear = 195;
     const float maxAccelerationRPS = 1.0f;
 
     const float counts_per_turn = 20.0f * 78.125f;      // define counts per turn at gearbox end: counts/turn * gearratio
-    const float kn = 180.0f / 12.0f;                    // define motor constant in RPM/V
-    const float k_gear = 100.0f / 78.125f;              // define additional ratio in case you are using a dc motor with a different gear box, e.g. 100:1
+    const float kn = 72.0f / 12.0f;                    // define motor constant in RPM/V
+    const float k_gear = M1_gear / 78.125f;              // define additional ratio in case you are using a dc motor with a different gear box, e.g. 100:1
     const float kp = 0.1f;
 
     FastPWM pwm_M1(PB_13);                              // Pin is correct!
@@ -115,17 +101,20 @@ int main()
 
         if (do_execute_main_task) {
 
-            if (mechanical_button.read()) {
+         /*   if (mechanical_button.read()) {
                 //printf("\nSTART M1");
                 enable_motors = 1;
-                positionController_M1.setDesiredRotation(1.5f); 
+                if (positionController_M1.getRotation() <= 0.1f){
+                    positionController_M1.setDesiredRotation(convertDistanceToRadians(200)); 
 
-
+                } 
             }
-            if (positionController_M1.getRotation() >= 1.45f) { 
+            printf(" ----- TEST -----:Rotation: %f", positionController_M1.getRotation());
+            if (positionController_M1.getRotation() >= convertDistanceToRadians(201)) { 
                 printf("\nRESET M1");
                 positionController_M1.setDesiredRotation(0.0f);
             }
+        */    
     
             // visual feedback that the main task is executed, setting this once would actually be enough
             additional_led = 1;
@@ -136,16 +125,42 @@ int main()
                 case GRYPER_STATE_INIT:
 
                     if(mechanical_button == 1){
-                        gryper_state_actual = GRYPER_STATE_ARM_DOWN_1;
+                        // For testing set the state that you want to test
+                        enable_motors = 1;
+                        
+                        gryper_state_actual = GRYPER_STATE_FORWARD_1;
+
+            
                     } else if(button2) {
                         gryper_state_actual = GRYPER_STATE_RESET;
                     } else {
-                        gryper_state_actual = GRYPER_STATE_INIT;
+                        //gryper_state_actual = GRYPER_STATE_INIT;
 
                     }
                     break;
 
                 case GRYPER_STATE_ARM_DOWN_1:
+                
+                    gryper_state_actual = GRYPER_STATE_FORWARD_1;
+                    break;
+                
+                case GRYPER_STATE_FORWARD_1:
+
+                    
+                    if (positionController_M1.getRotation() <= 0.1f){
+                        positionController_M1.setDesiredRotation(convertDistanceToRotation(157.08)); 
+                        printf("RAD: %f", convertDistanceToRotation(157.08));
+                    } 
+            
+                /*    if (positionController_M1.getRotation() >= convertDistanceToRadians(201)) { 
+                        printf("\nRESET M1");
+                        positionController_M1.setDesiredRotation(0.0f);
+                    }
+                */
+                    //gryper_state_actual = GRYPER_STATE_SET_ARM;
+                    break;
+                
+                case GRYPER_STATE_SET_ARM:
                 
                     gryper_state_actual = GRYPER_STATE_ROTATE;
                     break;
@@ -208,6 +223,7 @@ int main()
     }
 }
 
+
 void user_button_pressed_fcn()
 {
     // do_execute_main_task if the button was pressed
@@ -215,8 +231,6 @@ void user_button_pressed_fcn()
     if (do_execute_main_task) do_reset_all_once = true;
 }
 
-float convertDistanceToRadians(float distanceInMillimeters) {
-    float u = WHEEL_DIAMETER * M_PI;
-    return (u / 2) * M_PI / distanceInMillimeters;
-
+float convertDistanceToRotation(float distanceInMillimeters) {
+    return distanceInMillimeters / (WHEEL_DIAMETER * M_PI);
 }
