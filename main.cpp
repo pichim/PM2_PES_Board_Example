@@ -13,6 +13,9 @@
 
 # define M_PI 3.14159265358979323846 // number pi, an example in case you need it
 
+// ---- Vehicle Variables ----
+# define WHEEL_DIAMETER 50.0 
+
 
 bool do_execute_main_task = false; // this variable will be toggled via the user button (blue button) and decides whether to execute the main task or not
 bool do_reset_all_once = false;    // this variable is used to reset certain variables and objects and shows how you can run a code segment only once
@@ -20,7 +23,7 @@ bool do_reset_all_once = false;    // this variable is used to reset certain var
 // objects for user button (blue button) handling on nucleo board
 DebounceIn user_button(PC_13);  // create InterruptIn interface object to evaluate user button falling and rising edge (no blocking code in ISR)
 void user_button_pressed_fcn(); // custom functions which get executed when user button gets pressed, definition below
-float convertDistanceToRadians(float distanceInMillimeters, float gearRatio, float wheelRadiusInMillimeters); //custom function which calculate Radians from Distance
+float convertDistanceToRadians(float distanceInMillimeters); //custom function which calculate Radians from Distance
 
 // main runs as an own thread
 int main()
@@ -57,6 +60,8 @@ int main()
     // ----- M1 (closed-loop position controlled) -----
     float max_speed_rps = 0.5f;
     const int M1_gear = 100;
+    const float maxAccelerationRPS = 1.0f;
+
     const float counts_per_turn = 20.0f * 78.125f;      // define counts per turn at gearbox end: counts/turn * gearratio
     const float kn = 180.0f / 12.0f;                    // define motor constant in RPM/V
     const float k_gear = 100.0f / 78.125f;              // define additional ratio in case you are using a dc motor with a different gear box, e.g. 100:1
@@ -67,6 +72,9 @@ int main()
     PositionController positionController_M1(counts_per_turn * k_gear, kn / k_gear, max_voltage, pwm_M1, encoder_M1);
     positionController_M1.setSpeedCntrlGain(kp * k_gear);   // adjust internal speed controller gain, this is just an example
     positionController_M1.setMaxVelocityRPS(max_speed_rps); // adjust max velocity for internal speed controller
+    // fuer ruck beseitigung; maximale beschleunigung festssetzen
+    positionController_M1.setMaxAccelerationRPS(maxAccelerationRPS);
+
 
 
     // ----- M2 (closed-loop position controlled) -----
@@ -207,9 +215,8 @@ void user_button_pressed_fcn()
     if (do_execute_main_task) do_reset_all_once = true;
 }
 
-float convertDistanceToRadians(float distanceInMillimeters, float gearRatio, float wheelRadiusInMillimeters) {
-    float wheelCircumference = 2 * M_PI * (wheelRadiusInMillimeters / 1000.0);
-    float revolutions = distanceInMillimeters / wheelCircumference;
-    float radians = revolutions * 2 * M_PI * gearRatio;
-    return radians; 
-}//convertDistanceToRadians(10.0f, 1.0f, 25.0f); // Distance 10mm, gear ratio 1:1, wheelradius 25mm
+float convertDistanceToRadians(float distanceInMillimeters) {
+    float u = WHEEL_DIAMETER * M_PI;
+    return (u / 2) * M_PI / distanceInMillimeters;
+
+}
