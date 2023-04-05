@@ -74,7 +74,7 @@ int main()
     const float maxAccelerationRPS_M1 = 1.0f;
 
     const float counts_per_turn_M1 = 20.0f * 78.125f;      // define counts per turn at gearbox end: counts/turn * gearratio
-    const float kn_M1 = 72.0f / 12.0f;                    // define motor constant in RPM/V
+    const float kn_M1 = 28.0f / 12.0f;                    // define motor constant in RPM/V
     const float k_gear_M1 = M1_gear / 78.125f;              // define additional ratio in case you are using a dc motor with a different gear box, e.g. 100:1
     const float kp_M1 = 0.1f;
 
@@ -162,11 +162,18 @@ int main()
 
                     if(mechanical_button == 1){
                         // Start the loop
+
                         gryper_state_actual = GRYPER_STATE_SET_ARM;
 
                         // For testing set the state that you want to test
                         enable_motors = 1;
 
+
+                        gryper_state_actual = GRYPER_STATE_FORWARD_1;
+                        enable_motors = 1;
+                        // For testing set the state that you want to test
+            
+            
 
                     } else if(button2) {
                         // for the resetloop
@@ -186,7 +193,7 @@ int main()
 
                     if (positionController_M2.getRotation() <= 0.1f){
                         positionController_M2.setDesiredRotation(1.0f); 
-                        printf("RAD: %f", 1.0f);
+                        
                     }
 
                     //gryper_state_actual = GRYPER_STATE_FORWARD_1;
@@ -221,7 +228,7 @@ int main()
                     // 2. calculate angle
                     double angle_B = calcAngleSetArm(); // in rad
                     float bogenlaenge = get_way_from_rad(angle_B); // in mm
-                    float rotation = convertDistanceToRotation(float bogenlaenge, float ARM_LENGTH);
+                    float rotation = convertDistanceToRotation(bogenlaenge, ARM_LENGTH);
                     printf("ANGLE: %f [m]\tWEG: %f\tROT: %f",angle_B, bogenlaenge, rotation);
 
                     // 3. drive angle
@@ -230,6 +237,7 @@ int main()
                     //gryper_state_actual = GRYPER_STATE_ROTATE;
                     break;
 
+                /*
                 case GRYPER_STATE_ROTATE:
                 
                     gryper_state_actual = GRYPER_STATE_BALANCE;
@@ -239,6 +247,7 @@ int main()
                 
                     gryper_state_actual = GRYPER_STATE_DETACH;
                     break;
+                */
 
                 case GRYPER_STATE_DETACH:
                 
@@ -280,8 +289,8 @@ int main()
                 do_reset_all_once = false;
 
                 additional_led = 0;
-                positionController_M1.setDesiredRotation(0.0f);
-                positionController_M2.setDesiredRotation(0.0f);
+                //positionController_M1.setDesiredRotation(0.0f);
+                //positionController_M2.setDesiredRotation(0.0f);
             }            
         }
 
