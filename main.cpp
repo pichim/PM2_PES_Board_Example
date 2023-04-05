@@ -16,6 +16,7 @@ void user_button_pressed_fcn(); // custom functions which get executed when user
 // main runs as an own thread
 int main()
 {
+    user_button.fall(&user_button_pressed_fcn);
     // states and actual state for state machine
     const int ROBOT_STATE_INIT                = 0;
     const int ROBOT_STATE_FORWARD             = 1;
@@ -32,7 +33,7 @@ int main()
 
 
     // attach button fall function to user button object, button has a pull-up resistor
-    user_button.fall(&user_button_pressed_fcn);
+    
 
     // while loop gets executed every main_task_period_ms milliseconds (simple aproach to repeatedly execute main)
     const int main_task_period_ms = 50; // define main task period time in ms e.g. 50 ms -> main task runs 20 times per second
@@ -78,7 +79,7 @@ int main()
      PositionController positionController_M2(counts_per_turn, kn, max_voltage, pwm_M2, encoder_M2); // default 78.125:1 gear box  with default contoller parameters
      positionController_M2.setSpeedCntrlGain(kp * k_gear);
     float max_speed_rps2 = 0.5f;
-    positionController_M2.setMaxVelocityRPS(max_speed_rps1);
+    positionController_M2.setMaxVelocityRPS(max_speed_rps2);
     // SpeedController speedController_M2(counts_per_turn * k_gear, kn / k_gear, max_voltage, pwm_M2, encoder_M2); // parameters adjusted to 100:1 gear
 
     // PositionController positionController_M3(counts_per_turn, kn, max_voltage, pwm_M3, encoder_M3); // default 78.125:1 gear with default contoller parameters
@@ -124,8 +125,8 @@ int main()
 
                     if (mechanical_button.read()) {
 
-                         
-                        positionController_M1.setDesiredRotation(10.0f); //bewegt sich bis zum hindernis
+                        positionController_M1.setDesiredRotation(10.0f); 
+                        positionController_M3.setDesiredRotation(10.0f); //bewegt sich bis zum hindernis
                         positionController_M2.setDesiredRotation(10.0f); // set a desired speed for speed controlled dc motors M2
                         robot_state_actual = ROBOT_STATE_BACKWARD;
                     }
@@ -137,8 +138,8 @@ int main()
 
                         pwm_M1.write(0.25f);
 
-                        positionController_M1.setDesiredRotation(0.5f);
-                        positionController_M2.setDesiredRotation(0.5f);
+                        positionController_M1.setDesiredRotation(-0.5f);
+                        positionController_M2.setDesiredRotation(-0.5f);
                         positionController_M3.setDesiredRotation(0.0f);
 
                         robot_state_actual = ROBOT_STATE_SLEEP;
@@ -171,7 +172,7 @@ int main()
                 if (positionController_M3.getRotation() <= 0.05f){
                     pwm_M1.write(0.5f); // pwm regelt die geschwindigkeit um einen prozentteil
                     pwm_M2.write(0.5f); // für den arm und die raupen kann man verschiedene % nehmen um snychron das hindernis zu überwältigen
-                    pwm_M3.write(0.5f);
+                    pwm_M3.write(0.5f); 
                     positionController_M1.setDesiredRotation(1.5f);
                     positionController_M2.setDesiredRotation(1.5f);
                     positionController_M3.setDesiredRotation(1.5f);
@@ -193,7 +194,6 @@ int main()
                     positionController_M2.setDesiredRotation(10.0f); // set a desired speed for speed controlled dc motors M2
                     enable_motors = 0;
                     robot_state_actual = ROBOT_STATE_INIT;
-
                 }
 
                     break;
