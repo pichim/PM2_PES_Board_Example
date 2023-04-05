@@ -14,7 +14,19 @@
 # define M_PI 3.14159265358979323846 // number pi, an example in case you need it
 
 // ---- Vehicle Variables ----
-# define WHEEL_DIAMETER 50.0 
+# define WHEEL_DIAMETER 50.0     // in mm
+# define ARM_LENGTH = 160.0      // in mm
+
+
+// ---- Operation Variables ----
+# define DISTANCE_1 200         // in mm
+# define DISTANCE_2 200         // in mm    
+# define ANGEL_SET_ARM 45       // in Grad
+
+
+// ---- predefined Varables ----
+# define HURDLE_HIGHT 100       // in mm
+
 
 
 bool do_execute_main_task = false; // this variable will be toggled via the user button (blue button) and decides whether to execute the main task or not
@@ -76,7 +88,6 @@ int main()
     positionController_M1.setMaxAccelerationRPS(maxAccelerationRPS);
 
 
-
     // ----- M2 (closed-loop position controlled) -----
     const int M2_gear = 0;
     FastPWM pwm_M2(PA_9);                       // Pin is correct!
@@ -136,10 +147,13 @@ int main()
                 case GRYPER_STATE_INIT:
 
                     if(mechanical_button == 1){
+                        // Start the loop
                         gryper_state_actual = GRYPER_STATE_ARM_DOWN_1;
                     } else if(button2) {
+                        // for the resetloop
                         gryper_state_actual = GRYPER_STATE_RESET;
                     } else {
+                        // set state to init state
                         gryper_state_actual = GRYPER_STATE_INIT;
 
                     }
@@ -220,3 +234,5 @@ float convertDistanceToRadians(float distanceInMillimeters) {
     return (u / 2) * M_PI / distanceInMillimeters;
 
 }
+
+
