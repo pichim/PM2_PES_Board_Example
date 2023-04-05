@@ -9,24 +9,26 @@
 
 #include <mbed.h>
 #include <ctime>
+#include <math.h>
 
 #include "PM2_Drivers.h"
 
 # define M_PI 3.14159265358979323846 // number pi, an example in case you need it
 
 // ---- Vehicle Variables ----
-# define WHEEL_DIAMETER 50.0     // in mm
-# define ARM_LENGTH = 160.0      // in mm
+# define WHEEL_DIAMETER     50.0    // in mm
+# define ARM_LENGTH         160.0   // in mm
+# define GRYPER_HIGHT        30.0    // in mm
 
 
 // ---- Operation Variables ----
-# define DISTANCE_1 200         // in mm
-# define DISTANCE_2 200         // in mm    
-# define ANGEL_SET_ARM 45       // in Grad
+# define DISTANCE_1         200      // in mm
+# define DISTANCE_2         200      // in mm    
+# define ANGEL_SET_ARM      45       // in Grad
 
 
-// ---- predefined Varables ----
-# define HURDLE_HIGHT 100       // in mm
+// ---- predefined Variables ----
+# define HURDLE_HIGHT       100      // in mm
 
 #include <main.h>
 // main runs as an own thread
@@ -167,7 +169,6 @@ int main()
 
                         //gryper_state_actual = GRYPER_STATE_INIT;
 
-
                     }
                     break;
 
@@ -180,8 +181,8 @@ int main()
 
                     
                     if (positionController_M1.getRotation() <= 0.1f){
-                        positionController_M1.setDesiredRotation(convertDistanceToRotation(157.08)); 
-                        printf("RAD: %f", convertDistanceToRotation(157.08));
+                        positionController_M1.setDesiredRotation(convertDistanceToRotation(157.08, WHEEL_DIAMETER)); 
+                        printf("RAD: %f", convertDistanceToRotation(157.08, WHEEL_DIAMETER));
                     } 
             
                 /*    if (positionController_M1.getRotation() >= convertDistanceToRadians(201)) { 
@@ -193,6 +194,22 @@ int main()
                     break;
                 
                 case GRYPER_STATE_SET_ARM:
+                    /*  lift the arm and set it to the hurdle 
+                        1. drive arm in 0 position
+                        2. calculate angle
+                        3. drive angel
+                        4. drive a little bit forward
+                    */
+
+                    // drive arm in 0 position
+                    //positionController_M2.setDesiredRotation(0.0f);
+                    //float angel_B = 0.0f;
+                    
+
+
+                    
+
+
                 
                     gryper_state_actual = GRYPER_STATE_ROTATE;
                     break;
@@ -263,16 +280,24 @@ void user_button_pressed_fcn()
     if (do_execute_main_task) do_reset_all_once = true;
 }
 
-
-float convertDistanceToRadians(float distanceInMillimeters) {
-    float u = WHEEL_DIAMETER * M_PI;
+// General Functions
+float convertDistanceToRadians(float distanceInMillimeters, float diameter) {
+    float u = diameter * M_PI;
     return (u / 2) * M_PI / distanceInMillimeters;
 
 }
 
+float get_way_from_rad(float angle){
+     return angle * ARM_LENGTH;
+}
 
 
-float convertDistanceToRotation(float distanceInMillimeters) {
-    return distanceInMillimeters / (WHEEL_DIAMETER * M_PI);
+float convertDistanceToRotation(float distanceInMillimeters, float diameter) {
+    return distanceInMillimeters / (diameter * M_PI);
+}
+
+// Functions for STEP 3
+double calcAngleSetArm(void) {
+    return asin((HURDLE_HIGHT + GRYPER_HIGHT)/ARM_LENGTH);;
 }
 
