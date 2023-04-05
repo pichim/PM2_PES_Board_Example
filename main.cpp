@@ -6,8 +6,31 @@
 * Version: 0.0.0.0
 */
 #include <cstdio>
+
+#include <mbed.h>
+#include <ctime>
+
+#include "PM2_Drivers.h"
+
+# define M_PI 3.14159265358979323846 // number pi, an example in case you need it
+
+// ---- Vehicle Variables ----
+# define WHEEL_DIAMETER 50.0     // in mm
+# define ARM_LENGTH = 160.0      // in mm
+
+
+// ---- Operation Variables ----
+# define DISTANCE_1 200         // in mm
+# define DISTANCE_2 200         // in mm    
+# define ANGEL_SET_ARM 45       // in Grad
+
+
+// ---- predefined Varables ----
+# define HURDLE_HIGHT 100       // in mm
+
 #include <main.h>
 // main runs as an own thread
+
 
 
 
@@ -60,7 +83,6 @@ int main()
     positionController_M1.setMaxVelocityRPS(max_speed_rps_M1); // adjust max velocity for internal speed controller
     // fuer ruck beseitigung; maximale beschleunigung festssetzen
     positionController_M1.setMaxAccelerationRPS(maxAccelerationRPS_M1);
-
 
 
     // ----- M2 (closed-loop position controlled) -----
@@ -137,16 +159,26 @@ int main()
                 case GRYPER_STATE_INIT:
 
                     if(mechanical_button == 1){
+                        // Start the loop
+                        gryper_state_actual = GRYPER_STATE_ARM_DOWN_1;
+
                         // For testing set the state that you want to test
                         enable_motors = 1;
                         
                         gryper_state_actual = GRYPER_STATE_ARM_DOWN_1;
 
             
+
                     } else if(button2) {
+                        // for the resetloop
                         gryper_state_actual = GRYPER_STATE_RESET;
                     } else {
+
+                        // set state to init state
+                        gryper_state_actual = GRYPER_STATE_INIT;
+
                         //gryper_state_actual = GRYPER_STATE_INIT;
+
 
                     }
                     break;
@@ -254,6 +286,16 @@ void user_button_pressed_fcn()
     if (do_execute_main_task) do_reset_all_once = true;
 }
 
+
+float convertDistanceToRadians(float distanceInMillimeters) {
+    float u = WHEEL_DIAMETER * M_PI;
+    return (u / 2) * M_PI / distanceInMillimeters;
+
+}
+
+
+
 float convertDistanceToRotation(float distanceInMillimeters) {
     return distanceInMillimeters / (WHEEL_DIAMETER * M_PI);
 }
+
