@@ -12,6 +12,7 @@
 
 // ---- Vehicle Variables ----
 # define WHEEL_DIAMETER 50.0 
+# define GEAR_DIAMETER 20.3
 
 
 bool do_execute_main_task = false; // this variable will be toggled via the user button (blue button) and decides whether to execute the main task or not
