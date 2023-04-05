@@ -74,7 +74,7 @@ int main()
     const float maxAccelerationRPS_M1 = 1.0f;
 
     const float counts_per_turn_M1 = 20.0f * 78.125f;      // define counts per turn at gearbox end: counts/turn * gearratio
-    const float kn_M1 = 28.0f / 12.0f;                    // define motor constant in RPM/V
+    const float kn_M1 = 72.0f / 12.0f;                    // define motor constant in RPM/V
     const float k_gear_M1 = M1_gear / 78.125f;              // define additional ratio in case you are using a dc motor with a different gear box, e.g. 100:1
     const float kp_M1 = 0.1f;
 
@@ -93,7 +93,7 @@ int main()
     const float maxAccelerationRPS_M2 = 1.0f;
 
     const float counts_per_turn_M2 = 20.0f * 78.125f;      // define counts per turn at gearbox end: counts/turn * gearratio
-    const float kn_M2 = 28.0f / 12.0f;                    // define motor constant in RPM/V
+    const float kn_M2 = 50.0f / 12.0f;                    // define motor constant in RPM/V
     const float k_gear_M2 = M2_gear / 78.125f;              // define additional ratio in case you are using a dc motor with a different gear box, e.g. 100:1
     const float kp_M2 = 0.1f;
 
@@ -162,7 +162,7 @@ int main()
 
                     if(mechanical_button == 1){
                         // Start the loop
-                        gryper_state_actual = GRYPER_STATE_FORWARD_1;
+                        gryper_state_actual = GRYPER_STATE_ARM_DOWN_1;
                         enable_motors = 1;
                         // For testing set the state that you want to test
             
@@ -194,9 +194,9 @@ int main()
                 
                 case GRYPER_STATE_FORWARD_1:
 
-                    if (positionController_M1.getRotation() <= 0.1f){
+                    if (positionController_M1.getRotation() <= 0.1){
                         positionController_M1.setDesiredRotation(convertDistanceToRotation(157.08, WHEEL_DIAMETER)); 
-                        printf("RAD: %f", convertDistanceToRotation(157.08, WHEEL_DIAMETER));
+                        printf("1RAD: %f", convertDistanceToRotation(157.08, WHEEL_DIAMETER));
                     } 
             
                 /*    if (positionController_M1.getRotation() >= convertDistanceToRadians(201)) { 
@@ -251,8 +251,8 @@ int main()
                 case GRYPER_STATE_FORWARD_2:
 
                     if (positionController_M1.getRotation() <= 0.1f){
-                        positionController_M1.setDesiredRotation(convertDistanceToRotation(157.08)); 
-                        printf("RAD: %f", convertDistanceToRotation(157.08));
+                        positionController_M1.setDesiredRotation(convertDistanceToRotation(157.08, WHEEL_DIAMETER)); 
+                        printf("2RAD: %f", convertDistanceToRotation(157.08, WHEEL_DIAMETER));
                     }
 
                     //gryper_state_actual = GRYPER_STATE_FINAL;
@@ -278,8 +278,8 @@ int main()
                 do_reset_all_once = false;
 
                 additional_led = 0;
-                //positionController_M1.setDesiredRotation(0.0f);
-                //positionController_M2.setDesiredRotation(0.0f);
+                positionController_M1.setDesiredRotation(0.0f);
+                positionController_M2.setDesiredRotation(0.0f);
             }            
         }
 
