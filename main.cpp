@@ -120,8 +120,8 @@ int main()
     const int GRYPER_STATE_FORWARD_1 = 2;
     const int GRYPER_STATE_SET_ARM = 3;
     const int GRYPER_STATE_ROTATE = 4;
-    const int GRYPER_STATE_BALANCE = 5;
-    const int GRYPER_STATE_DETACH = 6;
+    //const int GRYPER_STATE_BALANCE = 5;
+    //const int GRYPER_STATE_DETACH = 6;
     const int GRYPER_STATE_ARM_DOWN_2 = 7;
     const int GRYPER_STATE_FORWARD_2 = 8;
     const int GRYPER_STATE_FINAL = 9;
@@ -162,14 +162,11 @@ int main()
 
                     if(mechanical_button == 1){
                         // Start the loop
-                        gryper_state_actual = GRYPER_STATE_ARM_DOWN_1;
+                        gryper_state_actual = GRYPER_STATE_SET_ARM;
 
                         // For testing set the state that you want to test
                         enable_motors = 1;
-                        
-                        gryper_state_actual = GRYPER_STATE_ARM_DOWN_1;
 
-            
 
                     } else if(button2) {
                         // for the resetloop
@@ -218,17 +215,19 @@ int main()
                         4. drive a little bit forward
                     */
 
-                    // drive arm in 0 position
-                    //positionController_M2.setDesiredRotation(0.0f);
-                    //float angel_B = 0.0f;
-                    
+                    // 1. drive arm in 0 position
+                    positionController_M2.setDesiredRotation(0.0f);
 
+                    // 2. calculate angle
+                    double angle_B = calcAngleSetArm(); // in rad
+                    float bogenlaenge = get_way_from_rad(angle_B); // in mm
+                    float rotation = convertDistanceToRotation(float bogenlaenge, float ARM_LENGTH);
+                    printf("ANGLE: %f [m]\tWEG: %f\tROT: %f",angle_B, bogenlaenge, rotation);
 
-                    
-
-
-                
-                    gryper_state_actual = GRYPER_STATE_ROTATE;
+                    // 3. drive angle
+                    //positionController_M2.setDesiredRotation(dist);
+                                   
+                    //gryper_state_actual = GRYPER_STATE_ROTATE;
                     break;
 
                 case GRYPER_STATE_ROTATE:
