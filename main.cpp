@@ -44,36 +44,48 @@ int main()
 
 
     // ----- M1 (closed-loop position controlled) -----
-    float max_speed_rps = 0.5f;
+    float max_speed_rps_M1 = 0.5f;
     const int M1_gear = 195;
-    const float maxAccelerationRPS = 1.0f;
+    const float maxAccelerationRPS_M1 = 1.0f;
 
-    const float counts_per_turn = 20.0f * 78.125f;      // define counts per turn at gearbox end: counts/turn * gearratio
-    const float kn = 72.0f / 12.0f;                    // define motor constant in RPM/V
-    const float k_gear = M1_gear / 78.125f;              // define additional ratio in case you are using a dc motor with a different gear box, e.g. 100:1
-    const float kp = 0.1f;
+    const float counts_per_turn_M1 = 20.0f * 78.125f;      // define counts per turn at gearbox end: counts/turn * gearratio
+    const float kn_M1 = 72.0f / 12.0f;                    // define motor constant in RPM/V
+    const float k_gear_M1 = M1_gear / 78.125f;              // define additional ratio in case you are using a dc motor with a different gear box, e.g. 100:1
+    const float kp_M1 = 0.1f;
 
     FastPWM pwm_M1(PB_13);                              // Pin is correct!
     EncoderCounter  encoder_M1(PA_6, PC_7);             // Pin is correct!
-    PositionController positionController_M1(counts_per_turn * k_gear, kn / k_gear, max_voltage, pwm_M1, encoder_M1);
-    positionController_M1.setSpeedCntrlGain(kp * k_gear);   // adjust internal speed controller gain, this is just an example
-    positionController_M1.setMaxVelocityRPS(max_speed_rps); // adjust max velocity for internal speed controller
+    PositionController positionController_M1(counts_per_turn_M1 * k_gear_M1, kn_M1 / k_gear_M1, max_voltage, pwm_M1, encoder_M1);
+    positionController_M1.setSpeedCntrlGain(kp_M1 * k_gear_M1);   // adjust internal speed controller gain, this is just an example
+    positionController_M1.setMaxVelocityRPS(max_speed_rps_M1); // adjust max velocity for internal speed controller
     // fuer ruck beseitigung; maximale beschleunigung festssetzen
-    positionController_M1.setMaxAccelerationRPS(maxAccelerationRPS);
+    positionController_M1.setMaxAccelerationRPS(maxAccelerationRPS_M1);
 
 
 
     // ----- M2 (closed-loop position controlled) -----
-    const int M2_gear = 0;
+    float max_speed_rps_M2 = 0.5f;
+    const int M2_gear = 488;
+    const float maxAccelerationRPS_M2 = 1.0f;
+
+    const float counts_per_turn_M2 = 20.0f * 78.125f;      // define counts per turn at gearbox end: counts/turn * gearratio
+    const float kn_M2 = 28.0f / 12.0f;                    // define motor constant in RPM/V
+    const float k_gear_M2 = M2_gear / 78.125f;              // define additional ratio in case you are using a dc motor with a different gear box, e.g. 100:1
+    const float kp_M2 = 0.1f;
+
     FastPWM pwm_M2(PA_9);                       // Pin is correct!
     EncoderCounter  encoder_M2(PB_6, PB_7);     // Pin is correct!
-    
+    PositionController positionController_M2(counts_per_turn_M2 * k_gear_M2, kn_M2 / k_gear_M2, max_voltage, pwm_M2, encoder_M2);
+    positionController_M2.setSpeedCntrlGain(kp_M2 * k_gear_M2);   // adjust internal speed controller gain, this is just an example
+    positionController_M2.setMaxVelocityRPS(max_speed_rps_M2); // adjust max velocity for internal speed controller
+    // fuer ruck beseitigung; maximale beschleunigung festssetzen
+    positionController_M2.setMaxAccelerationRPS(maxAccelerationRPS_M2);
 
     // ----- M3 (closed-loop position controlled) -----
-    const int M3_gear = 0;
+   /* const int M3_gear = 0;
     FastPWM pwm_M3(PA_10);                      // Pin is correct!
     EncoderCounter  encoder_M3(PA_0, PA_1);     // Pin is correct!
-
+    */
 
 
     // ---------- Sensoren ----------
@@ -128,7 +140,7 @@ int main()
                         // For testing set the state that you want to test
                         enable_motors = 1;
                         
-                        gryper_state_actual = GRYPER_STATE_FORWARD_1;
+                        gryper_state_actual = GRYPER_STATE_ARM_DOWN_1;
 
             
                     } else if(button2) {
@@ -139,14 +151,19 @@ int main()
                     }
                     break;
 
+
                 case GRYPER_STATE_ARM_DOWN_1:
-                
-                    gryper_state_actual = GRYPER_STATE_FORWARD_1;
+
+                    if (positionController_M2.getRotation() <= 0.1f){
+                        positionController_M2.setDesiredRotation(1.0f); 
+                        printf("RAD: %f", 1.0f);
+                    }
+
+                    //gryper_state_actual = GRYPER_STATE_FORWARD_1;
                     break;
                 
                 case GRYPER_STATE_FORWARD_1:
 
-                    
                     if (positionController_M1.getRotation() <= 0.1f){
                         positionController_M1.setDesiredRotation(convertDistanceToRotation(157.08)); 
                         printf("RAD: %f", convertDistanceToRotation(157.08));
@@ -186,8 +203,13 @@ int main()
                     break;
 
                 case GRYPER_STATE_FORWARD_2:
-                
-                    gryper_state_actual = GRYPER_STATE_FINAL;
+
+                    if (positionController_M1.getRotation() <= 0.1f){
+                        positionController_M1.setDesiredRotation(convertDistanceToRotation(157.08)); 
+                        printf("RAD: %f", convertDistanceToRotation(157.08));
+                    }
+
+                    //gryper_state_actual = GRYPER_STATE_FINAL;
                     break;
 
                 case GRYPER_STATE_FINAL:
@@ -201,7 +223,7 @@ int main()
                     break;
             }
 
-            printf("\nEncoder M1: %3d\tPosition M1: %3.3f", encoder_M1.read(), positionController_M1.getRotation());
+            printf("\nEncoder M1: %3d\tPosition M1: %3.3f\tEncoder M2: %3d\tPosition M2: %3.3f", encoder_M1.read(), positionController_M1.getRotation(), encoder_M2.read(), positionController_M2.getRotation());
 
         } else {
 
@@ -211,6 +233,7 @@ int main()
 
                 additional_led = 0;
                 positionController_M1.setDesiredRotation(0.0f);
+                positionController_M2.setDesiredRotation(0.0f);
             }            
         }
 
