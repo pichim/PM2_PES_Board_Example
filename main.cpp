@@ -162,9 +162,9 @@ int main()
 
                     if(mechanical_button == 1){
                         // Start the loop
-<<<<<<< HEAD
+
                         gryper_state_actual = GRYPER_STATE_ARM_DOWN_1;
-=======
+
 
                         gryper_state_actual = GRYPER_STATE_SET_ARM;
 
@@ -173,7 +173,7 @@ int main()
 
 
                         gryper_state_actual = GRYPER_STATE_FORWARD_1;
->>>>>>> cfac94519264f7cb72f2269c58e215d2c6e124dc
+
                         enable_motors = 1;
                         // For testing set the state that you want to test
             
@@ -196,7 +196,7 @@ int main()
                 case GRYPER_STATE_ARM_DOWN_1:
 
                     if (positionController_M2.getRotation() <= 0.1f){
-                        positionController_M2.setDesiredRotation(1.0f); 
+                        positionController_M2.setDesiredRotation(0.125f); // 1.0f = 360° 
                         
                     }
 
@@ -259,8 +259,13 @@ int main()
                     break;
 
                 case GRYPER_STATE_ARM_DOWN_2:
+
+                    if (positionController_M2.getRotation() <= 0.1f){
+                        positionController_M2.setDesiredRotation(0.125f); // 1.0f = 360° 
+                        
+                    }
                 
-                    gryper_state_actual = GRYPER_STATE_FORWARD_2;
+                    //gryper_state_actual = GRYPER_STATE_FORWARD_2;
                     break;
 
                 case GRYPER_STATE_FORWARD_2:
@@ -274,8 +279,13 @@ int main()
                     break;
 
                 case GRYPER_STATE_FINAL:
-                
-                    gryper_state_actual = GRYPER_STATE_INIT;
+
+                    if (positionController_M2.getRotation() <= 0.1f){ // Move Gryper back vertical to the car
+                        positionController_M2.setDesiredRotation(-0.125f); // 1.0f = 360° 
+                        
+                    }
+
+                    //gryper_state_actual = GRYPER_STATE_INIT;
                     break;
 
                 case GRYPER_STATE_RESET:
