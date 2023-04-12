@@ -84,9 +84,9 @@ int main()
           float turn_for_30cm = 3.19f;
     const float wheel_diameter = 0.3f;
           float rotation_til_arm_sets = 0.60f;   
-          float rotations_M3 = 0.0f;
+          float rotations_M2 = 0.0f;
           float  total_distance_M3  = 0.0f;
-          float distance_M3 = 0.0f;   
+          float distance_M2 = 0.0f;   
           float total_distance_M2 = 0.0f; 
          
           
@@ -97,7 +97,7 @@ int main()
 
     PositionController positionController_M2(counts_per_turn, kn, max_voltage, pwm_M2, encoder_M2); // default 78.125:1 gear box  with default contoller parameters
     positionController_M2.setSpeedCntrlGain(kp * k_gear);
-    float max_speed_rps2 = 0.5f;
+    float max_speed_rps2 = 0.45f;
     positionController_M2.setMaxVelocityRPS(max_speed_rps2);
     // SpeedController speedController_M2(counts_per_turn * k_gear, kn / k_gear, max_voltage, pwm_M2, encoder_M2); // parameters adjusted to 100:1 gear
 
@@ -147,21 +147,20 @@ int main()
 
                     if (mechanical_button.read()) {
 
-                    rotations_M3 = positionController_M3.getRotation();
-                    total_distance_M3 = calculate_distance_traveled(rotations_M3, wheel_diameter); 
-                    positionController_M3.setDesiredRotation(turn_for_30cm); // set a desired speed for speed controlled dc motors M
-                    positionController_M2.setDesiredRotation(-turn_for_30cm); //bewegt sich bis zum hindernis  
-                    printf("Distance 00: %f\n", total_distance_M3);
+                    rotations_M2 = positionController_M3.getRotation();
+                    total_distance_M2 = calculate_distance_traveled(rotations_M2, wheel_diameter); 
+                    positionController_M1.setDesiredRotation(turn_for_30cm); // set a desired speed for speed controlled dc motors M
+                    positionController_M2.setDesiredRotation(turn_for_30cm); //bewegt sich bis zum hindernis  
+                    printf("Distance 00: %f\n", total_distance_M2);
                    robot_state_actual = ROBOT_STATE_ARM_SETS_Angle;
         
                     }
                
                     break;
                    
-                
                     case ROBOT_STATE_ARM_SETS_Angle: // arm sets angle when the desired Position in Rad from case ROBOT_SLEEP is achieved
 
-                    if (total_distance_M3 >= 30.0f ) {
+                    if (positionController_M2.getRotation() >= turn_for_30cm ) {
 
                     positionController_M3.setDesiredRotation(rotation_til_arm_sets); // set a desired rotation for position controlled dc motors M3
                     robot_state_actual = ROBOT_STATE_MOVE_ARM_AND_WHEELS;
@@ -170,29 +169,29 @@ int main()
 
                     case ROBOT_STATE_MOVE_ARM_AND_WHEELS: //moves forward while moving arm
 
-                    if (positionController_M1.getRotation() <= rotation_til_arm_sets ){
-                    positionController_M1.setDesiredRotation(1.0f-rotation_til_arm_sets);
+                    if (positionController_M3.getRotation() <= rotation_til_arm_sets ){
+                    positionController_M3.setDesiredRotation(1.0f-rotation_til_arm_sets);
                     positionController_M2.setDesiredRotation(turn_for_1cm * 7.0f);
-                    positionController_M3.setDesiredRotation(turn_for_1cm * 7.0f);
+                    positionController_M1.setDesiredRotation(turn_for_1cm * 7.0f);
                     robot_state_actual = ROBOT_STATE_BACKWARD;
                 }
                     break;
 
                      case ROBOT_STATE_BACKWARD:  // not sure of needed in this code //evtl. brauchen wir es nicht
 
-                    if ( positionController_M1.getRotation() >= 1.0f)  {
+                    if ( positionController_M3.getRotation() >= 1.0f)  {
 
-                    rotations_M3 = positionController_M3.getRotation();
-                    distance_M3 = calculate_distance_traveled(rotations_M3, wheel_diameter); 
+                    rotations_M2 = positionController_M3.getRotation();
+                    distance_M2 = calculate_distance_traveled(rotations_M2, wheel_diameter); 
                     positionController_M2.setDesiredRotation(0.5f);  
-                    positionController_M3.setDesiredRotation(-0.5f);
+                    positionController_M1.setDesiredRotation(-0.5f);
                    
                     robot_state_actual = ROBOT_STATE_ARM_SETS_Angle;
                     }
                     break;
 
                     case ROBOT_STATE_REACH_GOAL:
-                    if (positionController_M3.getRotation() <= turn_for_30cm + turn_for_1cm * 7.0f - 0.5f){ //wenn die gewünschte position im ROBOT_SET erreicht wurde
+                    if (positionController_M2.getRotation() <= turn_for_30cm + turn_for_1cm * 7.0f + 0.5f){ //wenn die gewünschte position im ROBOT_SET erreicht wurde
                     positionController_M2.setDesiredRotation(-turn_for_30cm); // rotation bis zum endziel
                     positionController_M3.setDesiredRotation(turn_for_30cm); // set a desired speed for speed controlled dc motors M2
                     enable_motors = 0;
@@ -203,10 +202,10 @@ int main()
 
                     case ROBOT_STATE_SLEEP:  // robot sleeps when the desired position in rad is achieved
 
-                    if (positionController_M3.getRotation()>= 2*turn_for_30cm + turn_for_1cm * 7.0f - 0.5f) { //wenn M1 und M2 die gewünshte rotation bis zum hindernis erreicht hat
+                    if (positionController_M2.getRotation()>= 2*turn_for_30cm + turn_for_1cm * 7.0f - 0.5f) { //wenn M1 und M2 die gewünshte rotation bis zum hindernis erreicht hat
                     enable_motors = 0; // motor wird ausgeschaltet
-                    rotations_M3 = positionController_M3.getRotation();
-                    distance_M3 = calculate_distance_traveled(rotations_M3, wheel_diameter); 
+                    rotations_M2 = positionController_M3.getRotation();
+                    distance_M2 = calculate_distance_traveled(rotations_M2, wheel_diameter); 
                     positionController_M2.setDesiredRotation(0.0f);
                     positionController_M3.setDesiredRotation(0.0f);
                   
