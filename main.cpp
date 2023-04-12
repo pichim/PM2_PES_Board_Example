@@ -64,6 +64,24 @@ int main()
     mechanical_button.mode(PullUp);    // set pullup mode: sets pullup between pin and 3.3 V, so that there is a defined potential
 
 
+<<<<<<< HEAD
+    // Sharp GP2Y0A41SK0F, 4-40 cm IR Sensor
+    float ir_distance_mV = 0.0f; // define variable to store measurement
+    AnalogIn ir_analog_in(PC_2); // create AnalogIn object to read in infrared distance sensor, 0...3.3V are mapped to 0...1
+
+
+    // Futaba Servo S3001 20mm 3kg Analog
+    Servo servo_S1(PB_2);     // create servo objects
+    Servo servo_S2(PC_8);
+    float servo_S1_angle = 0; // servo S1 normalized input: 0...1
+    float servo_S2_angle = 0;
+    
+    int servo_counter = 0;    // define servo counter, this is an additional variable to make the servos move
+    const int loops_per_seconds = static_cast<int>(ceilf( 1.0f / (0.1f * (float)main_task_period_ms) ));
+
+
+=======
+>>>>>>> cbbc9114bb88ab68f768b305e5ed15c13a694800
     // 78:1, 100:1, ... Metal Gearmotor 20Dx44L mm 12V CB
     DigitalOut enable_motors(PB_15); // create DigitalOut object to enable dc motors
 
@@ -143,9 +161,14 @@ int main()
 
                     enable_motors = 1; // enable hardwaredriver dc motors: 0 -> disabled, 1 -> enabled
 
+<<<<<<< HEAD
                     robot_state_actual = ROBOT_STATE_FORWARD;
             
                     break;
+=======
+                    robot_state_actual = ROBOT_STATE_BACKWARD;
+                    break;  
+>>>>>>> 7c29b6a15a229f139098dccfa24fc1cf6067c187
 
                 case ROBOT_STATE_FORWARD: // robot moves forward when the motors are enabled
 
