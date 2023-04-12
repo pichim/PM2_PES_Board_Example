@@ -45,11 +45,7 @@ int main()
     const int main_task_period_ms = 50; // define main task period time in ms e.g. 50 ms -> main task runs 20 times per second
     Timer main_task_timer;              // create Timer object which we use to run the main task every main_task_period_ms
     // led on nucleo board
-    DigitalOut user_led(LED1);       // create DigitalOut object to command user led
-    // additional led
-    DigitalOut additional_led(PB_9); // create DigitalOut object to command extra led (you need to add an aditional resistor, e.g. 220...500 Ohm)
-
-
+    
 
     // ---------- Variablen ----------
 
@@ -60,6 +56,23 @@ int main()
     int button1 = 0;
     int button2 = 0;
     int button3 = 0;
+
+    DigitalIn start_button(PC_9);   // create DigitalIn object to evaluate extra mechanical button, you need to specify the mode for proper usage, see below
+    start_button.mode(PullUp); // set pullup mode: sets pullup between pin and 3.3 V, so that there is a defined potential
+    
+    DigitalIn reset_button(PC_8);
+    reset_button.mode(PullUp); // set pullup mode: sets pullup between pin and 3.3 V, so that there is a defined potential
+    
+    DigitalIn reset_all_button(PC_6);
+    reset_all_button.mode(PullUp); // set pullup mode: sets pullup between pin and 3.3 V, so that there is a defined potential
+    
+    DigitalIn reserve_button(PB_12);
+    reserve_button.mode(PullUp); // set pullup mode: sets pullup between pin and 3.3 V, so that there is a defined potential
+
+    // ---------- Leds ----------
+    DigitalOut user_led(LED1);       // create DigitalOut object to command user led
+    // additional led
+    DigitalOut additional_led(PB_9); // create DigitalOut object to command extra led (you need to add an aditional resistor, e.g. 220...500 Ohm)
 
     // ---------- Vehicle geometry ----------
 
