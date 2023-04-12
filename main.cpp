@@ -23,6 +23,8 @@ float calculate_distance_traveled(float rotations, float wheel_diameter)
     float total_distance_M3 =+ distance * 10.0f;
      printf("Distance 1M3: %f\n", total_distance_M2);
      printf("Distance 1M2: %f\n", total_distance_M3);
+     float* ptr_total_distance_M3 = &total_distance_M3;
+     
     return  total_distance_M3;
 }
 
@@ -81,11 +83,13 @@ int main()
     const float kn = 180.0f / 12.0f;               // define motor constant in RPM/V
     const float k_gear = 100.0f / 78.125f;         // define additional ratio in case you are using a dc motor with a different gear box, e.g. 100:1
     const float kp = 0.1f;                         // define custom kp, this is the default speed controller gain for gear box 78.125:1
-          float distance = 0.0f;
+          float distance = 0.0;
           float turn_for_1cm = 0.106f;  // entspricht 1 cm
+          long double turn_for_30cm = 3.19f;
     const float wheel_diameter = 0.3f;   
           float total_distance_M3 = 0.0f;
           float total_distance_M2 = 0.0f; 
+         
           
     PositionController positionController_M1(counts_per_turn, kn, max_voltage, pwm_M2, encoder_M1);
     positionController_M1.setSpeedCntrlGain(kp * k_gear);
@@ -105,10 +109,12 @@ int main()
     positionController_M3.setSpeedCntrlGain(kp * k_gear);   // adjust internal speed controller gain, this is just an example
     float max_speed_rps3 = 0.5f; // define maximum speed that the position controller is changig the speed, has to be smaller or equal to kn * max_voltage
     positionController_M3.setMaxVelocityRPS(max_speed_rps3); // adjust max velocity for internal speed controller
- float rotations_M3 = positionController_M3.getRotation();
-                    float distance_M3 = calculate_distance_traveled(rotations_M3, wheel_diameter); 
+   float rotations_M3 = 0.0f;
+                        float  distance_M3 = calculate_distance_traveled(rotations_M3, wheel_diameter); 
                         total_distance_M3 += distance_M3;
-                          printf("Distance MM: %f\n", total_distance_M3);
+                        // set a desired speed for speed controlled dc motors M
+                        
+                          
 
 
     main_task_timer.start();
@@ -121,7 +127,6 @@ int main()
         if (do_execute_main_task) {
 
         
-
             // visual feedback that the main task is executed, setting this once would actually be enough
             additional_led = 1;
 
@@ -144,56 +149,57 @@ int main()
                 case ROBOT_STATE_FORWARD: // robot moves forward when the motors are enabled
 
                     if (mechanical_button.read()) {
-                        positionController_M3.setDesiredRotation(3.19f); //bewegt sich bis zum hindernis
+                     
+                        positionController_M2.setDesiredRotation(-turn_for_30cm); // set a desired speed for speed controlled dc motors M
+                       
+                        positionController_M3.setDesiredRotation(turn_for_30cm); //bewegt sich bis zum hindernis
                         rotations_M3 = positionController_M3.getRotation();
-                        distance_M3 = calculate_distance_traveled(rotations_M3, wheel_diameter); 
-                        total_distance_M3 += distance_M3;
-                        positionController_M2.setDesiredRotation(3.19f); // set a desired speed for speed controlled dc motors M2
+                         total_distance_M3 = calculate_distance_traveled(rotations_M3, wheel_diameter); 
+                        
+                      printf("Distance 00: %f\n", total_distance_M3);
+                      robot_state_actual = ROBOT_STATE_BACKWARD;
+        
+    }
                
-
-                    }
                     break;
                    
 
                 case ROBOT_STATE_BACKWARD:  // not sure of needed in this code //evtl. brauchen wir es nicht
 
-                    if ( positionController_M3.getRotation() >= 3.19f ) {
-                        
-
-                        positionController_M3.setDesiredRotation(-5.5f);
-                        positionController_M1.setDesiredRotation(-5.5f);
-                          float rotations_M3 = positionController_M3.getRotation();
-                    float distance_M3 = calculate_distance_traveled(rotations_M3, wheel_diameter); 
-                    total_distance_M3 += distance_M3;
-                        positionController_M2.setDesiredRotation(-0.5f);
-
-                        robot_state_actual = ROBOT_STATE_ARM_SETS_Angle;
+                    if ( positionController_M3.getRotation() >= turn_for_30cm)  {
+            
+                        positionController_M3.setDesiredRotation(-3.0f);
+                        positionController_M1.setDesiredRotation(0.0f);
+                     rotations_M3 = positionController_M3.getRotation();
+                    distance_M3 = calculate_distance_traveled(rotations_M3, wheel_diameter); 
+                        positionController_M2.setDesiredRotation(3.0f);
+                        robot_state_actual = ROBOT_STATE_SLEEP;
                     }
                     break;
 
                 case ROBOT_STATE_SLEEP:  // robot sleeps when the desired position in rad is achieved
 
-                    if (positionController_M3.getRotation()>= 0.0f) { //wenn M1 und M2 die gewünshte rotation bis zum hindernis erreicht hat
+                    if (positionController_M3.getRotation()>= 500.0f) { //wenn M1 und M2 die gewünshte rotation bis zum hindernis erreicht hat
                         enable_motors = 0; // motor wird ausgeschaltet
 
                        positionController_M2.setDesiredRotation(0.0f);
                        positionController_M3.setDesiredRotation(0.0f);
-                         float rotations_M3 = positionController_M3.getRotation();
-                    float distance_M3 = calculate_distance_traveled(rotations_M3, wheel_diameter); 
-                    total_distance_M3 += distance_M3;
-                       robot_state_actual = ROBOT_STATE_ARM_SETS_Angle;
+                        rotations_M3 = positionController_M3.getRotation();
+                    distance_M3 = calculate_distance_traveled(rotations_M3, wheel_diameter); 
+                  
+                       robot_state_actual = ROBOT_STATE_BACKWARD;
                         
                         // robot_state_actual is not changed, there for the state machine remains in here until the blue button is pressed again
                     }
                     break;
                 
                 case ROBOT_STATE_ARM_SETS_Angle: // arm sets angle when the desired Position in Rad from case ROBOT_SLEEP is achieved 
-                if (positionController_M3.getRotation() <= 3.13f) {
+                if (total_distance_M3 >= 29.0 ) {
                   
-                positionController_M3.setDesiredRotation(3.0f); // set a desired rotation for position controlled dc motors M3
-                  float rotations_M3 = positionController_M3.getRotation();
-                    float distance_M3 = calculate_distance_traveled(rotations_M3, wheel_diameter); 
-                    total_distance_M3 += distance_M3;
+                positionController_M3.setDesiredRotation(-3.0f); // set a desired rotation for position controlled dc motors M3
+                  rotations_M3 = positionController_M3.getRotation();
+                     distance_M3 = calculate_distance_traveled(rotations_M3, wheel_diameter); 
+                    
                 robot_state_actual = ROBOT_STATE_MOVE_ARM_AND_WHEELS;
                 }
                     break;
