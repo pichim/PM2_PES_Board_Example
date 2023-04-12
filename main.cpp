@@ -150,14 +150,14 @@ int main()
 
                     if (mechanical_button.read()) {
                      
-                        positionController_M2.setDesiredRotation(-turn_for_30cm); // set a desired speed for speed controlled dc motors M
+                        positionController_M2.setDesiredRotation(5.0f); // set a desired speed for speed controlled dc motors M
                        
-                        positionController_M3.setDesiredRotation(turn_for_30cm); //bewegt sich bis zum hindernis
+                        positionController_M3.setDesiredRotation(5.0f); //bewegt sich bis zum hindernis
                         rotations_M3 = positionController_M3.getRotation();
                          total_distance_M3 = calculate_distance_traveled(rotations_M3, wheel_diameter); 
                         
                       printf("Distance 00: %f\n", total_distance_M3);
-                      robot_state_actual = ROBOT_STATE_BACKWARD;
+                     
         
     }
                
@@ -166,7 +166,7 @@ int main()
 
                 case ROBOT_STATE_BACKWARD:  // not sure of needed in this code //evtl. brauchen wir es nicht
 
-                    if ( positionController_M3.getRotation() >= turn_for_30cm)  {
+                    if ( positionController_M3.getRotation() >= 5.0f)  {
             
                         positionController_M3.setDesiredRotation(-3.0f);
                         positionController_M1.setDesiredRotation(0.0f);
