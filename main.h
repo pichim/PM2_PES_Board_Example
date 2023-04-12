@@ -11,7 +11,7 @@
 # define M_PI 3.14159265358979323846 // number pi, an example in case you need it
 
 // ---- Vehicle Variables ----
-# define WHEEL_DIAMETER 50.0 
+# define WHEEL_DIAMETER 30.0 
 # define GEAR_DIAMETER 20.3
 
 
