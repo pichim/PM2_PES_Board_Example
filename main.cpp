@@ -38,9 +38,6 @@ float bogenlaenge = 0.0, rotation = 0.0;
 // main runs as an own thread
 
 
-
-
-
 int main()
 {
     // attach button fall function to user button object, button has a pull-up resistor
@@ -54,24 +51,21 @@ int main()
     // ---------- Variablen ----------
 
     // ---------- Buttons ----------
-
-    DigitalIn mechanical_button(PC_5); 
+    DigitalIn mechanical_button(PC_5); //Blue User Button on Nucleo Board
     mechanical_button.mode(PullUp);
-    int button1 = 0;
-    int button2 = 0;
-    int button3 = 0;
 
-    DigitalIn start_button(PC_9);   // create DigitalIn object to evaluate extra mechanical button, you need to specify the mode for proper usage, see below
-    start_button.mode(PullUp); // set pullup mode: sets pullup between pin and 3.3 V, so that there is a defined potential
+    DigitalIn btn_start(PC_9);   // create DigitalIn object to evaluate extra mechanical button, you need to specify the mode for proper usage, see below
+    btn_start.mode(PullUp); // set pullup mode: sets pullup between pin and 3.3 V, so that there is a defined potential
     
-    DigitalIn reset_button(PC_8);
-    reset_button.mode(PullUp); // set pullup mode: sets pullup between pin and 3.3 V, so that there is a defined potential
+    DigitalIn btn_reset_vehicle(PC_8);
+    btn_reset_vehicle.mode(PullUp); // set pullup mode: sets pullup between pin and 3.3 V, so that there is a defined potential
     
-    DigitalIn reset_all_button(PC_6);
-    reset_all_button.mode(PullUp); // set pullup mode: sets pullup between pin and 3.3 V, so that there is a defined potential
+    DigitalIn btn_reset_all(PC_6);
+    btn_reset_all.mode(PullUp); // set pullup mode: sets pullup between pin and 3.3 V, so that there is a defined potential
     
-    DigitalIn reserve_button(PB_12);
-    reserve_button.mode(PullUp); // set pullup mode: sets pullup between pin and 3.3 V, so that there is a defined potential
+    DigitalIn btn_reserve(PB_12);
+    btn_reserve.mode(PullUp); // set pullup mode: sets pullup between pin and 3.3 V, so that there is a defined potential
+
 
     // ---------- Leds ----------
     DigitalOut user_led(LED1);       // create DigitalOut object to command user led
@@ -87,11 +81,11 @@ int main()
 
     // ----- M1 (closed-loop position controlled) -----
     float max_speed_rps_M1 = 0.5f;
-    const int M1_gear = 195;
+    const int M1_gear = 100;
     const float maxAccelerationRPS_M1 = 1.0f;
 
     const float counts_per_turn_M1 = 20.0f * 78.125f;      // define counts per turn at gearbox end: counts/turn * gearratio
-    const float kn_M1 = 72.0f / 12.0f;                    // define motor constant in RPM/V
+    const float kn_M1 = 180.0f / 12.0f;                    // define motor constant in RPM/V
     const float k_gear_M1 = M1_gear / 78.125f;              // define additional ratio in case you are using a dc motor with a different gear box, e.g. 100:1
     const float kp_M1 = 0.1f;
 
@@ -188,7 +182,7 @@ int main()
             
             
 
-                    } else if(button2) {
+                    } else if(btn_reset_vehicle) {
                         // for the resetloop
                         gryper_state_actual = GRYPER_STATE_RESET;
                     } else {
