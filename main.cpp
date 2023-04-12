@@ -156,7 +156,7 @@ int main()
                     positionController_M3.setDesiredRotation(turn_for_30cm); // set a desired speed for speed controlled dc motors M
                     positionController_M2.setDesiredRotation(-turn_for_30cm); //bewegt sich bis zum hindernis  
                     printf("Distance 00: %f\n", total_distance_M3);
-                   
+                   robot_state_actual = ROBOT_STATE_BACKWARD;
         
                     }
                
