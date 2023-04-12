@@ -1,6 +1,8 @@
 #include <iterator>
 #include <mbed.h>
 
+//hellooooo
+
 #include "PM2_Drivers.h"
 
 # define M_PI 3.14159265358979323846 // number pi, an example in case you need it
@@ -150,7 +152,8 @@ int main()
                     rotations_M2 = positionController_M3.getRotation();
                     total_distance_M2 = calculate_distance_traveled(rotations_M2, wheel_diameter); 
                     positionController_M1.setDesiredRotation(turn_for_30cm); // set a desired speed for speed controlled dc motors M
-                    positionController_M2.setDesiredRotation(turn_for_30cm); //bewegt sich bis zum hindernis  
+                    positionController_M2.setDesiredRotation(-turn_for_30cm); //bewegt sich bis zum hindernis 
+                    positionController_M3.setDesiredRotation(turn_for_30cm); 
                     printf("Distance 00: %f\n", total_distance_M2);
                    robot_state_actual = ROBOT_STATE_ARM_SETS_Angle;
         
