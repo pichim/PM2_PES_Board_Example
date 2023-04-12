@@ -35,12 +35,11 @@ int main()
     // states and actual state for state machine
     const int ROBOT_STATE_INIT                = 0;
     const int ROBOT_STATE_FORWARD             = 1;
-    const int ROBOT_STATE_BACKWARD            = 2;
-    const int ROBOT_STATE_SLEEP               = 3;
-    const int ROBOT_STATE_ARM_SETS_Angle      = 4;
-    const int ROBOT_STATE_MOVE_ARM_AND_WHEELS = 5;
-    const int ROBOT_STATE_SET_POSITION        = 6;
-    const int ROBOT_STATE_REACH_GOAL          = 7;
+    const int ROBOT_STATE_ARM_SETS_Angle      = 2;
+    const int ROBOT_STATE_MOVE_ARM_AND_WHEELS = 3;
+    const int ROBOT_STATE_BACKWARD            = 4;
+    const int ROBOT_STATE_REACH_GOAL          = 5;
+    const int ROBOT_STATE_SLEEP               = 6;
     
 
     int robot_state_actual = ROBOT_STATE_INIT;
@@ -51,37 +50,16 @@ int main()
     const int main_task_period_ms = 50; // define main task period time in ms e.g. 50 ms -> main task runs 20 times per second
     Timer main_task_timer;              // create Timer object which we use to run the main task every main_task_period_ms
 
-
     // led on nucleo board
     DigitalOut user_led(LED1);       // create DigitalOut object to command user led
 
     // additional led
     DigitalOut additional_led(PB_9); // create DigitalOut object to command extra led (you need to add an aditional resistor, e.g. 220...500 Ohm)
 
-
     // mechanical button
     DigitalIn mechanical_button(PC_5); // create DigitalIn object to evaluate extra mechanical button, you need to specify the mode for proper usage, see below
     mechanical_button.mode(PullUp);    // set pullup mode: sets pullup between pin and 3.3 V, so that there is a defined potential
 
-
-<<<<<<< HEAD
-    // Sharp GP2Y0A41SK0F, 4-40 cm IR Sensor
-    float ir_distance_mV = 0.0f; // define variable to store measurement
-    AnalogIn ir_analog_in(PC_2); // create AnalogIn object to read in infrared distance sensor, 0...3.3V are mapped to 0...1
-
-
-    // Futaba Servo S3001 20mm 3kg Analog
-    Servo servo_S1(PB_2);     // create servo objects
-    Servo servo_S2(PC_8);
-    float servo_S1_angle = 0; // servo S1 normalized input: 0...1
-    float servo_S2_angle = 0;
-    
-    int servo_counter = 0;    // define servo counter, this is an additional variable to make the servos move
-    const int loops_per_seconds = static_cast<int>(ceilf( 1.0f / (0.1f * (float)main_task_period_ms) ));
-
-
-=======
->>>>>>> cbbc9114bb88ab68f768b305e5ed15c13a694800
     // 78:1, 100:1, ... Metal Gearmotor 20Dx44L mm 12V CB
     DigitalOut enable_motors(PB_15); // create DigitalOut object to enable dc motors
 
@@ -104,7 +82,8 @@ int main()
           float distance = 0.0;
           float turn_for_1cm = 0.106f;  // entspricht 1 cm
           float turn_for_30cm = 3.19f;
-    const float wheel_diameter = 0.3f;   
+    const float wheel_diameter = 0.3f;
+          float rotation_til_arm_sets = 0.60f;   
           float rotations_M3 = 0.0f;
           float  total_distance_M3  = 0.0f;
           float distance_M3 = 0.0f;   
@@ -134,7 +113,6 @@ int main()
                         
                           
 
-
     main_task_timer.start();
     
     // this loop will run forever
@@ -161,14 +139,9 @@ int main()
 
                     enable_motors = 1; // enable hardwaredriver dc motors: 0 -> disabled, 1 -> enabled
 
-<<<<<<< HEAD
                     robot_state_actual = ROBOT_STATE_FORWARD;
             
                     break;
-=======
-                    robot_state_actual = ROBOT_STATE_BACKWARD;
-                    break;  
->>>>>>> 7c29b6a15a229f139098dccfa24fc1cf6067c187
 
                 case ROBOT_STATE_FORWARD: // robot moves forward when the motors are enabled
 
@@ -179,79 +152,68 @@ int main()
                     positionController_M3.setDesiredRotation(turn_for_30cm); // set a desired speed for speed controlled dc motors M
                     positionController_M2.setDesiredRotation(-turn_for_30cm); //bewegt sich bis zum hindernis  
                     printf("Distance 00: %f\n", total_distance_M3);
-                   robot_state_actual = ROBOT_STATE_BACKWARD;
+                   robot_state_actual = ROBOT_STATE_ARM_SETS_Angle;
         
                     }
                
                     break;
                    
-
-                case ROBOT_STATE_BACKWARD:  // not sure of needed in this code //evtl. brauchen wir es nicht
-
-                    if ( total_distance_M3 >= 30.0f)  {
-
-                    rotations_M3 = positionController_M3.getRotation();
-                    distance_M3 = calculate_distance_traveled(rotations_M3, wheel_diameter); 
-                    positionController_M2.setDesiredRotation(3.0f);  
-                    positionController_M3.setDesiredRotation(-3.0f);
-                    positionController_M2.setDesiredRotation(5.0f);
-                   
-                    robot_state_actual = ROBOT_STATE_SLEEP;
-                    }
-                    break;
-
-                case ROBOT_STATE_SLEEP:  // robot sleeps when the desired position in rad is achieved
-
-                    if (positionController_M3.getRotation()>= 500.0f) { //wenn M1 und M2 die gewünshte rotation bis zum hindernis erreicht hat
-                    enable_motors = 0; // motor wird ausgeschaltet
-                    rotations_M3 = positionController_M3.getRotation();
-                    distance_M3 = calculate_distance_traveled(rotations_M3, wheel_diameter); 
-                    positionController_M2.setDesiredRotation(0.0f);
-                    positionController_M3.setDesiredRotation(0.0f);
-                       
-                  
-                    robot_state_actual = ROBOT_STATE_BACKWARD;
-                        
-                        // robot_state_actual is not changed, there for the state machine remains in here until the blue button is pressed again
-                    }
-                    break;
                 
                     case ROBOT_STATE_ARM_SETS_Angle: // arm sets angle when the desired Position in Rad from case ROBOT_SLEEP is achieved
 
-                    if (total_distance_M3 >= 29.0 ) {
-                    positionController_M3.setDesiredRotation(-3.0f); // set a desired rotation for position controlled dc motors M3
-                    rotations_M3 = positionController_M3.getRotation();
-                    distance_M3 = calculate_distance_traveled(rotations_M3, wheel_diameter); 
+                    if (total_distance_M3 >= 30.0f ) {
+
+                    positionController_M3.setDesiredRotation(rotation_til_arm_sets); // set a desired rotation for position controlled dc motors M3
                     robot_state_actual = ROBOT_STATE_MOVE_ARM_AND_WHEELS;
                 }
                     break;
 
                     case ROBOT_STATE_MOVE_ARM_AND_WHEELS: //moves forward while moving arm
 
-                    if (positionController_M3.getRotation() <= 6.16f){
-                    positionController_M1.setDesiredRotation(5.5f);
-                    positionController_M2.setDesiredRotation(5.5f);
-                    positionController_M3.setDesiredRotation(5.5f);
-                    robot_state_actual = ROBOT_STATE_SET_POSITION;
+                    if (positionController_M1.getRotation() <= rotation_til_arm_sets ){
+                    positionController_M1.setDesiredRotation(1.0f-rotation_til_arm_sets);
+                    positionController_M2.setDesiredRotation(turn_for_1cm * 7.0f);
+                    positionController_M3.setDesiredRotation(turn_for_1cm * 7.0f);
+                    robot_state_actual = ROBOT_STATE_BACKWARD;
                 }
                     break;
 
-                    case ROBOT_STATE_SET_POSITION: //sets its position after going above hurdle
-                    if (positionController_M3.getRotation() <= 0.05f){ // wenn der arm die endposition erreicht (umdrehung bis zum anschlag)
-                    positionController_M1.setDesiredRotation(0.02f); //muss sich nach hinten bewegen bis zur Hürde
-                    positionController_M2.setDesiredRotation(0.02f); // gleich wie M1
-                    robot_state_actual = ROBOT_STATE_REACH_GOAL;     // die reichweite müsste man testen
-                }
+                     case ROBOT_STATE_BACKWARD:  // not sure of needed in this code //evtl. brauchen wir es nicht
+
+                    if ( positionController_M1.getRotation() >= 1.0f)  {
+
+                    rotations_M3 = positionController_M3.getRotation();
+                    distance_M3 = calculate_distance_traveled(rotations_M3, wheel_diameter); 
+                    positionController_M2.setDesiredRotation(0.5f);  
+                    positionController_M3.setDesiredRotation(-0.5f);
+                   
+                    robot_state_actual = ROBOT_STATE_ARM_SETS_Angle;
+                    }
                     break;
 
                     case ROBOT_STATE_REACH_GOAL:
-                    if (positionController_M1.getRotation() <= 0.05f ){ //wenn die gewünschte position im ROBOT_SET erreicht wurde
-                    positionController_M1.setDesiredRotation(3.18f); // rotation bis zum endziel
-                    positionController_M2.setDesiredRotation(3.18f); // set a desired speed for speed controlled dc motors M2
+                    if (positionController_M3.getRotation() <= turn_for_30cm + turn_for_1cm * 7.0f){ //wenn die gewünschte position im ROBOT_SET erreicht wurde
+                    positionController_M2.setDesiredRotation(-turn_for_30cm); // rotation bis zum endziel
+                    positionController_M3.setDesiredRotation(turn_for_30cm); // set a desired speed for speed controlled dc motors M2
                     enable_motors = 0;
                     robot_state_actual = ROBOT_STATE_INIT;
                 }
 
+                    break;
+
+                    case ROBOT_STATE_SLEEP:  // robot sleeps when the desired position in rad is achieved
+
+                    if (positionController_M3.getRotation()>= 2*turn_for_30cm + turn_for_1cm * 7.0f) { //wenn M1 und M2 die gewünshte rotation bis zum hindernis erreicht hat
+                    enable_motors = 0; // motor wird ausgeschaltet
+                    rotations_M3 = positionController_M3.getRotation();
+                    distance_M3 = calculate_distance_traveled(rotations_M3, wheel_diameter); 
+                    positionController_M2.setDesiredRotation(0.0f);
+                    positionController_M3.setDesiredRotation(0.0f);
+                  
+                    robot_state_actual = ROBOT_STATE_BACKWARD;
+                        
+                        // robot_state_actual is not changed, there for the state machine remains in here until the blue button is pressed again
+                    }
                     break;
 
                 default:
@@ -271,7 +233,6 @@ int main()
                 positionController_M3.setDesiredRotation(0.0f);
                 robot_state_actual = ROBOT_STATE_INIT;
                 
-
 
                 additional_led = 0;
             }   
@@ -293,10 +254,8 @@ int main()
     }
 
 
-
     
 }
-
 
 
 void user_button_pressed_fcn()
