@@ -99,7 +99,7 @@ int main()
 
 
     // ----- M2 (closed-loop position controlled) -----
-    float max_speed_rps_M2 = 0.5f;
+    float max_speed_rps_M2 = 0.1f;
     const int M2_gear = 488;
     const float maxAccelerationRPS_M2 = 1.0f;
 
@@ -200,10 +200,10 @@ int main()
                     printf("\nSTATE 1");
 
                     if (positionController_M2.getRotation() <= 0.1f){
-                        positionController_M2.setDesiredRotation(-0.125f); // 1.0f = 360° 
+                        positionController_M2.setDesiredRotation(-0.222f); // 1.0f = 360°, 0.222f= 80° 
                         
                     }
-                    if(positionController_M2.getRotation() <= -0.124f){
+                    if(positionController_M2.getRotation() <= -0.221f){
                         gryper_state_actual = GRYPER_STATE_FORWARD_1;
                     }
                     break;
@@ -299,10 +299,10 @@ int main()
                 case GRYPER_STATE_ARM_DOWN_2:
 
                     if (positionController_M2.getRotation() <= 0.1f){
-                        positionController_M2.setDesiredRotation(-0.125f); // 1.0f = 360° 
+                        positionController_M2.setDesiredRotation(-0.222f); // 1.0f = 360°, 0.222f = 80°
                         
                     }
-                    if(positionController_M2.getRotation() <= -0.124f){
+                    if(positionController_M2.getRotation() <= -0.221f){
                         //gryper_state_actual = GRYPER_STATE_FORWARD_2;
                     }
                 
