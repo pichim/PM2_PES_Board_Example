@@ -22,7 +22,7 @@
 
 
 // ---- Operation Variables ----
-# define DISTANCE_1         200      // in mm
+# define DISTANCE_1         200      // in mm (gemessen auf der Bahn 440mm)
 # define DISTANCE_2         200      // in mm    
 # define ANGEL_SET_ARM      45       // in Grad
 
@@ -80,7 +80,7 @@ int main()
 
 
     // ----- M1 (closed-loop position controlled) -----
-    float max_speed_rps_M1 = 0.5f;
+    float max_speed_rps_M1 = 0.2f;
     const int M1_gear = 100;
     const float maxAccelerationRPS_M1 = 1.0f;
 
@@ -99,7 +99,7 @@ int main()
 
 
     // ----- M2 (closed-loop position controlled) -----
-    float max_speed_rps_M2 = 0.1f;
+    float max_speed_rps_M2 = 0.03f;
     const int M2_gear = 488;
     const float maxAccelerationRPS_M2 = 1.0f;
 
@@ -174,7 +174,7 @@ int main()
                         // Start the loop
                         enable_motors = 1;
 
-                        gryper_state_actual = GRYPER_STATE_FORWARD_1;
+                        gryper_state_actual = GRYPER_STATE_ARM_DOWN_1;
 
                         
                         // For testing set the state that you want to test
@@ -197,7 +197,11 @@ int main()
 
 
                 case GRYPER_STATE_ARM_DOWN_1:
-                    printf("\nSTATE 1");
+                printf("Run STATE_ARM_DOWN_1");
+
+                    /* Test1: Winkel ein bisschen kleiner machen
+                    //  geschwindikeit i.o, 
+                        übergang zu STATE 2 i.o */
 
                     if (positionController_M2.getRotation() <= 0.1f){
                         positionController_M2.setDesiredRotation(-0.222f); // 1.0f = 360°, 0.222f= 80° 
@@ -205,24 +209,31 @@ int main()
                     }
                     if(positionController_M2.getRotation() <= -0.221f){
                         gryper_state_actual = GRYPER_STATE_FORWARD_1;
+                        printf("Set STATE 2");
                     }
                     break;
                 
                 case GRYPER_STATE_FORWARD_1:
-                    printf("\nSTATE 2");
+                printf("Run STATE_FORWARD_1");
+
+                    /* Test1: 
+                        Distanz fahren io,
+                    */
 
                     if (positionController_M1.getRotation() <= 0.1){
-                        positionController_M1.setDesiredRotation(convertDistanceToRotation(94.25, WHEEL_DIAMETER)); 
-                        printf("\n1RAD: %f", convertDistanceToRotation(157.08, WHEEL_DIAMETER));
+                        positionController_M1.setDesiredRotation(convertDistanceToRotation(DISTANCE_1, WHEEL_DIAMETER)); // + Radumdrehung 94.25
+                        printf("\n1RAD: %f", convertDistanceToRotation(DISTANCE_1, WHEEL_DIAMETER));
                     } 
 
-                    if(positionController_M1.getRotation() <= convertDistanceToRotation(94.24, WHEEL_DIAMETER)){
-                        //gryper_state_actual = GRYPER_STATE_SET_ARM;
-                        gryper_state_actual = GRYPER_STATE_INIT;
+                    if(positionController_M1.getRotation() >= convertDistanceToRotation(DISTANCE_1, WHEEL_DIAMETER)-0.1f){
+                        gryper_state_actual = GRYPER_STATE_SET_ARM;
+                        printf("Set STATE 3");
+                        //gryper_state_actual = GRYPER_STATE_INIT;
                     }
                     break;
                 
                 case GRYPER_STATE_SET_ARM:
+                printf("Run STATE_SET_ARM");
                     /*  lift the arm and set it to the hurdle 
                         1. drive arm in 0 position
                         2. calculate angle
@@ -232,7 +243,7 @@ int main()
 
                     // 1. drive arm in 0 position
                     printf("\nSTART: GRYPER_STATE_SET_ARM");
-                    positionController_M2.setDesiredRotation(0.0f);
+                    positionController_M2.setDesiredRotation(0.0f);                 
 
                     // 2. calculate angle
                     angle_B = calcAngleSetArm(); // in rad
@@ -247,7 +258,7 @@ int main()
                     }
 
                     // Set further STEP              
-                    //gryper_state_actual = GRYPER_STATE_ROTATE;
+                    gryper_state_actual = GRYPER_STATE_INIT;
                     break;
 
                 
@@ -345,8 +356,8 @@ int main()
                 do_reset_all_once = false;
 
                 additional_led = 0;
-                positionController_M1.setDesiredRotation(0.0f);
-                positionController_M2.setDesiredRotation(0.0f);
+               // positionController_M1.setDesiredRotation(0.0f);
+                //positionController_M2.setDesiredRotation(0.0f);
             }            
         }
 
