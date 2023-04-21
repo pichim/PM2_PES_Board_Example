@@ -198,7 +198,6 @@ int main()
 
                 case GRYPER_STATE_ARM_DOWN_1:
                 printf("Run STATE_ARM_DOWN_1");
-
                     /* Test1: Winkel ein bisschen kleiner machen
                     //  geschwindikeit i.o, 
                         übergang zu STATE 2 i.o */
@@ -208,8 +207,11 @@ int main()
                         
                     }
                     if(positionController_M2.getRotation() <= -0.221f){
-                        gryper_state_actual = GRYPER_STATE_FORWARD_1;
-                        printf("Set STATE 2");
+                        positionController_M2.setDesiredRotation(0.222f);
+                    }
+                     if(positionController_M2.getRotation() >= 0.221f){    
+                        gryper_state_actual = GRYPER_STATE_INIT;
+                        //printf("Set STATE 2");
                     }
                     break;
                 
