@@ -29,6 +29,7 @@
 bool arm_0_position = 0;
 bool arm_down = 0;
 bool forward_1 = 0;
+bool forward_2 = 0;
 
 // for GRYPER_STATE_SET_ARM
 double angle_B = 0.0, angle_rot = 0.0;
@@ -208,10 +209,10 @@ int main()
 
                     if (!arm_down){
                         positionController_M2.setDesiredRotation(-0.222f); // 1.0f = 360°, 0.222f= 80° 
-                        arm_down = 1;
                         
                     }
-                     if(positionController_M2.getRotation() <= -0.221f && arm_down){    
+                     if(positionController_M2.getRotation() <= -0.221f){  
+                        arm_down = 1;  
                         gryper_state_actual = GRYPER_STATE_FORWARD_1;
                         printf("Set STATE 2");
                     }
@@ -224,7 +225,7 @@ int main()
                         Distanz fahren io,
                     */
 
-                    positionController_M1.setDesiredRotation(convertDistanceToRotation(DISTANCE_1, WHEEL_DIAMETER)); // + Radumdrehung 94.25
+                    positionController_M1.setDesiredRotation(convertDistanceToRotation(DISTANCE_1, WHEEL_DIAMETER)); // 1 Radumdrehung 94.25
                     printf("\n1RAD: %f", convertDistanceToRotation(DISTANCE_1, WHEEL_DIAMETER));
 
                     if(positionController_M1.getRotation() >= convertDistanceToRotation(DISTANCE_1, WHEEL_DIAMETER)-0.1f){
@@ -252,6 +253,7 @@ int main()
                     }
                     if(positionController_M2.getRotation()>= -0.01f && positionController_M2.getRotation() <= 0.01f){
                         arm_0_position = 1;
+                        arm_down = 0;
                     }               
 
                     // 2. calculate angle
@@ -322,11 +324,12 @@ int main()
 
                 case GRYPER_STATE_ARM_DOWN_2:
 
-                    if (positionController_M2.getRotation() <= 0.1f){
+                    if (!arm_down){
                         positionController_M2.setDesiredRotation(-0.222f); // 1.0f = 360°, 0.222f = 80°
                         
                     }
                     if(positionController_M2.getRotation() <= -0.221f){
+                        arm_down = 1;
                         //gryper_state_actual = GRYPER_STATE_FORWARD_2;
                     }
                 
@@ -334,11 +337,11 @@ int main()
 
                 case GRYPER_STATE_FORWARD_2:
 
-                    if (positionController_M1.getRotation() <= 0.1f){
-                        positionController_M1.setDesiredRotation(convertDistanceToRotation(94.25, WHEEL_DIAMETER)); 
-                        printf("\n2RAD: %f", convertDistanceToRotation(94.25, WHEEL_DIAMETER));
-                    }
-                    if(positionController_M1.getRotation() <= convertDistanceToRotation(94.24, WHEEL_DIAMETER)){
+                    positionController_M1.setDesiredRotation(convertDistanceToRotation(94.25, WHEEL_DIAMETER)); 
+                    printf("\n2RAD: %f", convertDistanceToRotation(94.25, WHEEL_DIAMETER));
+
+                    if(positionController_M1.getRotation() <= convertDistanceToRotation(94.24, WHEEL_DIAMETER)-0.1f){
+                        forward_2 = 1;
                         //gryper_state_actual = GRYPER_STATE_FINAL;
                     }
                     
