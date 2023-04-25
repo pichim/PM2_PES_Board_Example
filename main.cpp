@@ -15,13 +15,13 @@
 
 # define M_PI 3.14159265358979323846 // number pi, an example in case you need it
 
-// ---- Vehicle Variables ----
+// ------------- Vehicle Variables -------------
 # define WHEEL_DIAMETER     30.0    // in mm
 # define ARM_LENGTH         160.0   // in mm
 # define GRYPER_HIGHT        30.0    // in mm
 
 
-// ---- Operation Variables ----
+// ------------- Operation Variables -------------
 # define DISTANCE_1         50      // in mm (gemessen auf der Bahn 440mm)
 # define DISTANCE_2         200      // in mm    
 # define ANGEL_SET_ARM      45       // in Grad
@@ -30,13 +30,15 @@ bool arm_0_position = 0;
 bool arm_down = 0;
 bool forward_1 = 0;
 bool forward_2 = 0;
+bool rotate_full = 0;
+bool adjust_ok = 0;
 
 // for GRYPER_STATE_SET_ARM
 double angle_B = 0.0, angle_rot = 0.0;
 float bogenlaenge = 0.0, rotation = 0.0, act_pos = 0.0;
 
 
-// ---- predefined Variables ----
+// ------------- predefined Variables -------------
 # define HURDLE_HIGHT       100      // in mm
 
 #include <main.h>
@@ -53,7 +55,7 @@ int main()
     // led on nucleo board
     
 
-    // ---------- Variablen ----------
+    // ------------- Variablen -------------
 
     // ---------- Buttons ----------
     DigitalIn mechanical_button(PC_5); //Blue User Button on Nucleo Board
@@ -72,19 +74,19 @@ int main()
     btn_reserve.mode(PullUp); // set pullup mode: sets pullup between pin and 3.3 V, so that there is a defined potential
 
 
-    // ---------- Leds ----------
+    // ------------- Leds -------------
     DigitalOut user_led(LED1);       // create DigitalOut object to command user led
     // additional led
     DigitalOut additional_led(PB_9); // create DigitalOut object to command extra led (you need to add an aditional resistor, e.g. 220...500 Ohm)
 
-    // ---------- Vehicle geometry ----------
+    // ------------- Vehicle geometry -------------
 
-    // ---------- Motoren ----------
+    // ------------- Motoren -------------
     DigitalOut enable_motors(PB_15);                    // create DigitalOut object to enable dc motors
     const float max_voltage = 12.0f;                    // Voltage for DC-Motors
 
 
-    // ----- M1 (closed-loop position controlled) -----
+    // ------------- M1 (closed-loop position controlled) -------------
     float max_speed_rps_M1 = 0.2f;
     const int M1_gear = 100;
     const float maxAccelerationRPS_M1 = 1.0f;
@@ -103,7 +105,7 @@ int main()
     positionController_M1.setMaxAccelerationRPS(maxAccelerationRPS_M1);
 
 
-    // ----- M2 (closed-loop position controlled) -----
+    // ------------- M2 (closed-loop position controlled) -------------
     float max_speed_rps_M2 = 0.03f;
     const int M2_gear = 488;
     const float maxAccelerationRPS_M2 = 1.0f;
@@ -121,15 +123,15 @@ int main()
     // fuer ruck beseitigung; maximale beschleunigung festssetzen
     positionController_M2.setMaxAccelerationRPS(maxAccelerationRPS_M2);
 
-    // ----- M3 (closed-loop position controlled) -----
+    // ------------- M3 (closed-loop position controlled) -------------
    /* const int M3_gear = 0;
     FastPWM pwm_M3(PA_10);                      // Pin is correct!
     EncoderCounter  encoder_M3(PA_0, PA_1);     // Pin is correct!
     */
 
 
-    // ---------- Sensoren ----------
-    // ---------- States and actual state for the machine ----------
+    // ------------- Sensoren -------------
+    // ------------- States and actual state for the machine -------------
 
     const int GRYPER_STATE_INIT = 0; 
     const int GRYPER_STATE_ARM_DOWN_1 = 1;
@@ -253,7 +255,7 @@ int main()
                     }
                     if(positionController_M2.getRotation()>= -0.01f && positionController_M2.getRotation() <= 0.01f){
                         arm_0_position = 1;
-                        arm_down = 0;
+                        arm_down = 0; // RR: wür ich erst am schluss mache
                     }               
 
                     // 2. calculate angle
@@ -262,17 +264,20 @@ int main()
                     rotation = convertDistanceToRotation(bogenlaenge, ARM_LENGTH);
                     printf("\nANGLE: %f [m]\tWEG: %f\tROT: %f",angle_B, bogenlaenge, rotation);
 
-                    // 3. drive angle and drive backwords 0.25
+                    
                     
                     if (arm_0_position) {
                         positionController_M2.setDesiredRotation(rotation);
                     }
+
+                    // 3. drive angle and drive backwords 0.25
+
+                    if (positionController_M2.getRotation() >= 0.2) {       // RR: 0.2 muss noch angepasst werden
+                        //positionController_M1.setDesiredRotation(-0.25);
+                    }
                     
-
-                    //positionController_M1.setDesiredRotation(-0.25);
-
                     // Set further STEP  
-                    if(positionController_M2.getRotation()>=rotation-0.01f){
+                    if(positionController_M2.getRotation() >= rotation-0.01f){
                         gryper_state_actual = GRYPER_STATE_INIT;
                     }                               
                     break;
@@ -291,13 +296,28 @@ int main()
                     printf("\nANGLE ROT: %f \tWEG: %f\tROT: %f",angle_rot, bogenlaenge, rotation);
                     
                     // 2. drive angle
-                    //positionController_M2.setDesiredRotation(rotation);
+                    if (!rotate_full) {
+                        //positionController_M2.setDesiredRotation(rotation);
+                        printf("ROTATE: gryper is rotating");
+                    }
+                    
+                    // check if arm reaches the end position
+                    if (positionController_M2.getRotation() >= rotation - 0.001f) {
+                        rotate_full = 1;
+                        printf("ROTATE: full rotate OK");
+                    }
 
                     // 3. adjust angle
-                    //positionController_M2.setDesiredRotation(0.0f);
-
+                    if (rotate_full && !adjust_ok) {
+                        act_pos = positionController_M2.getRotation();
+                        //positionController_M2.setDesiredRotation(act_pos + 0.0f);
+                        adjust_ok = 1;
+                        printf("ROTATE: gryper is adjusting");
+                    }
                     // Set further STEP 
-                    //gryper_state_actual = GRYPER_STATE_DETACH;
+                    if (positionController_M2.getRotation() >= act_pos + 0.0f) {
+                        //gryper_state_actual = GRYPER_STATE_DETACH;
+                    }
                     break;
 
                 case GRYPER_STATE_DETACH:
