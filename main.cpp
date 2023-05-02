@@ -309,7 +309,7 @@ int main()
                     angle_rot = 2 * M_PI - 2 * calcAngleSetArm();
                     bogenlaenge = get_way_from_rad(angle_rot); // in mm
                     rotation = convertDistanceToRotation(bogenlaenge, ARM_LENGTH);
-                     rotation = 0.5; // RR: Nur zu test zwecken
+                     //rotation = 0.5; // RR: Nur zu test zwecken
                     printf("ANGLE ROT: %f \tWEG: %f\tROT: %f\n",angle_rot, bogenlaenge, rotation);
                     
                     // 2. drive angle
@@ -372,7 +372,7 @@ int main()
                     if (detach_forward_ok && detach_ok && positionController_M1.getRotation() >= act_pos_m1 + convertDistanceToRotation(50, WHEEL_DIAMETER) -0.01f) {
                         printf("DETACH: Finish\n");
                         //gryper_state_actual = GRYPER_STATE_ARM_DOWN_2;
-                        gryper_state_actual = GRYPER_STATE_INIT;
+                        gryper_state_actual = GRYPER_STATE_ARM_DOWN_2;
                     }
                     
                     break;
@@ -381,23 +381,24 @@ int main()
                     printf("Run STATE_ARM_DOWN_2\n");
 
                     if (!arm_down_2){
-                        positionController_M2.setDesiredRotation(1.222f); // 1.0f = 360°, 0.222f = 80°
+                        positionController_M2.setDesiredRotation(0.888f); // 1.0f = 360°, 0.222f = 80°
                         
                     }
-                    if(positionController_M2.getRotation() <= -0.221f){
+                    if(positionController_M2.getRotation() <= 0.888f + 0.1f){
                         arm_down_2 = 1;
-                        //gryper_state_actual = GRYPER_STATE_FORWARD_2;
-                        gryper_state_actual = GRYPER_STATE_INIT;
+                        gryper_state_actual = GRYPER_STATE_FORWARD_2;
+                        //gryper_state_actual = GRYPER_STATE_INIT;
                     }
                     break;
 
                 case GRYPER_STATE_FORWARD_2:
                     printf("Run STATE_FORWARD_2\n");
+                    act_pos_m1 = positionController_M1.getRotation();
 
-                    positionController_M1.setDesiredRotation(convertDistanceToRotation(DISTANCE_2, WHEEL_DIAMETER)); 
+                    positionController_M1.setDesiredRotation(act_pos_m1 + convertDistanceToRotation(DISTANCE_2, WHEEL_DIAMETER)); 
                     printf("\n2RAD: %f\n", convertDistanceToRotation(DISTANCE_2, WHEEL_DIAMETER));
 
-                    if(positionController_M1.getRotation() <= convertDistanceToRotation(DISTANCE_2, WHEEL_DIAMETER)-0.1f){
+                    if(positionController_M1.getRotation() <= act_pos_m1 + convertDistanceToRotation(DISTANCE_2, WHEEL_DIAMETER)-0.1f){
                         forward_2 = 1;
                         //gryper_state_actual = GRYPER_STATE_FINAL;
                         gryper_state_actual = GRYPER_STATE_INIT;
