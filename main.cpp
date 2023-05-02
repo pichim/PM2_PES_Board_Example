@@ -394,10 +394,10 @@ int main()
                 case GRYPER_STATE_FORWARD_2:
                     printf("Run STATE_FORWARD_2\n");
 
-                    positionController_M1.setDesiredRotation(convertDistanceToRotation(94.25, WHEEL_DIAMETER)); 
-                    printf("\n2RAD: %f\n", convertDistanceToRotation(94.25, WHEEL_DIAMETER));
+                    positionController_M1.setDesiredRotation(convertDistanceToRotation(DISTANCE_2, WHEEL_DIAMETER)); 
+                    printf("\n2RAD: %f\n", convertDistanceToRotation(DISTANCE_2, WHEEL_DIAMETER));
 
-                    if(positionController_M1.getRotation() <= convertDistanceToRotation(94.24, WHEEL_DIAMETER)-0.1f){
+                    if(positionController_M1.getRotation() <= convertDistanceToRotation(DISTANCE_2, WHEEL_DIAMETER)-0.1f){
                         forward_2 = 1;
                         //gryper_state_actual = GRYPER_STATE_FINAL;
                         gryper_state_actual = GRYPER_STATE_INIT;
