@@ -186,28 +186,25 @@ int main()
 
                 case GRYPER_STATE_INIT:
 
-                    if(mechanical_button == 1){
+                    if(mechanical_button){ //btn_start
                         // Start the loop
                         enable_motors = 1;
 
-                        gryper_state_actual = GRYPER_STATE_ARM_DOWN_1;
-
-                        
+                        gryper_state_actual = GRYPER_STATE_ARM_DOWN_1;                    
                         // For testing set the state that you want to test
                         //gryper_state_actual = GRYPER_STATE_ARM_DOWN_1;
-            
-            
 
                     } else if(btn_reset_vehicle) {
                         // for the resetloop
                         gryper_state_actual = GRYPER_STATE_RESET;
-                    } else {
+                    } else if(btn_reset_all){
+                        // Reset All
 
+                    } else if(btn_reserve){
+                        //Reserve Button
+                    } else {
                         // set state to init state
                         gryper_state_actual = GRYPER_STATE_INIT;
-
-                        //gryper_state_actual = GRYPER_STATE_INIT;
-
                     }
                     break;
 
@@ -398,7 +395,7 @@ int main()
                     positionController_M1.setDesiredRotation(act_pos_m1 + convertDistanceToRotation(DISTANCE_2, WHEEL_DIAMETER)); 
                     printf("\n2RAD: %f\n", convertDistanceToRotation(DISTANCE_2, WHEEL_DIAMETER));
 
-                    if(positionController_M1.getRotation() <= act_pos_m1 + convertDistanceToRotation(DISTANCE_2, WHEEL_DIAMETER)-0.1f){
+                    if(positionController_M1.getRotation() >= act_pos_m1 + convertDistanceToRotation(DISTANCE_2, WHEEL_DIAMETER)-0.1f){
                         forward_2 = 1;
                         //gryper_state_actual = GRYPER_STATE_FINAL;
                         gryper_state_actual = GRYPER_STATE_INIT;
@@ -409,18 +406,24 @@ int main()
                 case GRYPER_STATE_FINAL:
                     printf("Run STATE_FINAL\n");
 
-                    if (positionController_M2.getRotation() <= 0.1f){ // Move Gryper back vertical to the car
+                    if (arm_down_2){ // Move Gryper back vertical to the car
                         positionController_M2.setDesiredRotation(1.0f); // 1.0f = 360° 
                         
                     }
-                    if (positionController_M2.getRotation() >= 0.98f && positionController_M2.getRotation() <= 1.02f){
+                    if (positionController_M2.getRotation() >= 1.0f - 0.1f){
                         gryper_state_actual = GRYPER_STATE_INIT;
                     }   
                     break;
 
                 case GRYPER_STATE_RESET:
-                     printf("Run STATE_RESET\n");
-                    gryper_state_actual = GRYPER_STATE_INIT;
+                    printf("Run STATE_RESET\n");
+
+                    positionController_M1.setDesiredRotation(0.0f); //M1 auf Position 0.0 fahren
+                    positionController_M2.setDesiredRotation(0.0f); //M2 auf position 0.0 fahren
+
+                    if(positionController_M1.getRotation() <= 0.01f && positionController_M2.getRotation() <= 0.01f){
+                        gryper_state_actual = GRYPER_STATE_INIT;
+                    }
                     break;
             }
 
