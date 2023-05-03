@@ -17,7 +17,7 @@
 
 // ------------- Vehicle Variables -------------
 # define WHEEL_DIAMETER     30.0    // in mm
-# define ARM_LENGTH         160.0   // in mm
+# define ARM_LENGTH         140.0   // in mm
 # define GRYPER_HIGHT        30.0    // in mm
 
 
@@ -70,7 +70,8 @@ int main()
 
     DigitalIn btn_start(PC_9);   // create DigitalIn object to evaluate extra mechanical button, you need to specify the mode for proper usage, see below
     btn_start.mode(PullUp); // set pullup mode: sets pullup between pin and 3.3 V, so that there is a defined potential
-    
+    btn_start.fall(&start_button_pressed_fcn);
+
     DigitalIn btn_reset_vehicle(PC_8);
     btn_reset_vehicle.mode(PullUp); // set pullup mode: sets pullup between pin and 3.3 V, so that there is a defined potential
     
@@ -159,7 +160,9 @@ int main()
 
         main_task_timer.reset();
 
-        //printf("Mechanical Button State %d\n", mechanical_button.read());
+        printf("BST:  %d :", btn_reserve.read() );
+        printf("BRS:  %d :", btn_start.read());
+        printf("USR:  %d \n", user_button.read());
         
         if (do_execute_main_task) {
 
@@ -186,7 +189,7 @@ int main()
 
                 case GRYPER_STATE_INIT:
 
-                    if(mechanical_button){ //btn_start
+                    if(btn_start){ //btn_start
                         // Start the loop
                         enable_motors = 1;
 
@@ -233,9 +236,9 @@ int main()
 
                     if(positionController_M1.getRotation() >= convertDistanceToRotation(DISTANCE_1, WHEEL_DIAMETER)-0.1f){
                         forward_1 = 1;
-                        gryper_state_actual = GRYPER_STATE_SET_ARM;
+                        //gryper_state_actual = GRYPER_STATE_SET_ARM;
                         printf("Set STATE_SET_ARM\n");
-                        //gryper_state_actual = GRYPER_STATE_INIT;
+                        gryper_state_actual = GRYPER_STATE_INIT;
                     }
                     break;
                 
@@ -280,7 +283,7 @@ int main()
                     // Set further STEP  
                     if(positionController_M2.getRotation() >= rotation-0.01f){
                         printf("SET_ARM: set next step\n");
-                        gryper_state_actual = GRYPER_STATE_ROTATE;
+                        gryper_state_actual = GRYPER_STATE_INIT;
                     }                               
                     break;
                 
@@ -324,8 +327,8 @@ int main()
                     }
                     // Set further STEP 
                     if (positionController_M2.getRotation() >= act_pos + angle_adjust && adjust_ok && rotate_full) {
-                        gryper_state_actual = GRYPER_STATE_DETACH;
-                        //gryper_state_actual = GRYPER_STATE_INIT;
+                        //gryper_state_actual = GRYPER_STATE_DETACH;
+                        gryper_state_actual = GRYPER_STATE_INIT;
                     }
                     break;
 
@@ -361,7 +364,7 @@ int main()
                     if (detach_forward_ok && detach_ok && positionController_M1.getRotation() >= act_pos_m1 + convertDistanceToRotation(50, WHEEL_DIAMETER) -0.01f) {
                         printf("DETACH: Finish\n");
                         //gryper_state_actual = GRYPER_STATE_ARM_DOWN_2;
-                        gryper_state_actual = GRYPER_STATE_ARM_DOWN_2;
+                        gryper_state_actual = GRYPER_STATE_INIT;
                     }
                     
                     break;
@@ -444,11 +447,15 @@ int main()
 
 
 
-void user_button_pressed_fcn()
-{
+void user_button_pressed_fcn() {
     // do_execute_main_task if the button was pressed
     do_execute_main_task = !do_execute_main_task;
     if (do_execute_main_task) do_reset_all_once = true;
+}
+
+void start_button_pressed_fcn() {
+    // do_execute_main_task if the button was pressed
+    start_pressed = !start_pressed;
 }
 
 // General Functions
