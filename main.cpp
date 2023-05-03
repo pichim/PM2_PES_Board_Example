@@ -215,8 +215,7 @@ int main()
                 case GRYPER_STATE_ARM_DOWN_1:
                     printf("Run STATE_ARM_DOWN_1\n");
                     /* Test1: Winkel ein bisschen kleiner machen
-                    //  geschwindikeit i.o, 
-                        übergang zu STATE 2 i.o */
+                    //  geschwindikeit i.o, übergang zu STATE 2 i.o */
 
                     if (!arm_down){
                         positionController_M2.setDesiredRotation(-0.222f); // 1.0f = 360°, 0.222f= 80° 
@@ -231,10 +230,6 @@ int main()
                 
                 case GRYPER_STATE_FORWARD_1:
                     printf("Run STATE_FORWARD_1\n");
-
-                    /* Test1: 
-                        Distanz fahren io,
-                    */
 
                     positionController_M1.setDesiredRotation(convertDistanceToRotation(DISTANCE_1, WHEEL_DIAMETER)); // 1 Radumdrehung 94.25
                     printf("\n1RAD: %f\n", convertDistanceToRotation(DISTANCE_1, WHEEL_DIAMETER));
@@ -255,38 +250,34 @@ int main()
                         3. drive angel
                         4. drive a little bit forward
                     */
-
+                    
                     // 1. drive arm in 0 position
-                    printf("START: GRYPER_STATE_SET_ARM\n");
                     if (!arm_0_position) {
                         positionController_M2.setDesiredRotation(0.0f);
-
                     }
-
+                    // Check if arm is in 0 position
                     if(positionController_M2.getRotation()>= -0.01f && positionController_M2.getRotation() <= 0.01f) {
                         printf("Reset 0 Position\n");
                         arm_0_position = 1;
-                        arm_down_2 = 0; // RR: wür ich erst am schluss mache
+                        arm_down_2 = 0; // RR: wuer ich erst am schluss mache
                     }               
 
                     // 2. calculate angle
-                    angle_B = calcAngleSetArm(); // in rad
-                    bogenlaenge = get_way_from_rad(angle_B); // in mm
-                    rotation = convertDistanceToRotation(bogenlaenge, ARM_LENGTH);
+                    angle_B = calcAngleSetArm();                                    // Fkt. get angle in [rad] -> 0.948
+                    bogenlaenge = get_way_from_rad(angle_B);                        // in mm
+                    rotation = convertDistanceToRotation(bogenlaenge, ARM_LENGTH);  // = 0.301 rot
                     printf("ANGLE: %f [m]\tWEG: %f\tROT: %f\n",angle_B, bogenlaenge, rotation);
 
-                    
-                    
+                    // 3. Drive angle 
                     if (arm_0_position) {
                         printf("SET_ARM: drive angle\n");
                         positionController_M2.setDesiredRotation(rotation);
                     }
 
-                    // 3. drive angle and drive backwords 0.25
-
-                    if (positionController_M2.getRotation() >= 0.2) {       // RR: 0.2 muss noch angepasst werden
+                    // 4. Drive a little bit backwords at the end of the set-arm-rotation (0.2)
+                    if (positionController_M2.getRotation() >= rotation - 0.1) {    // RR: 0.1 muss noch angepasst werden
                         printf("SET_ARM: drive forward\n");
-                        positionController_M1.setDesiredRotation(-0.25);
+                        positionController_M1.setDesiredRotation(-0.20);            // Distanz welche M1 zurueck fährt
                     }
                     
                     // Set further STEP  
@@ -298,7 +289,6 @@ int main()
                 
                 case GRYPER_STATE_ROTATE:
                     printf("Run STATE_ROTATE\n");
-                
                     /* drive angle over the hurdle
                         1. calc angle/dist: (360 - 2*angle_B)
                         2. drive angle 
@@ -306,10 +296,12 @@ int main()
                     */
 
                     // 1. calculate angle
-                    angle_rot = 2 * M_PI - 2 * calcAngleSetArm();
+                    angle_rot = 2 * M_PI - 2 * calcAngleSetArm(); // Fkt. get angle in [rad] -> 0.948
                     bogenlaenge = get_way_from_rad(angle_rot); // in mm
-                    rotation = convertDistanceToRotation(bogenlaenge, ARM_LENGTH);
-                     //rotation = 0.5; // RR: Nur zu test zwecken
+                    //rotation = convertDistanceToRotation(bogenlaenge, ARM_LENGTH);
+                    rotation = convertRadToRotation(angle_rot);
+
+                    //rotation = 0.5; // RR: Nur zu test zwecken
                     printf("ANGLE ROT: %f \tWEG: %f\tROT: %f\n",angle_rot, bogenlaenge, rotation);
                     
                     // 2. drive angle
@@ -477,3 +469,8 @@ double calcAngleSetArm(void) {
     return asin((HURDLE_HIGHT + GRYPER_HIGHT)/ARM_LENGTH);;
 }
 
+
+double convertRadToRotation(double angle) {
+    // Angle in [rad]
+    return 1 / (2 * M_PI) * angle;
+}
