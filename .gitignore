@@ -1,8 +1,7 @@
-.build
-.mbed
-projectfiles
-*.py*
-mbed-os
+.vscode
 BUILD
-
+.mbed
+eigen
+mbed-os
 pm2_drivers
+

@@ -1,6 +1,80 @@
 #include <mbed.h>
 
-#include "PM2_Drivers.h"
+// #include "DebounceIn.h"
+
+// bool do_execute_main_task = false; // this variable will be toggled via the user button (blue button) and decides whether to execute the main task or not
+// bool do_reset_all_once = false;    // this variable is used to reset certain variables and objects and shows how you can run a code segment only once
+
+// // objects for user button (blue button) handling on nucleo board
+// DebounceIn user_button(PC_13);  // create InterruptIn interface object to evaluate user button falling and rising edge (no blocking code in ISR)
+// void user_button_pressed_fcn(); // custom functions which get executed when user button gets pressed, definition below
+
+
+// // main runs as an own thread
+// int main()
+// {
+//     // attach button fall function to user button object, button has a pull-up resistor
+//     user_button.fall(&user_button_pressed_fcn);
+
+//     // while loop gets executed every main_task_period_ms milliseconds (simple aproach to repeatedly execute main)
+//     const int main_task_period_ms = 50; // define main task period time in ms e.g. 50 ms -> main task runs 20 times per second
+//     Timer main_task_timer;              // create Timer object which we use to run the main task every main_task_period_ms
+
+//     // led on nucleo board
+//     DigitalOut user_led(LED1);       // create DigitalOut object to command user led
+   
+//     // this loop will run forever
+//     while (true) {
+
+//         main_task_timer.reset();
+
+//         if (do_execute_main_task) {
+
+ 
+//         } else {
+
+//             if (do_reset_all_once) {
+//                 do_reset_all_once = false;
+
+//             }            
+//         }
+
+//         // toggling the user led
+//         user_led = !user_led;
+
+//         // do only output via serial what's really necessary, this makes your code slow
+//         // printf("IR sensor (mV): %3.3f, Encoder M1: %3d, Speed M2 (rps) %3.3f, Position M3 (rot): %3.3f, Servo S1 angle (normalized): %3.3f, Servo S2 angle (normalized): %3.3f\r\n",
+//         //        ir_distance_mV,
+//         //        encoder_M1.read(),
+//         //        speedController_M2.getSpeedRPS(),
+//         //        positionController_M3.getRotation(),
+//         //        servo_S1_angle,
+//         //        servo_S2_angle);
+
+//         // read timer and make the main thread sleep for the remaining time span (non blocking)
+//         int main_task_elapsed_time_ms = std::chrono::duration_cast<std::chrono::milliseconds>(main_task_timer.elapsed_time()).count();
+//         thread_sleep_for(main_task_period_ms - main_task_elapsed_time_ms);
+//     }
+// }
+
+// void user_button_pressed_fcn()
+// {
+//     // do_execute_main_task if the button was pressed
+//     do_execute_main_task = !do_execute_main_task;
+//     if (do_execute_main_task) {
+//         do_reset_all_once = true;
+//     }
+// }
+
+#include "pm2_drivers/PM2_Drivers.h"
+
+#include "pm2_drivers/IMUThread.h"
+#include "pm2_drivers/LinearCharacteristics.h"
+#include "pm2_drivers/LinearCharacteristics3.h"
+#include "pm2_drivers/Mahony.h"
+
+#include "pm2_drivers/ServoController.h"
+
 
 # define M_PI 3.14159265358979323846 // number pi, an example in case you need it
 
@@ -12,10 +86,14 @@ bool do_reset_all_once = false;    // this variable is used to reset certain var
 DebounceIn user_button(PC_13);  // create InterruptIn interface object to evaluate user button falling and rising edge (no blocking code in ISR)
 void user_button_pressed_fcn(); // custom functions which get executed when user button gets pressed, definition below
 
-
 // main runs as an own thread
 int main()
 {
+    // Mutex imuMutex;
+    // Data data;
+    // IMUThread imuThread(data, imuMutex);
+    // imuThread.StartThread();
+
     // states and actual state for state machine
     const int ROBOT_STATE_INIT     = 0;
     const int ROBOT_STATE_FORWARD  = 1;
@@ -51,9 +129,15 @@ int main()
 
     // Futaba Servo S3001 20mm 3kg Analog
     Servo servo_S1(PB_2);     // create servo objects
-    Servo servo_S2(PC_8);
+    ServoController servo_S2(PC_8);
     float servo_S1_angle = 0; // servo S1 normalized input: 0...1
     float servo_S2_angle = 0;
+    const float pulse_min = 0.035f;
+    const float pulse_max = 0.115f;
+    // servo_S1.enable( (pulse_max- pulse_min) / 2.0f + pulse_min);
+    // servo_S2.enable( (pulse_max- pulse_min) / 2.0f + pulse_min);
+    // thread_sleep_for(2000);
+
     
     int servo_counter = 0;    // define servo counter, this is an additional variable to make the servos move
     const int loops_per_seconds = static_cast<int>(ceilf( 1.0f / (0.001f * (float)main_task_period_ms) ));
@@ -106,15 +190,18 @@ int main()
             if (servo_S1.isEnabled() && servo_S1.isEnabled()) {
                 
                 // command servo position, increment normalised angle every second until it reaches 1.0f
-                servo_S1.setNormalisedAngle(servo_S1_angle);
+                servo_S1.setNormalisedPulseWidth(servo_S1_angle);
                 if (servo_S1_angle < 1.0f & servo_counter%loops_per_seconds == 0 & servo_counter != 0) {
-                    servo_S1_angle += 0.01f;
+                    servo_S1_angle += 0.0025f;
                 }
-                servo_S2.setNormalisedAngle(servo_S2_angle);
+                servo_S2.setNormalisedPulseWidth(servo_S2_angle);
                 if (servo_S2_angle < 1.0f & servo_counter%loops_per_seconds == 0 & servo_counter != 0) {
-                    servo_S2_angle += 0.01f;
+                    servo_S2_angle += 0.0025f;
                 }
                 servo_counter++;
+
+                servo_S1.setNormalisedPulseWidth(pulse_max);
+                servo_S2.setNormalisedPulseWidth(pulse_max);
             }
 
             // state machine
@@ -181,10 +268,12 @@ int main()
                 positionController_M3.setDesiredRotation(0.0f);
                 robot_state_actual = ROBOT_STATE_INIT;
 
-                servo_S1_angle = 0;
-                servo_S2_angle = 0;
-                servo_S1.disable();
-                servo_S2.disable();
+                // servo_S1_angle = 0;
+                // servo_S2_angle = 0;
+                // servo_S1.disable();
+                // servo_S2.disable();
+                servo_S1.setNormalisedPulseWidth(pulse_min);
+                servo_S2.setNormalisedPulseWidth(pulse_min);
 
                 additional_led = 0;
             }            
@@ -194,13 +283,13 @@ int main()
         user_led = !user_led;
 
         // do only output via serial what's really necessary, this makes your code slow
-        printf("IR sensor (mV): %3.3f, Encoder M1: %3d, Speed M2 (rps) %3.3f, Position M3 (rot): %3.3f, Servo S1 angle (normalized): %3.3f, Servo S2 angle (normalized): %3.3f\r\n",
-               ir_distance_mV,
-               encoder_M1.read(),
-               speedController_M2.getSpeedRPS(),
-               positionController_M3.getRotation(),
-               servo_S1_angle,
-               servo_S2_angle);
+        // printf("IR sensor (mV): %3.3f, Encoder M1: %3d, Speed M2 (rps) %3.3f, Position M3 (rot): %3.3f, Servo S1 angle (normalized): %3.4f, Servo S2 angle (normalized): %3.4f\r\n",
+        //        ir_distance_mV,
+        //        encoder_M1.read(),
+        //        speedController_M2.getSpeedRPS(),
+        //        positionController_M3.getRotation(),
+        //        servo_S1_angle,
+        //        servo_S2_angle);
 
         // read timer and make the main thread sleep for the remaining time span (non blocking)
         int main_task_elapsed_time_ms = std::chrono::duration_cast<std::chrono::milliseconds>(main_task_timer.elapsed_time()).count();
@@ -212,5 +301,7 @@ void user_button_pressed_fcn()
 {
     // do_execute_main_task if the button was pressed
     do_execute_main_task = !do_execute_main_task;
-    if (do_execute_main_task) do_reset_all_once = true;
+    if (do_execute_main_task) {
+        do_reset_all_once = true;
+    }
 }
