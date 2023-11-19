@@ -12,6 +12,9 @@
 |Dimensions       | 40.4 x 19.8 x 36 mm         | 41.0 x 20.0 x 38.0 mm
 |Gear             | Plastic                     | Metall
 
+* Using the servos outside der min and max value cal lead to audible stottering of the device. You can either
+disable it or better: calibrate the device properly.
+
 ## Links
 
 [Futaba S3001][1]

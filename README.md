@@ -12,6 +12,7 @@ TE 307
     * [Nucleo F446RE](#nucleo-f446re)
     * [PES Board](#pes-board)
 
+# Using the PES-Board with power On and hardware running while connected to your computer happens at your own risk
 
 ## Accounts
 

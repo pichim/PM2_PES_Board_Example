@@ -61,24 +61,35 @@ int main()
     float ir_distance_mV = 0.0f; // define variable to store measurement
     AnalogIn ir_analog_in(PC_2); // create AnalogIn object to read in infrared distance sensor, 0...3.3V are mapped to 0...1
 
-    Servo servo_D0(PB_2);
-    Servo servo_D1(PC_8);
-    Servo servo_D2(PC_6);
+
+    
+    #define PES_BOARD_D0 PB_2
+    #define PES_BOARD_D1 PC_8
+    #define PES_BOARD_D2 PC_6
+    #define PES_BOARD_D3 PB_12
+
+    Servo servo_D0(PES_BOARD_D0);
+    Servo servo_D1(PES_BOARD_D1);
+    Servo servo_D2(PES_BOARD_D2);
+
     // Futuba S3001
     float servo_D0_ang_min = 0.0150f;
     float servo_D0_ang_max = 0.1150f;
     // Modelcraft RS2 MG/BB
-    float servo_D1_ang_min = 0.0275f;
+    float servo_D1_ang_min = 0.0325f;
     float servo_D1_ang_max = 0.1250f;
     // REELY S0090
     float servo_D2_ang_min = 0.0325f;
     float servo_D2_ang_max = 0.1175f;
+
     servo_D0.calibratePulseMinMax(servo_D0_ang_min, servo_D0_ang_max);
     servo_D1.calibratePulseMinMax(servo_D1_ang_min, servo_D1_ang_max);
     servo_D2.calibratePulseMinMax(servo_D2_ang_min, servo_D2_ang_max);
-    servo_D0.setMotionProfileAcceleration(0.1f);
-    servo_D0.setMotionProfileAcceleration(0.1f);
-    servo_D0.setMotionProfileAcceleration(0.1f);
+
+    servo_D0.setMotionProfileAcceleration(1.0f);
+    servo_D1.setMotionProfileAcceleration(1.0f);
+    servo_D2.setMotionProfileAcceleration(1.0f);
+    
     float servo_angle = 0; // servo S1 normalized input: 0...1
     // const float pulse_min = 0.035f;
     // const float pulse_max = 0.115f;
@@ -137,21 +148,22 @@ int main()
             {
 
                 // command servo position, increment normalised angle every second until it reaches 1.0f
-                // servo_D0.setNormalisedPulseWidth(servo_angle);
-                // servo_D1.setNormalisedPulseWidth(servo_angle);
-                // servo_D2.setNormalisedPulseWidth(servo_angle);
+                servo_D0.setNormalisedPulseWidth(servo_angle);
+                servo_D1.setNormalisedPulseWidth(servo_angle);
+                servo_D2.setNormalisedPulseWidth(servo_angle);
                 if (servo_angle < 1.0f & servo_counter % loops_per_seconds == 0 & servo_counter != 0)
                 {
-                    servo_angle += 0.0025f;
+                    // servo_angle += 0.0025f;
+                    servo_angle += 0.1f;
                 }
                 servo_counter++;
 
                 // servo_D0.setNormalisedPulseWidth(servo_D0_ang_max);
                 // servo_D1.setNormalisedPulseWidth(servo_D1_ang_max);
                 // servo_D2.setNormalisedPulseWidth(servo_D2_ang_max);
-                servo_D0.setNormalisedPulseWidth(0.0f);
-                servo_D1.setNormalisedPulseWidth(0.0f);
-                servo_D2.setNormalisedPulseWidth(0.0f);
+                // servo_D0.setNormalisedPulseWidth(0.0f);
+                // servo_D1.setNormalisedPulseWidth(0.0f);
+                // servo_D2.setNormalisedPulseWidth(0.0f);
             }
 
             // state machine
@@ -229,15 +241,15 @@ int main()
                 robot_state_actual = ROBOT_STATE_INIT;
 
                 servo_angle = 0;
-                // servo_D0.setNormalisedPulseWidth(servo_angle);
-                // servo_D1.setNormalisedPulseWidth(servo_angle);
-                // servo_D2.setNormalisedPulseWidth(servo_angle);
+                servo_D0.setNormalisedPulseWidth(servo_angle);
+                servo_D1.setNormalisedPulseWidth(servo_angle);
+                servo_D2.setNormalisedPulseWidth(servo_angle);
                 // servo_D0.setNormalisedPulseWidth(servo_D0_ang_min);
                 // servo_D1.setNormalisedPulseWidth(servo_D1_ang_min);
                 // servo_D2.setNormalisedPulseWidth(servo_D2_ang_min);
-                servo_D0.setNormalisedPulseWidth(1.0f);
-                servo_D1.setNormalisedPulseWidth(1.0f);
-                servo_D2.setNormalisedPulseWidth(1.0f);
+                // servo_D0.setNormalisedPulseWidth(1.0f);
+                // servo_D1.setNormalisedPulseWidth(1.0f);
+                // servo_D2.setNormalisedPulseWidth(1.0f);
                 // servo_D0.disable();
                 // servo_D1.disable();
                 // servo_D2.disable();
