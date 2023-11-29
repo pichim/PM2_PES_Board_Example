@@ -62,12 +62,13 @@ int main()
     AnalogIn ir_analog_in(PC_2); // create AnalogIn object to read in infrared distance sensor, 0...3.3V are mapped to 0...1
 
 
-    
+    // PES-Board Pin Names
     #define PES_BOARD_D0 PB_2
     #define PES_BOARD_D1 PC_8
     #define PES_BOARD_D2 PC_6
     #define PES_BOARD_D3 PB_12
 
+    // create Servo objects to command servos
     Servo servo_D0(PES_BOARD_D0);
     Servo servo_D1(PES_BOARD_D1);
     Servo servo_D2(PES_BOARD_D2);
@@ -82,13 +83,17 @@ int main()
     float servo_D2_ang_min = 0.0325f;
     float servo_D2_ang_max = 0.1175f;
 
+    // setNormalisedPulseWidth: before calibration (0,1) -> (min pwm, max pwm)
     servo_D0.calibratePulseMinMax(servo_D0_ang_min, servo_D0_ang_max);
     servo_D1.calibratePulseMinMax(servo_D1_ang_min, servo_D1_ang_max);
     servo_D2.calibratePulseMinMax(servo_D2_ang_min, servo_D2_ang_max);
+    // setNormalisedPulseWidth: after calibration (0,1) -> (servo_D0_ang_min, servo_D0_ang_max)
 
+    // default is 1.0e6f, this is the default acceleration for the motion profile, this is the maximum acceleration of the servo
     servo_D0.setMotionProfileAcceleration(1.0f);
     servo_D1.setMotionProfileAcceleration(1.0f);
     servo_D2.setMotionProfileAcceleration(1.0f);
+    // after this there is smooth movement
     
     float servo_angle = 0; // servo S1 normalized input: 0...1
     // const float pulse_min = 0.035f;
