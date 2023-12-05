@@ -70,11 +70,12 @@ int main()
 
     // create Servo objects to command servos
     Servo servo_D0(PES_BOARD_D0);
-    Servo servo_D1(PES_BOARD_D1);
-    Servo servo_D2(PES_BOARD_D2);
+    //Servo servo_D1(PES_BOARD_D1);
+    //Servo servo_D2(PES_BOARD_D2);
 
+    //Those variables should be filled out with values obtained in the calibration process, these are minimal pulse width and maximal pulse width.
     // Futuba S3001
-    float servo_D0_ang_min = 0.0150f;
+    float servo_D0_ang_min = 0.0150f; 
     float servo_D0_ang_max = 0.1150f;
     // Modelcraft RS2 MG/BB
     float servo_D1_ang_min = 0.0325f;
@@ -84,15 +85,15 @@ int main()
     float servo_D2_ang_max = 0.1175f;
 
     // setNormalisedPulseWidth: before calibration (0,1) -> (min pwm, max pwm)
-    servo_D0.calibratePulseMinMax(servo_D0_ang_min, servo_D0_ang_max);
-    servo_D1.calibratePulseMinMax(servo_D1_ang_min, servo_D1_ang_max);
-    servo_D2.calibratePulseMinMax(servo_D2_ang_min, servo_D2_ang_max);
+    //servo_D0.calibratePulseMinMax(servo_D0_ang_min, servo_D0_ang_max);
+    //servo_D1.calibratePulseMinMax(servo_D1_ang_min, servo_D1_ang_max);
+    //servo_D2.calibratePulseMinMax(servo_D2_ang_min, servo_D2_ang_max);
     // setNormalisedPulseWidth: after calibration (0,1) -> (servo_D0_ang_min, servo_D0_ang_max)
 
     // default is 1.0e6f, this is the default acceleration for the motion profile, this is the maximum acceleration of the servo
-    servo_D0.setMotionProfileAcceleration(1.0f);
-    servo_D1.setMotionProfileAcceleration(1.0f);
-    servo_D2.setMotionProfileAcceleration(1.0f);
+    servo_D0.setMotionProfileAcceleration(0.5f);
+    // servo_D1.setMotionProfileAcceleration(1.0f);
+    // servo_D2.setMotionProfileAcceleration(1.0f);
     // after this there is smooth movement
     
     float servo_angle = 0; // servo S1 normalized input: 0...1
@@ -147,46 +148,50 @@ int main()
             additional_led = 1;
 
             // commanding the servos
-            if (servo_D0.isEnabled() &&
-                servo_D1.isEnabled() &&
-                servo_D2.isEnabled())
+            if (servo_D0.isEnabled()) //Needs to be filled up with  && servo_D1.isEnabled() && servo_D2.isEnabled()
             {
 
                 // command servo position, increment normalised angle every second until it reaches 1.0f
-                servo_D0.setNormalisedPulseWidth(servo_angle);
-                servo_D1.setNormalisedPulseWidth(servo_angle);
-                servo_D2.setNormalisedPulseWidth(servo_angle);
+                //servo_D0.setNormalisedPulseWidth(servo_angle);
+                //servo_D1.setNormalisedPulseWidth(servo_angle);
+                //servo_D2.setNormalisedPulseWidth(servo_angle);
+                /**
                 if (servo_angle < 1.0f & servo_counter % loops_per_seconds == 0 & servo_counter != 0)
                 {
-                    // servo_angle += 0.0025f;
-                    servo_angle += 0.1f;
+                    //servo_angle += 0.0025f;
+                    //servo_angle += 0.1f;
+                    servo_angle = 1.0f;
+
                 }
                 servo_counter++;
+                */
 
-                // servo_D0.setNormalisedPulseWidth(servo_D0_ang_max);
-                // servo_D1.setNormalisedPulseWidth(servo_D1_ang_max);
-                // servo_D2.setNormalisedPulseWidth(servo_D2_ang_max);
-                // servo_D0.setNormalisedPulseWidth(0.0f);
+                servo_D0.setNormalisedPulseWidth(servo_D0_ang_max);
+                //servo_D1.setNormalisedPulseWidth(servo_D1_ang_max);
+                //servo_D2.setNormalisedPulseWidth(servo_D2_ang_max);
+                //servo_D0.setNormalisedPulseWidth(0.0f);
                 // servo_D1.setNormalisedPulseWidth(0.0f);
                 // servo_D2.setNormalisedPulseWidth(0.0f);
             }
 
             // state machine
             switch (robot_state_actual)
+            
             {
-
+            
             case ROBOT_STATE_INIT:
 
                 // check if servos are enabled, should be alreay disabled at this point, it's just an example
                 if (!servo_D0.isEnabled())
                     servo_D0.enable();
+                    /**
                 if (!servo_D1.isEnabled())
                     servo_D1.enable();
                 if (!servo_D2.isEnabled())
                     servo_D2.enable();
+                    */
 
                 enable_motors = 1; // enable hardwaredriver dc motors: 0 -> disabled, 1 -> enabled
-
                 robot_state_actual = ROBOT_STATE_FORWARD;
                 break;
 
@@ -244,20 +249,20 @@ int main()
                 speedController_M2.setDesiredSpeedRPS(0.0f);
                 positionController_M3.setDesiredRotation(0.0f);
                 robot_state_actual = ROBOT_STATE_INIT;
-
-                servo_angle = 0;
-                servo_D0.setNormalisedPulseWidth(servo_angle);
-                servo_D1.setNormalisedPulseWidth(servo_angle);
-                servo_D2.setNormalisedPulseWidth(servo_angle);
-                // servo_D0.setNormalisedPulseWidth(servo_D0_ang_min);
-                // servo_D1.setNormalisedPulseWidth(servo_D1_ang_min);
-                // servo_D2.setNormalisedPulseWidth(servo_D2_ang_min);
-                // servo_D0.setNormalisedPulseWidth(1.0f);
+                servo_angle = 0.0f;
+                //servo_D0.setNormalisedPulseWidth(servo_angle);
+                //servo_D1.setNormalisedPulseWidth(servo_angle);
+                //servo_D2.setNormalisedPulseWidth(servo_angle);
+                servo_D0.setNormalisedPulseWidth(servo_D0_ang_min);
+                //servo_D1.setNormalisedPulseWidth(servo_D1_ang_min);
+                //servo_D2.setNormalisedPulseWidth(servo_D2_ang_min);
+                //servo_D0.setNormalisedPulseWidth(1.0f);
                 // servo_D1.setNormalisedPulseWidth(1.0f);
                 // servo_D2.setNormalisedPulseWidth(1.0f);
-                // servo_D0.disable();
-                // servo_D1.disable();
-                // servo_D2.disable();
+                //Those commands under are causing servo to freeze and not go back to possision 0.0
+                //servo_D0.disable();
+                //servo_D1.disable();
+                //servo_D2.disable();
                 // servo_D0.setNormalisedPulseWidth(pulse_min);
                 // servo_D1.setNormalisedPulseWidth(pulse_min);
 
@@ -276,7 +281,7 @@ int main()
         //        positionController_M3.getRotation(),
         //        servo_angle,
         //        servo_D1_angle);
-        printf("%f\n", servo_angle);
+        //printf("%f\n", servo_angle);
 
         // read timer and make the main thread sleep for the remaining time span (non blocking)
         int main_task_elapsed_time_ms = std::chrono::duration_cast<std::chrono::milliseconds>(main_task_timer.elapsed_time()).count();
