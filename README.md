@@ -48,11 +48,11 @@ https://os.mbed.com/platforms/ST-Nucleo-F446RE/
 ![pes_board_peripherals.PNG](markdown/pes_board_peripherals.PNG "PES Board Pheripherals")
 <!-- <img src="markdown/pes_board_peripherals.PNG" alt="PES Board Pheripherals" style="width:600px;"/> -->
 
-PDF: [./datasheet/pes_board_peripherals.pdf](./datasheet/pes_board_peripherals.pdf)
+PDF: [pes_board_peripherals.pdf](./datasheet/pes_board_peripherals.pdf)
 
 #### Pin-Mapping
 
-PDF: [./datasheet/pes_board_pin_mapping.pdf](./datasheet/pes_board_pin_mapping.pdf)
+PDF: [pes_board_pin_mapping.pdf](./datasheet/pes_board_pin_mapping.pdf)
 
 
 ## Hard- and Software Tutorials
