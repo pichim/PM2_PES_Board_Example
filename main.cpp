@@ -1,10 +1,15 @@
 #include "mbed.h"
 
-#include "pm2_drivers/IMUThread.h"
-#include "pm2_drivers/LinearCharacteristics.h"
-#include "pm2_drivers/LinearCharacteristics3.h"
-#include "pm2_drivers/Mahony.h"
-#include "pm2_drivers/PM2_Drivers.h"
+#include "pm2_drivers/DebounceIn.h"
+#include "pm2_drivers/Servo.h"
+#include "pm2_drivers/EncoderCounter.h"
+#include "pm2_drivers/DCMotor.h"
+
+// #include "pm2_drivers/IMUThread.h"
+// #include "pm2_drivers/LinearCharacteristics.h"
+// #include "pm2_drivers/LinearCharacteristics3.h"
+// #include "pm2_drivers/Mahony.h"
+// #include "pm2_drivers/PM2_Drivers.h"
 
 // PES-Board Pin Names
 #define PB_D0 PB_2
@@ -31,7 +36,8 @@ bool do_reset_all_once = false; // this variable is used to reset certain variab
                                 // shows how you can run a code segment only once
 
 // objects for user button (blue button) handling on nucleo board
-DebounceIn user_button(PC_13);  // create InterruptIn interface object to evaluate user button falling and rising edge (no blocking code in ISR)
+DebounceIn user_button(PC_13);  // create InterruptIn interface object to evaluate user button falling and
+                                // rising edge (no blocking code in ISR)
 void user_button_pressed_fcn(); // custom functions which get executed when user
                                 // button gets pressed, definition below
 
@@ -48,15 +54,15 @@ int main()
         FORWARD,
         BACKWARD,
         SLEEP,
-    };
-    RobotState robot_state = RobotState::INIT;
+    } robot_state = RobotState::INIT;
 
     // attach button fall function to user button object, button has a pull-up resistor
     user_button.fall(&user_button_pressed_fcn);
 
     // while loop gets executed every main_task_period_ms milliseconds (simple
     // aproach to repeatedly execute main)
-    const int main_task_period_ms = 10; // define main task period time in ms e.g. 50 ms -> main task runs 20 times per second
+    const int main_task_period_ms = 10; // define main task period time in ms e.g. 50 ms
+                                        // -> main task runs 20 times per second
     Timer main_task_timer; // create Timer object which we use to run the main task every main_task_period_ms
     Timer timer;
 
@@ -81,10 +87,10 @@ int main()
     float ir_distance_mV = 0.0f; // define variable to store measurement
     AnalogIn ir_analog_in(PC_2); // create AnalogIn object to read in infrared distance sensor, 0...3.3V are mapped to 0...1
 
-    // // create Servo objects to command servos
-    // Servo servo_D0(PB_D0);
-    // Servo servo_D1(PB_D1);
-    // Servo servo_D2(PB_D2);
+    // create Servo objects to command servos
+    Servo servo_D0(PB_D0);
+    Servo servo_D1(PB_D1);
+    Servo servo_D2(PB_D2);
 
     // Those variables should be filled out with values obtained in the
     // calibration process, these are minimal pulse width and maximal pulse width.
@@ -98,18 +104,18 @@ int main()
     float servo_D2_ang_min = 0.0325f;
     float servo_D2_ang_max = 0.1175f;
 
-    // // setNormalisedPulseWidth: before calibration (0,1) -> (min pwm, max pwm)
-    // servo_D0.calibratePulseMinMax(servo_D0_ang_min, servo_D0_ang_max);
-    // servo_D1.calibratePulseMinMax(servo_D1_ang_min, servo_D1_ang_max);
-    // servo_D2.calibratePulseMinMax(servo_D2_ang_min, servo_D2_ang_max);
-    // // setNormalisedPulseWidth: after calibration (0,1) -> (servo_D0_ang_min, servo_D0_ang_max)
+    // setNormalisedPulseWidth: before calibration (0,1) -> (min pwm, max pwm)
+    servo_D0.calibratePulseMinMax(servo_D0_ang_min, servo_D0_ang_max);
+    servo_D1.calibratePulseMinMax(servo_D1_ang_min, servo_D1_ang_max);
+    servo_D2.calibratePulseMinMax(servo_D2_ang_min, servo_D2_ang_max);
+    // setNormalisedPulseWidth: after calibration (0,1) -> (servo_D0_ang_min, servo_D0_ang_max)
 
-    // // default is 1.0e6f, this is the default acceleration for the motion profile,
-    // // this is the maximum acceleration of the servo
-    // servo_D0.setMaxAcceleration(3.0f);
-    // servo_D1.setMaxAcceleration(3.0f);
-    // servo_D2.setMaxAcceleration(3.0f);
-    // // after this there is smooth movement
+    // default is 1.0e6f, this is the default acceleration for the motion profile,
+    // this is the maximum acceleration of the servo
+    servo_D0.setMaxAcceleration(3.0f);
+    servo_D1.setMaxAcceleration(3.0f);
+    servo_D2.setMaxAcceleration(3.0f);
+    // after this there is smooth movement
 
     float servo_angle = 0; // servo S1 normalized input: 0...1
     int servo_counter = 0; // define servo counter, this is an additional variable
@@ -117,9 +123,9 @@ int main()
     const int loops_per_seconds = static_cast<int>(ceilf(1.0f / (0.001f * (float)main_task_period_ms)));
 
     // 78:1, 100:1, ... Metal Gearmotor 20Dx44L mm 12V CB
-    // - motor M1 is used open-loop
-    // - motor M2 is closed-loop speed controlled (rotations per second)
-    // - motor M3 is closed-loop position controlled (rotations)
+    // motor M1 is used open-loop
+    // motor M2 is used closed-loop to command velocity (rotations per second)
+    // motor M3 is used closed-loop to command position (rotations)
     DigitalOut enable_motors(PB_15); // create DigitalOut object to enable dc motors
 
     FastPWM pwm_M1(PB_M1_PWM); // create FastPWM object to command motor M1
@@ -135,7 +141,6 @@ int main()
 
     // const float k_gear = 100.0f / gear_ratio;         // define additional ratio in case you are using a dc motor with a different gear box, e.g. 100:1
     // const float kp = 0.2f;                            // define custom kp, this is the default speed 1controller gain for gear box 78.125:1
-
     // SpeedController speedController_M2(counts_per_turn, kn, voltage_max, pwm_M2, encoder_M2); // default 78.125:1 gear box  with default contoller parameters
     // SpeedController speedController_M2(counts_per_turn * k_gear, kn / k_gear, voltage_max, pwm_M2, encoder_M2); // parameters adjusted to 100:1 gear
 
@@ -161,95 +166,89 @@ int main()
             // read analog input
             ir_distance_mV = 1.0e3f * ir_analog_in.read() * 3.3f;
 
-            // visual feedback that the main task is executed, setting this once would
-            // actually be enough
+            // visual feedback that the main task is executed, setting this once would actually be enough
             led1 = 1;
 
-            // // commanding the servos
-            // if (servo_D0.isEnabled() && servo_D1.isEnabled() && servo_D2.isEnabled()) {
-            //     // command servo position, increment normalised angle every second until
-            //     // it reaches 1.0f servo_D0.setNormalisedPulseWidth(servo_angle);
-            //     // servo_D1.setNormalisedPulseWidth(servo_angle);
-            //     // servo_D2.setNormalisedPulseWidth(servo_angle);
-            //     /**
-            //     if (servo_angle < 1.0f & servo_counter % loops_per_seconds == 0 &
-            //     servo_counter != 0)
-            //     {
-            //         //servo_angle += 0.0025f;
-            //         //servo_angle += 0.1f;
-            //         servo_angle = 1.0f;
+            // commanding the servos
+            if (servo_D0.isEnabled() && servo_D1.isEnabled() && servo_D2.isEnabled()) {
+                // command servo position, increment normalised angle every second until
+                // it reaches 1.0f servo_D0.setNormalisedPulseWidth(servo_angle);
+                // servo_D1.setNormalisedPulseWidth(servo_angle);
+                // servo_D2.setNormalisedPulseWidth(servo_angle);
+                /**
+                if (servo_angle < 1.0f & servo_counter % loops_per_seconds == 0 &
+                servo_counter != 0)
+                {
+                    //servo_angle += 0.0025f;
+                    //servo_angle += 0.1f;
+                    servo_angle = 1.0f;
 
-            //     }
-            //     servo_counter++;
-            //     */
+                }
+                servo_counter++;
+                */
 
-            //     // servo_D0.setNormalisedPulseWidth(servo_D0_ang_max);
-            //     // servo_D1.setNormalisedPulseWidth(servo_D1_ang_max);
-            //     // servo_D2.setNormalisedPulseWidth(servo_D2_ang_max);
-            //     servo_D0.setNormalisedPulseWidth(0.0f);
-            //     servo_D1.setNormalisedPulseWidth(0.0f);
-            //     servo_D2.setNormalisedPulseWidth(0.0f);
-            // }
+                // servo_D0.setNormalisedPulseWidth(servo_D0_ang_max);
+                // servo_D1.setNormalisedPulseWidth(servo_D1_ang_max);
+                // servo_D2.setNormalisedPulseWidth(servo_D2_ang_max);
+                servo_D0.setNormalisedPulseWidth(0.0f);
+                servo_D1.setNormalisedPulseWidth(0.0f);
+                servo_D2.setNormalisedPulseWidth(0.0f);
+            }
 
             // state machine
             switch (robot_state) {
-            case RobotState::INIT:
+                case RobotState::INIT:
+                    // enable servos if not enabled
+                    if (!servo_D0.isEnabled())
+                        servo_D0.enable();
+                    if (!servo_D1.isEnabled())
+                        servo_D1.enable();
+                    if (!servo_D2.isEnabled())
+                        servo_D2.enable();
 
-                // // check if servos are enabled, should be alreay disabled at this
-                // // point, it's just an example
-                // if (!servo_D0.isEnabled())
-                //     servo_D0.enable();
-                // if (!servo_D1.isEnabled())
-                //     servo_D1.enable();
-                // if (!servo_D2.isEnabled())
-                //     servo_D2.enable();
+                    // enable hardwaredriver dc motors: 0 -> disabled, 1 -> enabled
+                    enable_motors = 1;
+                    robot_state = RobotState::FORWARD;
+                    break;
 
-                enable_motors = 1; // enable hardwaredriver dc motors: 0 -> disabled, 1 -> enabled
-                robot_state = RobotState::FORWARD;
-                break;
+                case RobotState::FORWARD:
+                    if (mechanical_button.read()) {
+                        led2 = 1;
 
-            case RobotState::FORWARD:
+                        pwm_M1.write(0.75f); // write output to motor M1
+                        DCMotor_M2.setVelocity(0.5f); // set a desired speed for speed controlled dc motors M2
+                        DCMotor_M3.setRotation(5.0f); // set a desired rotation for position controlled dc motors M3
 
-                if (mechanical_button.read()) {
-                    led2 = 1;
+                        robot_state = RobotState::BACKWARD;
+                    }
+                    break;
 
-                    pwm_M1.write(0.75f); // write output voltage to motor M1
-                    DCMotor_M2.setVelocity(0.5f); // set a desired speed for speed controlled dc motors M2
-                    DCMotor_M3.setRotation(5.0f); // set a desired rotation for position controlled dc motors M3
+                case RobotState::BACKWARD:
+                    if (DCMotor_M3.getRotation() >= 4.95f) {
+                        pwm_M1.write(0.25f);
+                        DCMotor_M2.setVelocity(-0.5f);
+                        DCMotor_M3.setRotation(0.0f);
 
-                    robot_state = RobotState::BACKWARD;
-                }
-                break;
+                        robot_state = RobotState::SLEEP;
+                    }
+                    break;
 
-            case RobotState::BACKWARD:
+                case RobotState::SLEEP:
 
-                if (DCMotor_M3.getRotation() >= 4.95f) {
-                    pwm_M1.write(0.25f);
-                    DCMotor_M2.setVelocity(-0.5f);
-                    DCMotor_M3.setRotation(0.0f);
+                    if (DCMotor_M3.getRotation() <= 0.05f) {
+                        // enable_motors = 0;
+                        pwm_M1.write(0.5f);
+                        DCMotor_M2.setVelocity(0.0f);
 
-                    robot_state = RobotState::SLEEP;
-                }
-                break;
+                        // robot_state is not changed, there for the state machine remains in here until the blue button is pressed again
+                    }
 
-            case RobotState::SLEEP:
-
-                if (DCMotor_M3.getRotation() <= 0.05f) {
-                    // enable_motors = 0;
-                    pwm_M1.write(0.5f);
-                    DCMotor_M2.setVelocity(0.0f);
-
-                    // robot_stat is not changed, there for the state machine remains in
-                    // here until the blue button is pressed again
-                }
-
-            default:
-
-                // do nothing
-                break;
+                default:
+                    break; // do nothing
             }
         } else {
             if (do_reset_all_once) {
+                // toggle do_reset_all_once to make sure this code is only executed once
                 do_reset_all_once = false;
 
                 ir_distance_mV = 0.0f;
@@ -257,24 +256,21 @@ int main()
                 pwm_M1.write(0.5f);
                 DCMotor_M2.setVelocity(0.0f);
                 DCMotor_M3.setRotation(0.0f);
-                robot_state = RobotState::INIT;
+
                 servo_angle = 0.0f;
-                // // servo_D0.setNormalisedPulseWidth(servo_angle);
-                // // servo_D1.setNormalisedPulseWidth(servo_angle);
-                // // servo_D2.setNormalisedPulseWidth(servo_angle);
-                // // servo_D0.setNormalisedPulseWidth(servo_D0_ang_min);
-                // // servo_D1.setNormalisedPulseWidth(servo_D1_ang_min);
-                // // servo_D2.setNormalisedPulseWidth(servo_D2_ang_min);
-                // servo_D0.setNormalisedPulseWidth(1.0f);
-                // servo_D1.setNormalisedPulseWidth(1.0f);
-                // servo_D2.setNormalisedPulseWidth(1.0f);
-                // // Those commands under are causing servo to freeze and not go back to
-                // // possision 0.0 servo_D0.disable(); servo_D1.disable();
-                // // servo_D2.disable();
-                // //  servo_D0.setNormalisedPulseWidth(pulse_min);
-                // //  servo_D1.setNormalisedPulseWidth(pulse_min);
+                // servo_D0.setNormalisedPulseWidth(servo_angle);
+                // servo_D1.setNormalisedPulseWidth(servo_angle);
+                // servo_D2.setNormalisedPulseWidth(servo_angle);
+                // servo_D0.setNormalisedPulseWidth(servo_D0_ang_min);
+                // servo_D1.setNormalisedPulseWidth(servo_D1_ang_min);
+                // servo_D2.setNormalisedPulseWidth(servo_D2_ang_min);
+                servo_D0.setNormalisedPulseWidth(1.0f);
+                servo_D1.setNormalisedPulseWidth(1.0f);
+                servo_D2.setNormalisedPulseWidth(1.0f);
 
                 led1 = led2 = 0;
+
+                robot_state = RobotState::INIT;
             }
         }
 

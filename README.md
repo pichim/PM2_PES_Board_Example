@@ -14,6 +14,10 @@ TE 307
 
 # Using the PES-Board with power On and hardware running while connected to your computer happens at your own risk
 
+# Under now circumstances leave the battery charger connected to the PES-Board when using the PES-Board of having it connected to your computer
+
+- FastPWM default pwm period is 50 mus
+
 ## Accounts
 
 It is recommendet that you use your private E-mail address to set up accounts on Mbed and on GitHub.
