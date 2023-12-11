@@ -4,6 +4,7 @@
 #include "pm2_drivers/Servo.h"
 #include "pm2_drivers/EncoderCounter.h"
 #include "pm2_drivers/DCMotor.h"
+#include "pm2_drivers/RangeFinder/RangeFinder.h"
 
 // #include "pm2_drivers/IMUThread.h"
 // #include "pm2_drivers/LinearCharacteristics.h"
@@ -32,8 +33,8 @@
 
 bool do_execute_main_task = false; // this variable will be toggled via the user button (blue button) and
                                    // decides whether to execute the main task or not
-bool do_reset_all_once = false; // this variable is used to reset certain variables and objects and
-                                // shows how you can run a code segment only once
+bool do_reset_all_once = false;    // this variable is used to reset certain variables and objects and
+                                   // shows how you can run a code segment only once
 
 // objects for user button (blue button) handling on nucleo board
 DebounceIn user_button(PC_13);  // create InterruptIn interface object to evaluate user button falling and
@@ -61,9 +62,9 @@ int main()
 
     // while loop gets executed every main_task_period_ms milliseconds (simple
     // aproach to repeatedly execute main)
-    const int main_task_period_ms = 10; // define main task period time in ms e.g. 50 ms
+    const int main_task_period_ms = 50; // define main task period time in ms e.g. 50 ms
                                         // -> main task runs 20 times per second
-    Timer main_task_timer; // create Timer object which we use to run the main task every main_task_period_ms
+    Timer main_task_timer;              // create Timer object which we use to run the main task every main_task_period_ms
     Timer timer;
 
     // led on nucleo board
@@ -128,7 +129,7 @@ int main()
     // motor M3 is used closed-loop to command position (rotations)
     DigitalOut enable_motors(PB_15); // create DigitalOut object to enable dc motors
 
-    FastPWM pwm_M1(PB_M1_PWM); // create FastPWM object to command motor M1
+    FastPWM pwm_M1(PB_M1_PWM);                           // create FastPWM object to command motor M1
     EncoderCounter encoder_M1(PB_M1_ENC_A, PB_M1_ENC_B); // create EncoderCounter object to read in the encoder counter
                                                          // values, since M1 is used open-loop no encoder would be
                                                          // needed for operation, this is just an example
@@ -155,6 +156,11 @@ int main()
                                 // speed, has to be smaller or equal to kn * voltage_max
     // DCMotor_M3.setMaxVelocity(max_speed_rps); // adjust max velocity for internal speed controller
 
+    // Groove Ultrasonic Ranger V2.0
+    float us_distance_cm = 0.0f;    // define variable to store measurement
+    RangeFinder us_range_finder(PB_D3, 5782.0f, 0.02f, 17500);    // create range finder object (ultra sonic distance sensor), 20 Hz parametrization <-> main_task_period_ms = 50 ms
+    // RangeFinder us_range_finder(PB_D3, 5782.0f, 0.02f,  7000); // create range finder object (ultra sonic distance sensor), 50 Hz parametrization <-> main_task_period_ms = 20 ms
+
     main_task_timer.start();
     timer.start();
 
@@ -168,6 +174,9 @@ int main()
 
             // visual feedback that the main task is executed, setting this once would actually be enough
             led1 = 1;
+
+            // read ultra sonic distance sensor
+            us_distance_cm = us_range_finder.read_cm();
 
             // commanding the servos
             if (servo_D0.isEnabled() && servo_D1.isEnabled() && servo_D2.isEnabled()) {
@@ -215,7 +224,7 @@ int main()
                     if (mechanical_button.read()) {
                         led2 = 1;
 
-                        pwm_M1.write(0.75f); // write output to motor M1
+                        pwm_M1.write(0.75f);          // write output to motor M1
                         DCMotor_M2.setVelocity(0.5f); // set a desired speed for speed controlled dc motors M2
                         DCMotor_M3.setRotation(5.0f); // set a desired rotation for position controlled dc motors M3
 
@@ -245,13 +254,15 @@ int main()
 
                 default:
                     break; // do nothing
-            }
+                }
         } else {
             if (do_reset_all_once) {
                 // toggle do_reset_all_once to make sure this code is only executed once
                 do_reset_all_once = false;
 
                 ir_distance_mV = 0.0f;
+
+                us_distance_cm = 0.0f;
 
                 pwm_M1.write(0.5f);
                 DCMotor_M2.setVelocity(0.0f);
@@ -289,18 +300,19 @@ int main()
         //        servo_D1_angle);
         // printf("%f\n", servo_angle);
         int time_ms = std::chrono::duration_cast<std::chrono::milliseconds>(timer.elapsed_time()).count();
-        DCMotor* DCMotor_ptr = &DCMotor_M3;
-        printf("%d, %d, %f, %f, %f, %f, %f, %f, %f, %f\n",
-                time_ms,
-                robot_state,
-                DCMotor_ptr->getRotationTarget(),
-                DCMotor_ptr->getRotationSetpoint(),
-                DCMotor_ptr->getRotation(),
-                DCMotor_ptr->getVelocityTarget(),
-                DCMotor_ptr->getVelocitySetpoint(),
-                DCMotor_ptr->getVelocity(),
-                DCMotor_ptr->getVoltage(),
-                DCMotor_ptr->getPWM());
+        printf("%d, %f\n", time_ms, us_distance_cm);
+        // DCMotor* DCMotor_ptr = &DCMotor_M3;
+        // printf("%d, %d, %f, %f, %f, %f, %f, %f, %f, %f\n",
+        //        time_ms,
+        //        robot_state,
+        //        DCMotor_ptr->getRotationTarget(),
+        //        DCMotor_ptr->getRotationSetpoint(),
+        //        DCMotor_ptr->getRotation(),
+        //        DCMotor_ptr->getVelocityTarget(),
+        //        DCMotor_ptr->getVelocitySetpoint(),
+        //        DCMotor_ptr->getVelocity(),
+        //        DCMotor_ptr->getVoltage(),
+        //        DCMotor_ptr->getPWM());
 
         // read timer and make the main thread sleep for the remaining time span (non blocking)
         int main_task_elapsed_time_ms = std::chrono::duration_cast<std::chrono::milliseconds>(main_task_timer.elapsed_time()).count();
@@ -312,7 +324,6 @@ void user_button_pressed_fcn()
 {
     // do_execute_main_task if the button was pressed
     do_execute_main_task = !do_execute_main_task;
-    if (do_execute_main_task) {
+    if (do_execute_main_task)
         do_reset_all_once = true;
-    }
 }
