@@ -6,10 +6,10 @@
 #include "pm2_drivers/DCMotor.h"
 #include "pm2_drivers/UltrasonicSensor.h"
 
-// #include "pm2_drivers/IMUThread.h"
+#include "pm2_drivers/IMUThread.h"
 // #include "pm2_drivers/LinearCharacteristics.h"
-// #include "pm2_drivers/LinearCharacteristics3.h"
-// #include "pm2_drivers/Mahony.h"
+#include "pm2_drivers/LinearCharacteristics3.h"
+#include "pm2_drivers/Mahony.h"
 // #include "pm2_drivers/PM2_Drivers.h"
 
 // PES-Board Pin Names
@@ -45,11 +45,6 @@ void user_button_pressed_fcn(); // custom functions which get executed when user
 // main runs as an own thread
 int main()
 {
-    // Mutex imuMutex;
-    // Data data;
-    // IMUThread imuThread(data, imuMutex);
-    // imuThread.StartThread();
-
     enum RobotState {
         INIT,
         FORWARD,
@@ -62,7 +57,7 @@ int main()
 
     // while loop gets executed every main_task_period_ms milliseconds (simple
     // aproach to repeatedly execute main)
-    const int main_task_period_ms = 50; // define main task period time in ms e.g. 50 ms
+    const int main_task_period_ms = 20; // define main task period time in ms e.g. 50 ms
                                         // -> main task runs 20 times per second
     Timer main_task_timer;              // create Timer object which we use to run the main task every main_task_period_ms
 
@@ -159,8 +154,14 @@ int main()
     float us_distance_cm = 0.0f;    // define variable to store measurement
     UltrasonicSensor us_sensor(PB_D3);
 
+    // IMU
+    ImuData imu_data;
+    IMUThread imu_thread;
+    Timer timer;
+
     // start timer
     main_task_timer.start();
+    timer.start();
 
     // this loop will run forever
     while (true) {
@@ -175,6 +176,9 @@ int main()
 
             // read ultra sonic distance sensor
             us_distance_cm = us_sensor.read();
+
+            // read imu data
+            imu_data = imu_thread.getImuData();
 
             // commanding the servos
             if (servo_D0.isEnabled() && servo_D1.isEnabled() && servo_D2.isEnabled()) {
@@ -262,6 +266,8 @@ int main()
 
                 us_distance_cm = 0.0f;
 
+                imu_data.initialise();
+
                 pwm_M1.write(0.5f);
                 motor_M2.setVelocity(0.0f);
                 motor_M3.setRotation(0.0f);
@@ -297,7 +303,7 @@ int main()
         //        servo_angle,
         //        servo_D1_angle);
         // printf("%f\n", servo_angle);
-        printf("%f\n", us_distance_cm);
+
         // DCMotor* DCMotor_ptr = &motor_M3;
         // printf("%d, %d, %f, %f, %f, %f, %f, %f, %f, %f\n",
         //        time_ms,
@@ -310,6 +316,16 @@ int main()
         //        DCMotor_ptr->getVelocity(),
         //        DCMotor_ptr->getVoltage(),
         //        DCMotor_ptr->getPWM());
+
+        // printf("%f\n", us_distance_cm);
+
+        float time_ms = std::chrono::duration_cast<std::chrono::microseconds>(timer.elapsed_time()).count() * 1.0e-3f;
+        printf("%.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f, ", imu_data.gyro(0), imu_data.gyro(1), imu_data.gyro(2),
+                                                                               imu_data.acc(0) , imu_data.acc(1) , imu_data.acc(2) ,
+                                                                               imu_data.mag(0) , imu_data.mag(1) , imu_data.mag(2) , time_ms );
+        printf("%.6f, %.6f, %.6f, %.6f, ", imu_data.quat.w(), imu_data.quat.x(), imu_data.quat.y(), imu_data.quat.z() );
+        printf("%.6f, %.6f, %.6f, ", imu_data.rpy(0), imu_data.rpy(1), imu_data.rpy(2) );
+        printf("%.6f\n", imu_data.tilt);
 
         // read timer and make the main thread sleep for the remaining time span (non blocking)
         int main_task_elapsed_time_ms = std::chrono::duration_cast<std::chrono::milliseconds>(main_task_timer.elapsed_time()).count();
