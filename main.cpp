@@ -56,7 +56,7 @@ int main()
         main_task_timer.reset();
         timer.reset();
 
-        us_distance_cm = us_sensor.read_cm();
+        us_distance_cm = us_sensor.read();
         const int time_mus = std::chrono::duration_cast<std::chrono::microseconds>(timer.elapsed_time()).count();
         printf("%d, %f\n", time_mus, us_distance_cm);
 
