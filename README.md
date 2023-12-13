@@ -16,6 +16,8 @@ TE 307
 
 # Under now circumstances leave the battery charger connected to the PES-Board when using the PES-Board of having it connected to your computer
 
+# Motor encoder soldering can be wrong. Do not assume that if you plug in one Motor and everything works you can the also use the same pings and everything works. You have to make sure that the physical rotation is according to your assumption and that a positive input leads to a positive change of increments.
+
 - FastPWM default pwm period is 50 mus
 
 ## Accounts

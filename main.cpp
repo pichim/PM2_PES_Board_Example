@@ -18,16 +18,16 @@
 #define PB_D2 PC_6
 #define PB_D3 PB_12
 
-#define PB_M1_PWM PB_13
-#define PB_M2_PWM PA_9
-#define PB_M3_PWM PA_10
+#define PB_PWM_M1 PB_13
+#define PB_PWM_M2 PA_9
+#define PB_PWM_M3 PA_10
 
-#define PB_M1_ENC_A PA_6
-#define PB_M1_ENC_B PC_7
-#define PB_M2_ENC_A PB_6
-#define PB_M2_ENC_B PB_7
-#define PB_M3_ENC_A PA_0
-#define PB_M3_ENC_B PA_1
+#define PB_ENC_A_M1 PA_6
+#define PB_ENC_B_M1 PC_7
+#define PB_ENC_A_M2 PB_6
+#define PB_ENC_B_M2 PB_7
+#define PB_ENC_A_M3 PA_0
+#define PB_ENC_B_M3 PA_1
 
 // #include "pm2_drivers/PESBoardPinName.h"
 
@@ -60,6 +60,7 @@ int main()
     const int main_task_period_ms = 20; // define main task period time in ms e.g. 50 ms
                                         // -> main task runs 20 times per second
     Timer main_task_timer;              // create Timer object which we use to run the main task every main_task_period_ms
+    Timer timer;
 
     // led on nucleo board
     // create DigitalOut object to command user led
@@ -123,32 +124,30 @@ int main()
     // motor M3 is used closed-loop to command position (rotations)
     DigitalOut enable_motors(PB_15); // create DigitalOut object to enable dc motors
 
-    FastPWM pwm_M1(PB_M1_PWM);                           // create FastPWM object to command motor M1
-    EncoderCounter encoder_M1(PB_M1_ENC_A, PB_M1_ENC_B); // create EncoderCounter object to read in the encoder counter
-                                                         // values, since M1 is used open-loop no encoder would be
-                                                         // needed for operation, this is just an example
+    // FastPWM pwm_M1(PB_PWM_M1);                           // create FastPWM object to command motor M1
+    // EncoderCounter encoder_M1(PB_ENC_A_M1, PB_ENC_B_M1); // create EncoderCounter object to read in the encoder counter
+    //                                                      // values, since M1 is used open-loop no encoder would be
+    //                                                      // needed for operation, this is just an example
 
-    // create SpeedController and DCMotor objects, default parametrization is for 78.125:1 gear box
-    const float gear_ratio = 78.125f;                 // 78.125:1 gear box
-    const float voltage_max = 12.0f;                  // define maximum voltage of battery packs, adjust this to 6.0f V if you only use one batterypack
-    const float counts_per_turn = 20.0f * gear_ratio; // define counts per turn at gearbox end: counts/turn * gearratio
-    const float kn = 180.0f / 12.0f;                  // define motor constant in RPM / V
+    const float voltage_max = 12.0f;     // maximum voltage of battery packs, adjust this to 6.0f V if you only use one batterypack
 
-    // const float k_gear = 100.0f / gear_ratio;         // define additional ratio in case you are using a dc motor with a different gear box, e.g. 100:1
-    // const float kp = 0.2f;                            // define custom kp, this is the default speed 1controller gain for gear box 78.125:1
-    // SpeedController speedController_M2(counts_per_turn, kn, voltage_max, pwm_M2, encoder_M2); // default 78.125:1 gear box  with default contoller parameters
-    // SpeedController speedController_M2(counts_per_turn * k_gear, kn / k_gear, voltage_max, pwm_M2, encoder_M2); // parameters adjusted to 100:1 gear
+    // https://www.pololu.com/product/3475/specs
+    const float gear_ratio_M1 = 31.25f;     // 31.25:1 gear box
+    const float kn_M1 = 450.0f / 12.0f;     // motor constant in RPM / V
+    DCMotor motor_M1(PB_PWM_M1, PB_ENC_A_M1, PB_ENC_B_M1, gear_ratio_M1, kn_M1, voltage_max);
+    motor_M1.setMaxVelocity(0.4f);
+    
+    // https://www.pololu.com/product/3485/specs
+    const float gear_ratio_M2 = 488.28125f; // 488.28125:1 gear box
+    const float kn_M2 = 28.0f / 12.0f;      // motor constant in RPM / V
+    DCMotor motor_M2(PB_PWM_M2, PB_ENC_A_M2, PB_ENC_B_M2, gear_ratio_M2, kn_M2, voltage_max);
+    motor_M2.setMaxVelocity(0.4f);
 
-    DCMotor motor_M2(PB_M2_PWM, PB_M2_ENC_A, PB_M2_ENC_B, counts_per_turn, kn, voltage_max);
-    DCMotor motor_M3(PB_M3_PWM, PB_M3_ENC_A, PB_M3_ENC_B, counts_per_turn, kn, voltage_max);
-    motor_M3.setMaxVelocity(1.5f);
-    // DCMotor motor_M3(PB_M3_PWM, PB_M3_ENC_A, PB_M3_ENC_B, counts_per_turn * k_gear, kn / k_gear, voltage_max); // parameters adjusted to 100:1 gear, we
-    // need a different speed controller gain here
-    // motor_M3.setVelocityCntrlGain(kp * k_gear); // adjust internal speed
-    // controller gain, this is just an example
-    float max_speed_rps = 0.5f; // define maximum speed that the position controller is changig the
-                                // speed, has to be smaller or equal to kn * voltage_max
-    // motor_M3.setMaxVelocity(max_speed_rps); // adjust max velocity for internal speed controller
+    // https://www.pololu.com/product/3477/specs
+    const float gear_ratio_M3 = 78.125f;    // 78.125:1 gear box
+    const float kn_M3 = 180.0f / 12.0f;     // motor constant in RPM / V
+    DCMotor motor_M3(PB_PWM_M3, PB_ENC_A_M3, PB_ENC_B_M3, gear_ratio_M3, kn_M3, voltage_max);
+    motor_M3.setMaxVelocity(0.4f);
 
     // Groove Ultrasonic Ranger V2.0
     float us_distance_cm = 0.0f;    // define variable to store measurement
@@ -156,8 +155,7 @@ int main()
 
     // IMU
     ImuData imu_data;
-    IMUThread imu_thread;
-    Timer timer;
+    IMUThread imu_thread;    
 
     // start timer
     main_task_timer.start();
@@ -226,18 +224,25 @@ int main()
                     if (mechanical_button.read()) {
                         led2 = 1;
 
-                        pwm_M1.write(0.75f);          // write output to motor M1
-                        motor_M2.setVelocity(0.5f); // set a desired speed for speed controlled dc motors M2
-                        motor_M3.setRotation(5.0f); // set a desired rotation for position controlled dc motors M3
+                        // pwm_M1.write(0.75f);          // write output to motor M1
+                        // motor_M2.setVelocity(0.5f); // set a desired speed for speed controlled dc motors M2
+                        // motor_M3.setRotation(5.0f); // set a desired rotation for position controlled dc motors M3
+                        motor_M1.setRotation(3.0f);
+                        motor_M2.setRotation(3.0f);
+                        motor_M3.setRotation(3.0f);
 
                         robot_state = RobotState::BACKWARD;
                     }
                     break;
 
                 case RobotState::BACKWARD:
-                    if (motor_M3.getRotation() >= 4.95f) {
-                        pwm_M1.write(0.25f);
-                        motor_M2.setVelocity(-0.5f);
+                    if (motor_M3.getRotation() >= 2.95f) {
+                        // pwm_M1.write(0.25f);
+                        // motor_M2.setVelocity(-0.5f);
+                        // motor_M3.setRotation(0.0f);
+
+                        motor_M1.setRotation(0.0f);
+                        motor_M2.setRotation(0.0f);
                         motor_M3.setRotation(0.0f);
 
                         robot_state = RobotState::SLEEP;
@@ -248,8 +253,10 @@ int main()
 
                     if (motor_M3.getRotation() <= 0.05f) {
                         // enable_motors = 0;
-                        pwm_M1.write(0.5f);
-                        motor_M2.setVelocity(0.0f);
+
+                        // pwm_M1.write(0.5f);
+                        // motor_M2.setVelocity(0.0f);
+                        // motor_M2.setVelocity(0.0f);
 
                         // robot_state is not changed, there for the state machine remains in here until the blue button is pressed again
                     }
@@ -268,7 +275,10 @@ int main()
 
                 imu_data.initialise();
 
-                pwm_M1.write(0.5f);
+                // pwm_M1.write(0.5f);
+                // motor_M2.setVelocity(0.0f);
+                // motor_M3.setRotation(0.0f);
+                motor_M1.setVelocity(0.0f);
                 motor_M2.setVelocity(0.0f);
                 motor_M3.setRotation(0.0f);
 
@@ -304,28 +314,29 @@ int main()
         //        servo_D1_angle);
         // printf("%f\n", servo_angle);
 
-        // DCMotor* DCMotor_ptr = &motor_M3;
-        // printf("%d, %d, %f, %f, %f, %f, %f, %f, %f, %f\n",
-        //        time_ms,
-        //        robot_state,
-        //        DCMotor_ptr->getRotationTarget(),
-        //        DCMotor_ptr->getRotationSetpoint(),
-        //        DCMotor_ptr->getRotation(),
-        //        DCMotor_ptr->getVelocityTarget(),
-        //        DCMotor_ptr->getVelocitySetpoint(),
-        //        DCMotor_ptr->getVelocity(),
-        //        DCMotor_ptr->getVoltage(),
-        //        DCMotor_ptr->getPWM());
+        int time_ms = std::chrono::duration_cast<std::chrono::milliseconds>(timer.elapsed_time()).count();
+        DCMotor* DCMotor_ptr = &motor_M2;
+        printf("%d, %d, %f, %f, %f, %f, %f, %f, %f, %f\n",
+               time_ms,
+               robot_state,
+               DCMotor_ptr->getRotationTarget(),
+               DCMotor_ptr->getRotationSetpoint(),
+               DCMotor_ptr->getRotation(),
+               DCMotor_ptr->getVelocityTarget(),
+               DCMotor_ptr->getVelocitySetpoint(),
+               DCMotor_ptr->getVelocity(),
+               DCMotor_ptr->getVoltage(),
+               DCMotor_ptr->getPWM());
 
         // printf("%f\n", us_distance_cm);
 
-        float time_ms = std::chrono::duration_cast<std::chrono::microseconds>(timer.elapsed_time()).count() * 1.0e-3f;
-        printf("%.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f, ", imu_data.gyro(0), imu_data.gyro(1), imu_data.gyro(2),
-                                                                               imu_data.acc(0) , imu_data.acc(1) , imu_data.acc(2) ,
-                                                                               imu_data.mag(0) , imu_data.mag(1) , imu_data.mag(2) , time_ms );
-        printf("%.6f, %.6f, %.6f, %.6f, ", imu_data.quat.w(), imu_data.quat.x(), imu_data.quat.y(), imu_data.quat.z() );
-        printf("%.6f, %.6f, %.6f, ", imu_data.rpy(0), imu_data.rpy(1), imu_data.rpy(2) );
-        printf("%.6f\n", imu_data.tilt);
+        // float time_ms = std::chrono::duration_cast<std::chrono::microseconds>(timer.elapsed_time()).count() * 1.0e-3f;
+        // printf("%.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f, ", imu_data.gyro(0), imu_data.gyro(1), imu_data.gyro(2),
+        //                                                                        imu_data.acc(0) , imu_data.acc(1) , imu_data.acc(2) ,
+        //                                                                        imu_data.mag(0) , imu_data.mag(1) , imu_data.mag(2) , time_ms );
+        // printf("%.6f, %.6f, %.6f, %.6f, ", imu_data.quat.w(), imu_data.quat.x(), imu_data.quat.y(), imu_data.quat.z() );
+        // printf("%.6f, %.6f, %.6f, ", imu_data.rpy(0), imu_data.rpy(1), imu_data.rpy(2) );
+        // printf("%.6f\n", imu_data.tilt);
 
         // read timer and make the main thread sleep for the remaining time span (non blocking)
         int main_task_elapsed_time_ms = std::chrono::duration_cast<std::chrono::milliseconds>(main_task_timer.elapsed_time()).count();
