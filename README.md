@@ -18,6 +18,10 @@ TE 307
 
 # Motor encoder soldering can be wrong. Do not assume that if you plug in one Motor and everything works you can the also use the same pings and everything works. You have to make sure that the physical rotation is according to your assumption and that a positive input leads to a positive change of increments.
 
+# Depending on the PES BOARD version DCMotor M3 rotation direction might be inverted
+
+# Depending on the PES BOARD version the Pin map might differ
+
 - FastPWM default pwm period is 50 mus
 
 ## Accounts

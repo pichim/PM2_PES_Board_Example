@@ -5,31 +5,40 @@
 #include "pm2_drivers/EncoderCounter.h"
 #include "pm2_drivers/DCMotor.h"
 #include "pm2_drivers/UltrasonicSensor.h"
+#include "pm2_drivers/IMU.h"
 
-#include "pm2_drivers/IMUThread.h"
-// #include "pm2_drivers/LinearCharacteristics.h"
-#include "pm2_drivers/LinearCharacteristics3.h"
-#include "pm2_drivers/Mahony.h"
-// #include "pm2_drivers/PM2_Drivers.h"
-
-// PES-Board Pin Names
-#define PB_D0 PB_2
-#define PB_D1 PC_8
-#define PB_D2 PC_6
-#define PB_D3 PB_12
-
-#define PB_PWM_M1 PB_13
-#define PB_PWM_M2 PA_9
-#define PB_PWM_M3 PA_10
-
-#define PB_ENC_A_M1 PA_6
-#define PB_ENC_B_M1 PC_7
-#define PB_ENC_A_M2 PB_6
-#define PB_ENC_B_M2 PB_7
-#define PB_ENC_A_M3 PA_0
-#define PB_ENC_B_M3 PA_1
-
-// #include "pm2_drivers/PESBoardPinName.h"
+#define NEW_PES_BOARD_VERSION
+#ifdef NEW_PES_BOARD_VERSION
+    #define PB_D0 PB_2
+    #define PB_D1 PC_8
+    #define PB_D2 PC_6
+    #define PB_D3 PB_12
+    #define PB_PWM_M1 PB_13
+    #define PB_PWM_M2 PA_9
+    #define PB_PWM_M3 PA_10
+    #define PB_ENC_A_M1 PA_6
+    #define PB_ENC_B_M1 PC_7
+    #define PB_ENC_A_M2 PB_6
+    #define PB_ENC_B_M2 PB_7
+    #define PB_ENC_A_M3 PA_0
+    #define PB_ENC_B_M3 PA_1
+    #define PN_ENABLE_DCMOTORS PB_15
+#else
+    #define PB_D0 ???
+    #define PB_D1 ???
+    #define PB_D2 ???
+    #define PB_D3 ???
+    #define PB_PWM_M1 PA_8
+    #define PB_PWM_M2 PA_9
+    #define PB_PWM_M3 ???
+    #define PB_ENC_A_M1 PB_6
+    #define PB_ENC_B_M1 PB_7
+    #define PB_ENC_A_M2 PA_6
+    #define PB_ENC_A_M2 PC_7
+    #define PB_ENC_A_M3 ???
+    #define PB_ENC_B_M3 ???
+    #define PN_ENABLE_DCMOTORS PB_2
+#endif
 
 bool do_execute_main_task = false; // this variable will be toggled via the user button (blue button) and
                                    // decides whether to execute the main task or not
@@ -46,7 +55,7 @@ void user_button_pressed_fcn(); // custom functions which get executed when user
 int main()
 {
     enum RobotState {
-        INIT,
+        INIT = 0,
         FORWARD,
         BACKWARD,
         SLEEP,
@@ -122,7 +131,7 @@ int main()
     // motor M1 is used open-loop
     // motor M2 is used closed-loop to command velocity (rotations per second)
     // motor M3 is used closed-loop to command position (rotations)
-    DigitalOut enable_motors(PB_15); // create DigitalOut object to enable dc motors
+    DigitalOut enable_motors(PN_ENABLE_DCMOTORS); // create DigitalOut object to enable dc motors
 
     // FastPWM pwm_M1(PB_PWM_M1);                           // create FastPWM object to command motor M1
     // EncoderCounter encoder_M1(PB_ENC_A_M1, PB_ENC_B_M1); // create EncoderCounter object to read in the encoder counter
@@ -132,22 +141,26 @@ int main()
     const float voltage_max = 12.0f;     // maximum voltage of battery packs, adjust this to 6.0f V if you only use one batterypack
 
     // https://www.pololu.com/product/3475/specs
-    const float gear_ratio_M1 = 31.25f;     // 31.25:1 gear box
-    const float kn_M1 = 450.0f / 12.0f;     // motor constant in RPM / V
+    const float gear_ratio_M1 = 31.25f;                        // 31.25:1 gear box
+    const float kn_M1 = 450.0f / 12.0f;                        // motor constant in RPM / V
     DCMotor motor_M1(PB_PWM_M1, PB_ENC_A_M1, PB_ENC_B_M1, gear_ratio_M1, kn_M1, voltage_max);
-    motor_M1.setMaxVelocity(0.4f);
+    const float velocity_max_M1 = kn_M1 * voltage_max / 60.0f; // maximum velocity in rotations per second
+    motor_M1.setMaxVelocity(velocity_max_M1 * 0.5f);           // set maximum velocity to 50% of maximum velocity
     
     // https://www.pololu.com/product/3485/specs
     const float gear_ratio_M2 = 488.28125f; // 488.28125:1 gear box
     const float kn_M2 = 28.0f / 12.0f;      // motor constant in RPM / V
     DCMotor motor_M2(PB_PWM_M2, PB_ENC_A_M2, PB_ENC_B_M2, gear_ratio_M2, kn_M2, voltage_max);
-    motor_M2.setMaxVelocity(0.4f);
-
+    // we don't need to set the maximum velocity, since the default value is already set to 100% of the maximum velocity
+    // const float velocity_max_M2 = kn_M2 * voltage_max / 60.0f; // maximum velocity in rotations per second
+    // motor_M2.setMaxVelocity(velocity_max_M2);                  // set maximum velocity to 100% of maximum velocity
+    
     // https://www.pololu.com/product/3477/specs
     const float gear_ratio_M3 = 78.125f;    // 78.125:1 gear box
     const float kn_M3 = 180.0f / 12.0f;     // motor constant in RPM / V
     DCMotor motor_M3(PB_PWM_M3, PB_ENC_A_M3, PB_ENC_B_M3, gear_ratio_M3, kn_M3, voltage_max);
-    motor_M3.setMaxVelocity(0.4f);
+    const float velocity_max_M3 = kn_M3 * voltage_max / 60.0f; // maximum velocity in rotations per second
+    motor_M3.setMaxVelocity(velocity_max_M3 * 0.8f);           // set maximum velocity to 80% of maximum velocity
 
     // Groove Ultrasonic Ranger V2.0
     float us_distance_cm = 0.0f;    // define variable to store measurement
@@ -155,7 +168,7 @@ int main()
 
     // IMU
     ImuData imu_data;
-    IMUThread imu_thread;    
+    IMU imu;    
 
     // start timer
     main_task_timer.start();
@@ -176,7 +189,7 @@ int main()
             us_distance_cm = us_sensor.read();
 
             // read imu data
-            imu_data = imu_thread.getImuData();
+            imu_data = imu.getImuData();
 
             // commanding the servos
             if (servo_D0.isEnabled() && servo_D1.isEnabled() && servo_D2.isEnabled()) {
@@ -217,6 +230,8 @@ int main()
 
                     // enable hardwaredriver dc motors: 0 -> disabled, 1 -> enabled
                     enable_motors = 1;
+                    motor_M1.setRotation(3.0f);
+
                     robot_state = RobotState::FORWARD;
                     break;
 
@@ -227,7 +242,7 @@ int main()
                         // pwm_M1.write(0.75f);          // write output to motor M1
                         // motor_M2.setVelocity(0.5f); // set a desired speed for speed controlled dc motors M2
                         // motor_M3.setRotation(5.0f); // set a desired rotation for position controlled dc motors M3
-                        motor_M1.setRotation(3.0f);
+                        motor_M1.setVelocity(-2.0f);
                         motor_M2.setRotation(3.0f);
                         motor_M3.setRotation(3.0f);
 
@@ -241,7 +256,7 @@ int main()
                         // motor_M2.setVelocity(-0.5f);
                         // motor_M3.setRotation(0.0f);
 
-                        motor_M1.setRotation(0.0f);
+                        motor_M1.setVelocity(3.0f);
                         motor_M2.setRotation(0.0f);
                         motor_M3.setRotation(0.0f);
 
@@ -257,6 +272,7 @@ int main()
                         // pwm_M1.write(0.5f);
                         // motor_M2.setVelocity(0.0f);
                         // motor_M2.setVelocity(0.0f);
+                        motor_M1.setRotation(0.0f);
 
                         // robot_state is not changed, there for the state machine remains in here until the blue button is pressed again
                     }
