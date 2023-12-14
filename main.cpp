@@ -9,35 +9,53 @@
 
 #define NEW_PES_BOARD_VERSION
 #ifdef NEW_PES_BOARD_VERSION
+    #define USER_BUTTON PC_13
+    #define USER_LED PA_5
+
     #define PB_D0 PB_2
     #define PB_D1 PC_8
     #define PB_D2 PC_6
     #define PB_D3 PB_12
+
     #define PB_PWM_M1 PB_13
     #define PB_PWM_M2 PA_9
     #define PB_PWM_M3 PA_10
+
     #define PB_ENC_A_M1 PA_6
     #define PB_ENC_B_M1 PC_7
     #define PB_ENC_A_M2 PB_6
     #define PB_ENC_B_M2 PB_7
     #define PB_ENC_A_M3 PA_0
     #define PB_ENC_B_M3 PA_1
+
+    #define PB_IMU_SDA PC_9
+    #define PB_IMU_SCL PA_8
+
     #define PN_ENABLE_DCMOTORS PB_15
 #else
-    #define PB_D0 ???
-    #define PB_D1 ???
-    #define PB_D2 ???
-    #define PB_D3 ???
+    #define USER_BUTTON PC_13
+    #define USER_LED PA_5
+
+    #define PB_D0 PC_9  // ???
+    #define PB_D1 PC_8  // ???
+    #define PB_D2 PC_6  // ???
+    #define PB_D3 PB_12 // ???
+
     #define PB_PWM_M1 PA_8
     #define PB_PWM_M2 PA_9
-    #define PB_PWM_M3 ???
+    #define PB_PWM_M3 PA_13 // ???
+
     #define PB_ENC_A_M1 PB_6
     #define PB_ENC_B_M1 PB_7
     #define PB_ENC_A_M2 PA_6
     #define PB_ENC_A_M2 PC_7
-    #define PB_ENC_A_M3 ???
-    #define PB_ENC_B_M3 ???
-    #define PN_ENABLE_DCMOTORS PB_2
+    #define PB_ENC_A_M3 PA_1 // ???
+    #define PB_ENC_B_M3 PA_0 // ???
+
+    #define PB_IMU_SDA // ???
+    #define PB_IMU_SCL // ???
+    
+    #define PN_ENABLE_DCMOTORS PB_2 // PB_13 ???
 #endif
 
 bool do_execute_main_task = false; // this variable will be toggled via the user button (blue button) and
@@ -46,10 +64,10 @@ bool do_reset_all_once = false;    // this variable is used to reset certain var
                                    // shows how you can run a code segment only once
 
 // objects for user button (blue button) handling on nucleo board
-DebounceIn user_button(PC_13);  // create InterruptIn interface object to evaluate user button falling and
-                                // rising edge (no blocking code in ISR)
-void user_button_pressed_fcn(); // custom functions which get executed when user
-                                // button gets pressed, definition below
+DebounceIn user_button(USER_BUTTON);  // create InterruptIn interface object to evaluate user button falling and
+                                      // rising edge (no blocking code in ISR)
+void user_button_pressed_fcn();       // custom functions which get executed when user
+                                      // button gets pressed, definition below
 
 // main runs as an own thread
 int main()
@@ -73,7 +91,7 @@ int main()
 
     // led on nucleo board
     // create DigitalOut object to command user led
-    DigitalOut user_led(LED1);
+    DigitalOut user_led(USER_LED);
 
     // additional led's
     // create DigitalOut object to command extra led (you need to add an aditional
@@ -168,7 +186,7 @@ int main()
 
     // IMU
     ImuData imu_data;
-    IMU imu;    
+    IMU imu(PB_IMU_SDA, PB_IMU_SCL);    
 
     // start timer
     main_task_timer.start();
@@ -257,7 +275,7 @@ int main()
                         // motor_M3.setRotation(0.0f);
 
                         motor_M1.setVelocity(3.0f);
-                        motor_M2.setRotation(0.0f);
+                        motor_M2.setVelocity(0.2f);
                         motor_M3.setRotation(0.0f);
 
                         robot_state = RobotState::SLEEP;
@@ -273,6 +291,8 @@ int main()
                         // motor_M2.setVelocity(0.0f);
                         // motor_M2.setVelocity(0.0f);
                         motor_M1.setRotation(0.0f);
+                        motor_M3.setRotation(0.0f);
+                        motor_M2.setRotation(0.0f);
 
                         // robot_state is not changed, there for the state machine remains in here until the blue button is pressed again
                     }
