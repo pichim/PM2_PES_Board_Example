@@ -58,7 +58,7 @@
     #define PN_ENABLE_DCMOTORS PB_2 // PB_13 ???
 #endif
 
-bool do_execute_main_task = false; // this variable will be toggled via the user button (blue button) and
+bool do_execute_main_task = true; // this variable will be toggled via the user button (blue button) and
                                    // decides whether to execute the main task or not
 bool do_reset_all_once = false;    // this variable is used to reset certain variables and objects and
                                    // shows how you can run a code segment only once
@@ -158,27 +158,29 @@ int main()
 
     const float voltage_max = 12.0f;     // maximum voltage of battery packs, adjust this to 6.0f V if you only use one batterypack
 
-    // https://www.pololu.com/product/3475/specs
-    const float gear_ratio_M1 = 31.25f;                        // 31.25:1 gear box
-    const float kn_M1 = 450.0f / 12.0f;                        // motor constant in RPM / V
-    DCMotor motor_M1(PB_PWM_M1, PB_ENC_A_M1, PB_ENC_B_M1, gear_ratio_M1, kn_M1, voltage_max);
-    const float velocity_max_M1 = kn_M1 * voltage_max / 60.0f; // maximum velocity in rotations per second
-    motor_M1.setMaxVelocity(velocity_max_M1 * 0.5f);           // set maximum velocity to 50% of maximum velocity
+    // // https://www.pololu.com/product/3475/specs
+    // const float gear_ratio_M1 = 31.25f;                        // 31.25:1 gear box
+    // const float kn_M1 = 450.0f / 12.0f;                        // motor constant in RPM / V
+    // DCMotor motor_M1(PB_PWM_M1, PB_ENC_A_M1, PB_ENC_B_M1, gear_ratio_M1, kn_M1, voltage_max);
+    // // const float velocity_max_M1 = kn_M1 * voltage_max / 60.0f; // maximum velocity in rotations per second
+    // // motor_M1.setMaxVelocity(velocity_max_M1 * 0.5f);           // set maximum velocity to 50% of maximum velocity
+    // wait_us(1 * 1000 * 1000);
+    // // motor_M1.printGPAInfo();
     
-    // https://www.pololu.com/product/3485/specs
-    const float gear_ratio_M2 = 488.28125f; // 488.28125:1 gear box
-    const float kn_M2 = 28.0f / 12.0f;      // motor constant in RPM / V
-    DCMotor motor_M2(PB_PWM_M2, PB_ENC_A_M2, PB_ENC_B_M2, gear_ratio_M2, kn_M2, voltage_max);
-    // we don't need to set the maximum velocity, since the default value is already set to 100% of the maximum velocity
-    // const float velocity_max_M2 = kn_M2 * voltage_max / 60.0f; // maximum velocity in rotations per second
-    // motor_M2.setMaxVelocity(velocity_max_M2);                  // set maximum velocity to 100% of maximum velocity
+    // // https://www.pololu.com/product/3485/specs
+    // const float gear_ratio_M2 = 488.28125f;                    // 488.28125:1 gear box
+    // const float kn_M2 = 28.0f / 12.0f;                         // motor constant in RPM / V
+    // DCMotor motor_M2(PB_PWM_M2, PB_ENC_A_M2, PB_ENC_B_M2, gear_ratio_M2, kn_M2, voltage_max);
+    // // we don't need to set the maximum velocity, since the default value is already set to 100% of the maximum velocity
+    // // const float velocity_max_M2 = kn_M2 * voltage_max / 60.0f; // maximum velocity in rotations per second
+    // // motor_M2.setMaxVelocity(velocity_max_M2);               // set maximum velocity to 100% of maximum velocity
     
     // https://www.pololu.com/product/3477/specs
-    const float gear_ratio_M3 = 78.125f;    // 78.125:1 gear box
-    const float kn_M3 = 180.0f / 12.0f;     // motor constant in RPM / V
+    const float gear_ratio_M3 = 78.125f;                       // 78.125:1 gear box
+    const float kn_M3 = 180.0f / 12.0f;                        // motor constant in RPM / V
     DCMotor motor_M3(PB_PWM_M3, PB_ENC_A_M3, PB_ENC_B_M3, gear_ratio_M3, kn_M3, voltage_max);
     const float velocity_max_M3 = kn_M3 * voltage_max / 60.0f; // maximum velocity in rotations per second
-    motor_M3.setMaxVelocity(velocity_max_M3 * 0.8f);           // set maximum velocity to 80% of maximum velocity
+    // motor_M3.setMaxVelocity(velocity_max_M3 * 0.8f);           // set maximum velocity to 80% of maximum velocity
 
     // Groove Ultrasonic Ranger V2.0
     float us_distance_cm = 0.0f;    // define variable to store measurement
@@ -248,7 +250,7 @@ int main()
 
                     // enable hardwaredriver dc motors: 0 -> disabled, 1 -> enabled
                     enable_motors = 1;
-                    motor_M1.setRotation(3.0f);
+                    motor_M3.setVelocity(1.5000f);
 
                     robot_state = RobotState::FORWARD;
                     break;
@@ -257,45 +259,45 @@ int main()
                     if (mechanical_button.read()) {
                         led2 = 1;
 
-                        // pwm_M1.write(0.75f);          // write output to motor M1
-                        // motor_M2.setVelocity(0.5f); // set a desired speed for speed controlled dc motors M2
-                        // motor_M3.setRotation(5.0f); // set a desired rotation for position controlled dc motors M3
-                        motor_M1.setVelocity(-2.0f);
-                        motor_M2.setRotation(3.0f);
-                        motor_M3.setRotation(3.0f);
+                        // // pwm_M1.write(0.75f);          // write output to motor M1
+                        // // motor_M2.setVelocity(0.5f); // set a desired speed for speed controlled dc motors M2
+                        // // motor_M3.setRotation(5.0f); // set a desired rotation for position controlled dc motors M3
+                        // motor_M1.setVelocity(-2.0f);
+                        // motor_M2.setRotation(3.0f);
+                        // motor_M3.setRotation(3.0f);
 
                         robot_state = RobotState::BACKWARD;
                     }
                     break;
 
                 case RobotState::BACKWARD:
-                    if (motor_M3.getRotation() >= 2.95f) {
-                        // pwm_M1.write(0.25f);
-                        // motor_M2.setVelocity(-0.5f);
-                        // motor_M3.setRotation(0.0f);
+                    // if (motor_M3.getRotation() >= 2.95f) {
+                    //     // pwm_M1.write(0.25f);
+                    //     // motor_M2.setVelocity(-0.5f);
+                    //     // motor_M3.setRotation(0.0f);
 
-                        motor_M1.setVelocity(3.0f);
-                        motor_M2.setVelocity(0.2f);
-                        motor_M3.setRotation(0.0f);
+                    //     motor_M1.setVelocity(3.0f);
+                    //     motor_M2.setVelocity(0.2f);
+                    //     motor_M3.setRotation(0.0f);
 
-                        robot_state = RobotState::SLEEP;
-                    }
+                    //     robot_state = RobotState::SLEEP;
+                    // }
                     break;
 
                 case RobotState::SLEEP:
 
-                    if (motor_M3.getRotation() <= 0.05f) {
-                        // enable_motors = 0;
+                    // if (motor_M3.getRotation() <= 0.05f) {
+                    //     // enable_motors = 0;
 
-                        // pwm_M1.write(0.5f);
-                        // motor_M2.setVelocity(0.0f);
-                        // motor_M2.setVelocity(0.0f);
-                        motor_M1.setRotation(0.0f);
-                        motor_M3.setRotation(0.0f);
-                        motor_M2.setRotation(0.0f);
+                    //     // pwm_M1.write(0.5f);
+                    //     // motor_M2.setVelocity(0.0f);
+                    //     // motor_M2.setVelocity(0.0f);
+                    //     motor_M1.setRotation(0.0f);
+                    //     motor_M3.setRotation(0.0f);
+                    //     motor_M2.setRotation(0.0f);
 
-                        // robot_state is not changed, there for the state machine remains in here until the blue button is pressed again
-                    }
+                    //     // robot_state is not changed, there for the state machine remains in here until the blue button is pressed again
+                    // }
 
                 default:
                     break; // do nothing
@@ -311,12 +313,12 @@ int main()
 
                 imu_data.initialise();
 
-                // pwm_M1.write(0.5f);
+                // // pwm_M1.write(0.5f);
+                // // motor_M2.setVelocity(0.0f);
+                // // motor_M3.setRotation(0.0f);
+                // motor_M1.setVelocity(0.0f);
                 // motor_M2.setVelocity(0.0f);
                 // motor_M3.setRotation(0.0f);
-                motor_M1.setVelocity(0.0f);
-                motor_M2.setVelocity(0.0f);
-                motor_M3.setRotation(0.0f);
 
                 servo_angle = 0.0f;
                 // servo_D0.setNormalisedPulseWidth(servo_angle);
@@ -351,7 +353,7 @@ int main()
         // printf("%f\n", servo_angle);
 
         int time_ms = std::chrono::duration_cast<std::chrono::milliseconds>(timer.elapsed_time()).count();
-        DCMotor* DCMotor_ptr = &motor_M2;
+        DCMotor* DCMotor_ptr = &motor_M3;
         printf("%d, %d, %f, %f, %f, %f, %f, %f, %f, %f\n",
                time_ms,
                robot_state,
