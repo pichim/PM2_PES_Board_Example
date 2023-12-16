@@ -158,14 +158,12 @@ int main()
 
     const float voltage_max = 12.0f;     // maximum voltage of battery packs, adjust this to 6.0f V if you only use one batterypack
 
-    // // https://www.pololu.com/product/3475/specs
-    // const float gear_ratio_M1 = 31.25f;                        // 31.25:1 gear box
-    // const float kn_M1 = 450.0f / 12.0f;                        // motor constant in RPM / V
-    // DCMotor motor_M1(PB_PWM_M1, PB_ENC_A_M1, PB_ENC_B_M1, gear_ratio_M1, kn_M1, voltage_max);
-    // // const float velocity_max_M1 = kn_M1 * voltage_max / 60.0f; // maximum velocity in rotations per second
-    // // motor_M1.setMaxVelocity(velocity_max_M1 * 0.5f);           // set maximum velocity to 50% of maximum velocity
-    // wait_us(1 * 1000 * 1000);
-    // // motor_M1.printGPAInfo();
+    // https://www.pololu.com/product/3475/specs
+    const float gear_ratio_M1 = 31.25f;                        // 31.25:1 gear box
+    const float kn_M1 = 450.0f / 12.0f;                        // motor constant in RPM / V
+    DCMotor motor_M1(PB_PWM_M1, PB_ENC_A_M1, PB_ENC_B_M1, gear_ratio_M1, kn_M1, voltage_max);
+    // const float velocity_max_M1 = kn_M1 * voltage_max / 60.0f; // maximum velocity in rotations per second
+    // motor_M1.setMaxVelocity(velocity_max_M1 * 0.5f);           // set maximum velocity to 50% of maximum velocity
     
     // // https://www.pololu.com/product/3485/specs
     // const float gear_ratio_M2 = 488.28125f;                    // 488.28125:1 gear box
@@ -176,10 +174,10 @@ int main()
     // // motor_M2.setMaxVelocity(velocity_max_M2);               // set maximum velocity to 100% of maximum velocity
     
     // https://www.pololu.com/product/3477/specs
-    const float gear_ratio_M3 = 78.125f;                       // 78.125:1 gear box
-    const float kn_M3 = 180.0f / 12.0f;                        // motor constant in RPM / V
-    DCMotor motor_M3(PB_PWM_M3, PB_ENC_A_M3, PB_ENC_B_M3, gear_ratio_M3, kn_M3, voltage_max);
-    const float velocity_max_M3 = kn_M3 * voltage_max / 60.0f; // maximum velocity in rotations per second
+    // const float gear_ratio_M3 = 78.125f;                       // 78.125:1 gear box
+    // const float kn_M3 = 180.0f / 12.0f;                        // motor constant in RPM / V
+    // DCMotor motor_M3(PB_PWM_M3, PB_ENC_A_M3, PB_ENC_B_M3, gear_ratio_M3, kn_M3, voltage_max);
+    // const float velocity_max_M3 = kn_M3 * voltage_max / 60.0f; // maximum velocity in rotations per second
     // motor_M3.setMaxVelocity(velocity_max_M3 * 0.8f);           // set maximum velocity to 80% of maximum velocity
 
     // Groove Ultrasonic Ranger V2.0
@@ -250,7 +248,7 @@ int main()
 
                     // enable hardwaredriver dc motors: 0 -> disabled, 1 -> enabled
                     enable_motors = 1;
-                    motor_M3.setVelocity(1.5000f);
+                    motor_M1.setVelocity(0.8 * 3.0f);
 
                     robot_state = RobotState::FORWARD;
                     break;
@@ -353,18 +351,18 @@ int main()
         // printf("%f\n", servo_angle);
 
         int time_ms = std::chrono::duration_cast<std::chrono::milliseconds>(timer.elapsed_time()).count();
-        DCMotor* DCMotor_ptr = &motor_M3;
-        printf("%d, %d, %f, %f, %f, %f, %f, %f, %f, %f\n",
-               time_ms,
-               robot_state,
-               DCMotor_ptr->getRotationTarget(),
-               DCMotor_ptr->getRotationSetpoint(),
-               DCMotor_ptr->getRotation(),
-               DCMotor_ptr->getVelocityTarget(),
-               DCMotor_ptr->getVelocitySetpoint(),
-               DCMotor_ptr->getVelocity(),
-               DCMotor_ptr->getVoltage(),
-               DCMotor_ptr->getPWM());
+        // DCMotor* DCMotor_ptr = &motor_M3;
+        // printf("%d, %d, %f, %f, %f, %f, %f, %f, %f, %f\n",
+        //        time_ms,
+        //        robot_state,
+        //        DCMotor_ptr->getRotationTarget(),
+        //        DCMotor_ptr->getRotationSetpoint(),
+        //        DCMotor_ptr->getRotation(),
+        //        DCMotor_ptr->getVelocityTarget(),
+        //        DCMotor_ptr->getVelocitySetpoint(),
+        //        DCMotor_ptr->getVelocity(),
+        //        DCMotor_ptr->getVoltage(),
+        //        DCMotor_ptr->getPWM());
 
         // printf("%f\n", us_distance_cm);
 
