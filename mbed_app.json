@@ -8,7 +8,7 @@
     },
     "config": {
         "main-stack-size": {
-            "value": 8192
+            "value": 16384
         }
     }
 }
