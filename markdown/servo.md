@@ -1,4 +1,7 @@
 # Analog Servos
+A servo motor is defined as an electric motor that allows for precise control of angular or linear position, speed, and torque. It consists of a suitable motor coupled to a sensor for position feedback and a controller that regulates the motor’s movement according to a desired setpoint. Analog Servos operate based on voltage signals that come through the pulse width modulation (PWM).
+<center><img src="image.PNG" alt="servo example" width="250"/></center>
+<center> <i>Example of analog servo</i> </center>
 
 ## Technical Specifications
 
@@ -12,8 +15,6 @@
 |Dimensions       | 40.4 x 19.8 x 36 mm         | 41.0 x 20.0 x 38.0 mm
 |Gear             | Plastic                     | Metall
 
-* Using the servos outside der min and max value cal lead to audible stottering of the device. You can either
-disable it or better: calibrate the device properly.
 
 ## Links
 
@@ -21,32 +22,33 @@ disable it or better: calibrate the device properly.
 
 [Reely S-0090][2]
 
-<!-- link list, last updated 14.11.2023 -->
+<!-- link list, last updated 07.12.2023 -->
 [1]: https://www.futaba.ch/?cat=21&tit=Servo%20SBus
 [2]: https://www.conrad.ch/de/p/reely-standard-servo-cys-s0090-analog-servo-getriebe-material-metall-stecksystem-jr-2203091.html?refresh=true#productHighlights
-[3]: <https://theorycircuit.com/servo-motor-driver-circuit/>
+[3]: https://theorycircuit.com/servo-motor-driver-circuit/
+[4]: https://os.mbed.com/platforms/ST-Nucleo-F446RE/
 
 ## Servo driver
 Servo driver is made to control the analog servos by setting the position from range 0 to 1. It also has the ability to control the speed of movement so that so-called "smooth movements" can be made.
 ### Fisrt steps
 First step to use the servo driver is to create in the main file the servo object and define the pins that will be assigned to the object. Analog servos are assigned to PES board pins D0 to D3.
 ```
-// PES-Board Pin Names 
-#define PES_BOARD_D0 PB_2
-#define PES_BOARD_D1 PC_8
-#define PES_BOARD_D2 PC_6
-#define PES_BOARD_D3 PB_12
+// PES-Board Pin Names
+#define PB_D0 PB_2
+#define PB_D1 PC_8
+#define PB_D2 PC_6
+#define PB_D3 PB_12
 ```
 <center><img src="board_pins.png" alt="board_pins" width="600" /></center>
 <center> <i>PES board pin map</i> </center>
 
 
-If the servo  that you want to work on is connected to pin D0, enter **PES_BOARD_D0** as the argument of the created object.
+If the servo  that you want to work on is connected to pin D0, enter **PB_D0** as the argument of the created object.
 ```
 // create Servo objects to command servos
-Servo servo_D0(PES_BOARD_D0);
-Servo servo_D1(PES_BOARD_D1);
-Servo servo_D2(PES_BOARD_D2);
+Servo servo_D0(PB_D0);
+Servo servo_D1(PB_D1);
+Servo servo_D2(PB_D2);
 ```
 In order to properly control the servo, the basic step that should be performed is its calibration.
 
@@ -131,20 +133,118 @@ The following function is used for this:
 servo_D0.setMotionProfileAcceleration(1.0f);
 ```
 Whose change in argument causes a change in the accelerations that occur during movement. If you do not declare an argument [leave the bracket () empty], this function will take a default value that is a very large number, making the movement the fastest possible. If, on the other hand, you want smooth motion, you can enter any argument greater than 0, keeping in mind that the lower the value of the paramter, the smaller the value of acceleration.
-<center><img src="ang_vel_pulsewidth.PNG" alt="drawing" width="600"/></center>
-<center> <i>Effect of change in acceleration profile value on servo movement</i> </center>
+|<center>No acceleration set</center>|<center>Acceleration set to 1</center>|
+|-|-|
+|<center><img src="no_set_acc.PNG" alt="no acc" width="550"/></center>|<center><img src="set_acc.PNG" alt="set acc" width="550"/></center>|
+|<center><i>Figures without set acceleration</i></center> |<center><i>Figures with set acceleration</i></center> |
+|In the graph of the servo movement without acceleration settings, you can see that the movement is made instantaneously, as this is the intention of the operation. The value of velocity and acceleration does not change, because in theory the movement is supposed to be infinitely fast (of course, such is not the case in the real world, hardware limitations, etc.), and the position changes instantly from initial to final.|In the case of a movement in which acceleration has been set, the movement is smooth and the acceleration values are limited by our function. As you can see, the velocity in the initial stage increases with a constant acceleration and decreases also with the same acceleration value of the opposite sign. This causes the movement to be smooth, which can be seen in the time course of the servo position graph.|
 
 ### Practical tips
 * The plug and pin layout allows you to connect the servo in two ways, one of them is faulty and causes the servo to fail. Pay attention to the GND pin and GND servo cable.
-* ffrefre
+* Using the servos outside of the min and max value can lead to audible stottering of the device. You can either disable it or better: calibrate the device properly.
 
+## Task to do
+Before performing the exercise, read the instructions carefully and familiarize yourself with the knitting of each function. Calibrate the servo so that you can operate on the *servo_angle* variable in range 0 to 1.
+### Purpose of exercise
+The goal is to calibrate the servo with an angular range measurement and then write an appropriate function that will allow the servo to move by a certain value expressed in degrees. To perform the task, it will first be necessary to develop a system that will allow calibration, and then modify the code that will allow the measurement. The next step will be to determine the function describing the dependence of the pulse width on the angular position (Matlab), which will allow us to modify the argument of the function so that we can give the value of the variable *servo_angle* in degrees. List of things needed to do the exercise can be found below:
 
-## NOTES
+>Hardware:
+> - PES board with NUCLEO-F446RE board
+> - Mini USB cable
+> - Servo Futaba S3001/RELY S-009
+> - Additional wires to connect servo to board
+> - Servo arm
+> - Sheet of paper
+> - Protractor https://www.printables.com/model/8155-printable-protractor?fbclid=IwAR1hko1QIWihh7MkhOoI2Li8rvKICXtOSALfi9kLE6yoYt198Aq4TX69ar0
+> - Mechanical button
+>
+><center><img src="servo_set.png" alt="Servo set" width="350" /></center>
+><center> <i>Hardware used in exercise</i> </center>
+>
+>Software:
+> - PM2_Pes_board_example
+> - Matlab file: pulse_to_angle_eval.m 
 
-* Practical problems that might happend
+### Conduct of the exercise:
+- First of all, you need to prepare the stand by connecting the servo to the PES Board to the appropriate input (D0 - D3). You should also plug the mechanical button into pin **PC_5** (map of pins can be found [HERE][4])
+- Prepare a sheet of paper with angles from 0 to 270 degrees drawn on it, then make a hole in the center that will allow you to put it on the servo. Next, put the servo arm on the spline and move the made measurement paper so that the servo arm coincides with the 0-degree indication.
+<center><img src="servo_task.png" alt="Servo task" width="350" /></center>
+<center> <i>Performing the exercise</i> </center>
 
-* Kalibracja serwa z pomiarami kątowymi
-* While doing this proces we can check the the minimal angle in degrees but for that we would need special tool to tell us what is the value in degress in every step. 
+- The next step after preparing the hardware is to move on to the software. In this step, we need to write a routine that allows us to make such a movement so that we have enough time to record the measurement. Currently, the routine assumes a 0.1 pulse movement every second. The time to register should be longer. (Hints: you should use **mechanical_button.read()**). Put the routine in the code below.
+```
+    if (servo_angle < 1.0f & servo_counter % loops_per_seconds == 0 & servo_counter != 0)
+    {
+        //servo_angle += 0.0025f;
+        servo_angle += 0.1f;
+    }
+    servo_counter++;
+```
+<details Closed>
+<summary>Answear</summary>
+<br>
+
+```
+    if (servo_angle < 1.0f & servo_counter % loops_per_seconds == 0 & servo_counter != 0  & mechanical_button.read())
+    {
+        //servo_angle += 0.0025f;
+        servo_angle += 0.1f;
+    }
+    servo_counter++;
+```
+</details>
+
+- Now you can run the program and write down the pulse width displayed on the screen, and the corresponding angle. 
+- Then these data should be entered into the Matlab program ([file](./pulse_to_angle_eval.m)), running the script will present us with a graphical representation of the data with the best fit function, is it linear? **(I RAN TESTS IT IS LINEAR, INFO FOR ME)**
+- Now you need to write modify argument of the function **setNormalisedPulseWidth** so that in the *servo_angle* variable you can declare the angle given in units of angular degrees. (HINT: note that by default the full range is between 0 and 1, our range is between 0 and MAX_ANGLE) 
+```
+servo_D0.setNormalisedPulseWidth(YOUR EQUATION);
+```
+<details Closed>
+<summary>Answear</summary>
+<br>
+
+```
+int MAX_ANGLE = "MEASURED ANGLE BY YOU";
+servo_D0.setNormalisedPulseWidth(servo_angle/MAX_ANGLE);
+```
+</details>
+
+- The ultimate goal is to run the program and move the servo arm to a position of 45 degrees. In the end the code should look like this:
+```
+if (servo_D0.isEnabled() && servo_D1.isEnabled() && servo_D2.isEnabled())
+{
+    servo_D0.setNormalisedPulseWidth(YOUR EQUATION);
+    servo_D1.setNormalisedPulseWidth(YOUR EQUATION);
+    servo_D2.setNormalisedPulseWidth(YOUR EQUATION);
+                
+    if (servo_angle < 1.0f & servo_counter % loops_per_seconds == 0 & servo_counter != 0)
+    {
+        servo_angle = 45;
+    }
+    servo_counter++;
+}
+```
+<details Closed>
+<summary>Answear</summary>
+<br>
+
+```
+if (servo_D0.isEnabled() && servo_D1.isEnabled() && servo_D2.isEnabled())
+{
+    int MAX_ANGLE = "MEASURED ANGLE BY YOU";
+    servo_D0.setNormalisedPulseWidth(servo_angle/MAX_ANGLE);
+    servo_D1.setNormalisedPulseWidth(servo_angle/MAX_ANGLE);
+    servo_D2.setNormalisedPulseWidth(servo_angle/MAX_ANGLE);
+                
+    if (servo_angle < 1.0f & servo_counter % loops_per_seconds == 0 & servo_counter != 0)
+    {
+        servo_angle = 45;
+    }
+    servo_counter++;
+}
+```
+</details>
 
 
 
