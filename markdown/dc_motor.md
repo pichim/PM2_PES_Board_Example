@@ -1,7 +1,7 @@
 # DC Motor
 A direct current (DC) motor is a type of electric machine that converts electrical energy into mechanical energy. DC motors take electrical power through direct current, and convert this energy into mechanical rotation. DC motors use magnetic fields that occur from the electrical currents generated, which powers the movement of a rotor fixed within the output shaft. The output torque and speed depends upon both the electrical input and the design of the motor.
 
-<center><img src="dc_motor.PNG" alt="dc motor" width="250"/></center>
+<center><img src="dc_motor.png" alt="dc motor" width="250"/></center>
 <center> <i>Example of dc motor with encoder</i> </center>
 
 ## Technical Specifications

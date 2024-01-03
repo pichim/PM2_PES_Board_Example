@@ -92,7 +92,7 @@ int main()
 
     // while loop gets executed every main_task_period_ms milliseconds (simple
     // aproach to repeatedly execute main)
-    const int main_task_period_ms = 20; // define main task period time in ms e.g. 50 ms
+    const int main_task_period_ms = 10; // define main task period time in ms e.g. 50 ms
                                         // -> main task runs 20 times per second
     Timer main_task_timer;              // create Timer object which we use to run the main task every main_task_period_ms
     Timer timer;
@@ -170,22 +170,28 @@ int main()
     const float gear_ratio_M1 = 31.25f;                        // 31.25:1 gear box
     const float kn_M1 = 450.0f / 12.0f;                        // motor constant in RPM / V
     DCMotor motor_M1(PB_PWM_M1, PB_ENC_A_M1, PB_ENC_B_M1, gear_ratio_M1, kn_M1, voltage_max);
-    const float velocity_max_M1 = kn_M1 * voltage_max / 60.0f; // maximum velocity in rotations per second
-    motor_M1.setMaxVelocity(velocity_max_M1 * 0.5f);           // set maximum velocity to 80% of maximum velocity
+    motor_M1.setMaxVelocity(motor_M1.getMaxVelocity() * 0.5f);
+    motor_M1.setMaxAcceleration(motor_M1.getMaxAcceleration() * 0.5f);
+    // const float velocity_max_M1 = kn_M1 / 60.0f * voltage_max; // maximum velocity in rotations per second
+    // motor_M1.setMaxVelocity(velocity_max_M1 * 0.5f);           // set maximum velocity to 50% of maximum velocity
     
     // https://www.pololu.com/product/3485/specs
     const float gear_ratio_M2 = 488.28125f;                    // 488.28125:1 gear box
     const float kn_M2 = 28.0f / 12.0f;                         // motor constant in RPM / V
     DCMotor motor_M2(PB_PWM_M2, PB_ENC_A_M2, PB_ENC_B_M2, gear_ratio_M2, kn_M2, voltage_max);
-    const float velocity_max_M2 = kn_M2 * voltage_max / 60.0f; // maximum velocity in rotations per second
-    motor_M2.setMaxVelocity(velocity_max_M2 * 0.5f);           // set maximum velocity to 80% of maximum velocity
+    motor_M2.setMaxVelocity(motor_M2.getMaxVelocity() * 0.5f);
+    motor_M2.setMaxAcceleration(motor_M2.getMaxAcceleration() * 0.5f);
+    // const float velocity_max_M2 = kn_M2 / 60.0f * voltage_max; // maximum velocity in rotations per second
+    // motor_M2.setMaxVelocity(velocity_max_M2 * 0.5f);           // set maximum velocity to 50% of maximum velocity
 
     // https://www.pololu.com/product/3477/specs
     const float gear_ratio_M3 = 78.125f;                       // 78.125:1 gear box
     const float kn_M3 = 180.0f / 12.0f;                        // motor constant in RPM / V
     DCMotor motor_M3(PB_PWM_M3, PB_ENC_A_M3, PB_ENC_B_M3, gear_ratio_M3, kn_M3, voltage_max);
-    const float velocity_max_M3 = kn_M3 * voltage_max / 60.0f; // maximum velocity in rotations per second
-    motor_M3.setMaxVelocity(velocity_max_M3 * 0.5f);           // set maximum velocity to 80% of maximum velocity
+    motor_M3.setMaxVelocity(motor_M3.getMaxVelocity() * 0.5f);
+    motor_M3.setMaxAcceleration(motor_M3.getMaxAcceleration() * 0.5f);
+    // const float velocity_max_M3 = kn_M3 / 60.0f * voltage_max; // maximum velocity in rotations per second
+    // motor_M3.setMaxVelocity(velocity_max_M3 * 0.5f);           // set maximum velocity to 50% of maximum velocity
 
     const float motor_setpoint_M1 = 300.0f / gear_ratio_M1;
     const float motor_setpoint_M2 = 300.0f / gear_ratio_M2;
@@ -359,7 +365,7 @@ int main()
         // printf("%f\n", servo_angle);
 
         int time_ms = std::chrono::duration_cast<std::chrono::milliseconds>(timer.elapsed_time()).count();
-        DCMotor* DCMotor_ptr = &motor_M1;
+        DCMotor* DCMotor_ptr = &motor_M3;
         printf("%d, %d, %f, %f, %f, %f, %f, %f, %f, %f\n",
                time_ms,
                robot_state,
@@ -372,7 +378,10 @@ int main()
                DCMotor_ptr->getVoltage(),
                DCMotor_ptr->getPWM());
 
-        // printf("%f\n", us_distance_cm);
+        // int time_ms = std::chrono::duration_cast<std::chrono::milliseconds>(timer.elapsed_time()).count();
+        // printf("%d, %f\n",
+        //         time_ms,
+        //         us_distance_cm);
 
         // float time_ms = std::chrono::duration_cast<std::chrono::microseconds>(timer.elapsed_time()).count() * 1.0e-3f;
         // printf("%.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f, ", imu_data.gyro(0), imu_data.gyro(1), imu_data.gyro(2),
