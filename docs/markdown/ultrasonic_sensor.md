@@ -3,7 +3,7 @@
 An ultrasonic sensor (range fidner / detector) is a type of sensor designed to measure the relative distance between the device and an object that reflects sound waves. This sensor operates by emitting ultrasonic pulses and measuring the time it takes for these pulses to bounce back as echoes. By knowing the speed of sound in air, it is possible to calculate the relative distance to the object based on the time elapsed between the emission of the ultrasonic pulse and the reception of its echo.
 
 <center>
-    <img src="../images/grove_ultrasonic_ranger_v2.png" alt="Grove-Ultrasonic Ranger V2.0" width="400"/>
+    <img src="../images/grove_ultrasonic_ranger_v2.png" alt="Grove-Ultrasonic Ranger V2.0" width="500"/>
 </center>
 <center>
     <i>Grove-Ultrasonic Ranger V2.0</i>
@@ -68,7 +68,7 @@ You can use the following pins:
 #define PB_D3 PB_12
 ```
 <center>
-    <img src="../images/pes_board_peripherals.png" alt="board_pins" width="800" />
+    <img src="../images/pes_board_peripherals.png" alt="board_pins" width="1000" />
 </center>
 <center>
     <i>PES board Pin Map</i>

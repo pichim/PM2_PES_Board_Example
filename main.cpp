@@ -4,7 +4,6 @@
  * ToDo:
  * - remove precalc and storage from GPA
  * - check if additional size of main is after still necessary
- * - adapt logik from https://www.geeksforgeeks.org/snprintf-c-library/ to GPA
  * - implement rotation logik for different mounted board in IMU
 */
 
