@@ -11,7 +11,7 @@ An ultrasonic sensor (range fidner / detector) is a type of sensor designed to m
 
 ## Specifications
 
-|                     |                 |
+| Parameter           | Value           |
 | ------------------- | --------------- |
 | Operating voltage   | 3.2 ~ 5.2 V     |
 | Measuring range     | 3 - ~200 cm     |
