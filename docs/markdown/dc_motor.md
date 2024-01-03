@@ -1,7 +1,7 @@
 # DC Motor
 A direct current (DC) motor is a type of electric machine that converts electrical energy into mechanical energy. DC motors take electrical power through direct current, and convert this energy into mechanical rotation. DC motors use magnetic fields that occur from the electrical currents generated, which powers the movement of a rotor fixed within the output shaft. The output torque and speed depends upon both the electrical input and the design of the motor.
 
-<center><img src="dc_motor.png" alt="dc motor" width="250"/></center>
+<center><img src="../images/dc_motor.png" alt="dc motor" width="250"/></center>
 <center> <i>Example of dc motor with encoder</i> </center>
 
 ## Technical Specifications
@@ -64,7 +64,7 @@ Defining encoder pins:
 #define PB_M3_ENC_A PA_0
 #define PB_M3_ENC_B PA_1
 ```
-<center><img src="board_pins.png" alt="board_pins" width="600" /></center>
+<center><img src="../images/board_pins.png" alt="board_pins" width="600" /></center>
 <center> <i>PES board pin map</i> </center>
 
 When declaring a DC motor object, it is necessary to specify three arguments related to the pins to which the motor is connected. This is the PWM pin, and the A and B pins belonging to the encoder. The following will show the code used to declare motor:

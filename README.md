@@ -1,3 +1,9 @@
+# Directory
+dirHome = getwd()
+
+# Image directory
+dirImg = paste(dirHome, '/screenshots/image.jpeg', sep = "")
+
 # PM2_PES_Board
 
 Michael Peter\
@@ -55,18 +61,21 @@ https://os.mbed.com/platforms/ST-Nucleo-F446RE/
 
 #### Pheripherals
 
-![pes_board_peripherals.PNG](markdown/pes_board_peripherals.PNG "PES Board Pheripherals")
+![pes_board_peripherals.PNG](docs/images/pes_board_peripherals.PNG "PES Board Pheripherals")
 <!-- <img src="markdown/pes_board_peripherals.PNG" alt="PES Board Pheripherals" style="width:600px;"/> -->
 
-PDF: [pes_board_peripherals.pdf](./datasheet/pes_board_peripherals.pdf)
+PDF: [pes_board_peripherals.pdf](docs/datasheets/pes_board_peripherals.pdf)
 
 #### Pin-Mapping
 
-PDF: [pes_board_pin_mapping.pdf](./datasheet/pes_board_pin_mapping.pdf)
+PDF: [pes_board_pin_mapping.pdf](docs/datasheets/pes_board_pin_mapping.pdf)
 
 
 ## Hard- and Software Tutorials
 
-- [<font size="4"> Servo </font>](markdown/servo.md)
+- [<font size="3"> IR Sensor </font>](docs/markdown/ir_sensor.md)
+- [<font size="3"> Ultrasonic Sensor </font>](docs/markdown/ultrasonic_sensor.md)
+- [<font size="3"> Servo </font>](docs/markdown/servo.md)
+- [<font size="3"> DC Motor </font>](docs/markdown/dc_motor.md)
 
 

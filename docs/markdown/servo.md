@@ -1,6 +1,6 @@
 # Analog Servos
 A servo motor is defined as an electric motor that allows for precise control of angular or linear position, speed, and torque. It consists of a suitable motor coupled to a sensor for position feedback and a controller that regulates the motor’s movement according to a desired setpoint. Analog Servos operate based on voltage signals that come through the pulse width modulation (PWM).
-<center><img src="image.PNG" alt="servo example" width="250"/></center>
+<center><img src="../images/servo_image.png" alt="servo example" width="250"/></center>
 <center> <i>Example of analog servo</i> </center>
 
 ## Technical Specifications
@@ -39,7 +39,7 @@ First step to use the servo driver is to create in the main file the servo objec
 #define PB_D2 PC_6
 #define PB_D3 PB_12
 ```
-<center><img src="board_pins.png" alt="board_pins" width="600" /></center>
+<center><img src="../images/board_pins.png" alt="board_pins" width="600" /></center>
 <center> <i>PES board pin map</i> </center>
 
 
@@ -55,11 +55,11 @@ In order to properly control the servo, the basic step that should be performed 
 > For what we need calibration?
 >
 > Servos are controled by PWM (Pulse Width Modulation) output signal, which allows to set servo motor ratiation and position by using differnt duty cycle PWM pulse. By default we do not know the pulse width corresponding to a specific servo position. Therefore, we need to perform a calibration process to find the minimum pulse width corresponding to position 0 (minimum) and the width assigned to the maximum position. 
-><center><img src="servo_figures.PNG" alt="drawing" width="600"/></center>
+><center><img src="../images/servo_figures.PNG" alt="drawing" width="600"/></center>
 ><center> <i>Graphs showing the influence of pulse width on PWM output and on servo position</i> </center>
 >
 >The charts above show that pulse has a direct effect on position. If the pulse width is increased, the position of the servo changes. This is also shown in the illustration below.
-><center><img src="servo-motor-pwm-signal-rotation.png" alt="drawing" width="600"/></center>
+><center><img src="../images/servo-motor-pwm-signal-rotation.png" alt="drawing" width="600"/></center>
 ><center> <i>Pulse widths and corresponding positions for the example servo</i> </center>
 >
 >As the illustration of the example servo shows, the zero position of the servo occurs at a pulse width of 1 ms, and the maximum yaw angle is obtained at 2ms. Initially, we do not know these values for the servos we want to operate, so we perform a calibration process to learn them. 
@@ -158,7 +158,7 @@ The goal is to calibrate the servo with an angular range measurement and then wr
 > - Protractor https://www.printables.com/model/8155-printable-protractor?fbclid=IwAR1hko1QIWihh7MkhOoI2Li8rvKICXtOSALfi9kLE6yoYt198Aq4TX69ar0
 > - Mechanical button
 >
-><center><img src="servo_set.png" alt="Servo set" width="350" /></center>
+><center><img src="../images/servo_set.png" alt="Servo set" width="350" /></center>
 ><center> <i>Hardware used in exercise</i> </center>
 >
 >Software:
@@ -168,7 +168,7 @@ The goal is to calibrate the servo with an angular range measurement and then wr
 ### Conduct of the exercise:
 - First of all, you need to prepare the stand by connecting the servo to the PES Board to the appropriate input (D0 - D3). You should also plug the mechanical button into pin **PC_5** (map of pins can be found [HERE][4])
 - Prepare a sheet of paper with angles from 0 to 270 degrees drawn on it, then make a hole in the center that will allow you to put it on the servo. Next, put the servo arm on the spline and move the made measurement paper so that the servo arm coincides with the 0-degree indication.
-<center><img src="servo_task.png" alt="Servo task" width="350" /></center>
+<center><img src="../images/servo_task.png" alt="Servo task" width="350" /></center>
 <center> <i>Performing the exercise</i> </center>
 
 - The next step after preparing the hardware is to move on to the software. In this step, we need to write a routine that allows us to make such a movement so that we have enough time to record the measurement. Currently, the routine assumes a 0.1 pulse movement every second. The time to register should be longer. (Hints: you should use **mechanical_button.read()**). Put the routine in the code below.
@@ -195,7 +195,7 @@ The goal is to calibrate the servo with an angular range measurement and then wr
 </details>
 
 - Now you can run the program and write down the pulse width displayed on the screen, and the corresponding angle. 
-- Then these data should be entered into the Matlab program ([file](./pulse_to_angle_eval.m)), running the script will present us with a graphical representation of the data with the best fit function, is it linear? **(I RAN TESTS IT IS LINEAR, INFO FOR ME)**
+- Then these data should be entered into the Matlab program ([file](../matlab/pulse_to_angle_eval.m)), running the script will present us with a graphical representation of the data with the best fit function, is it linear? **(I RAN TESTS IT IS LINEAR, INFO FOR ME)**
 - Now you need to write modify argument of the function **setNormalisedPulseWidth** so that in the *servo_angle* variable you can declare the angle given in units of angular degrees. (HINT: note that by default the full range is between 0 and 1, our range is between 0 and MAX_ANGLE) 
 ```
 servo_D0.setNormalisedPulseWidth(YOUR EQUATION);

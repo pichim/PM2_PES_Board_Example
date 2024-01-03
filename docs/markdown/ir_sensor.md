@@ -1,7 +1,7 @@
 # Analog distance sensor
 
 |Analog distance sensor is a distance measuring sensor unit, composed of an integrated combination of PSD (position sensitive detector), IRED (infrared emitting diode) and signal processing circuit. 
-<center><img src="ir-distance-sensor.png" alt="IR_sensor" width="250" /></center>
+<center><img src="../images/ir-distance-sensor.png" alt="IR_sensor" width="250" /></center>
 <center> <i>Example of IR distance sensor</i> </center>
 
 ## Technical Specifications
@@ -42,7 +42,7 @@
 > How does it work?
 >
 >Very briefly infrared sensors work on the principle of reflected light waves. Infrared light reflected from objects or sent from an infrared remote or beacon. Infrared sensors are also used to measure distance or proximity. The reflected light is detected and then an estimate of distance is calculated between sensor and object. The following is a pictorial representation of the principle of operation:
-><center><img src="how-infrared-sensors-work.png" alt="how_IR_works" width="400" /></center>
+><center><img src="../images/how-infrared-sensors-work.png" alt="how_IR_works" width="400" /></center>
 ><center> <i>Principle of operation</i> </center>
 >
 > More detailed explanation can be found: [HERE][4]
@@ -54,7 +54,7 @@ The first step to be able to use the IR distance sensor is to create an analog o
 AnalogIn ir_analog_in(PC_2);
 ```
 As we can see, there are three wires coming out of the sensor, one is used for signal transmission, another is used as ground, and the last one is used for power supply. The layout of the wires is shown below:
-<center><img src="ir_sensor_wires.png" alt="IR sensor wires" width="250" /></center>
+<center><img src="../images/ir_sensor_wires.PNG" alt="IR sensor wires" width="250" /></center>
 <center> <i>Layout of wires</i> </center>
 
 According to the documentation of the sensors, you need to power them with 5V to receive correct signals. If you are not sure how to connect the sensor, click the following hint.
@@ -62,7 +62,7 @@ According to the documentation of the sensors, you need to power them with 5V to
 <details Closed>
 <summary>HINT</summary>
 <br>
-<center><img src="connection_pin_map.png" alt="Cennection pin map" width="700" /></center>
+<center><img src="../images/connection_pin_map.png" alt="Cennection pin map" width="700" /></center>
 <center> <i>Connection Pin map with marked wire's colors </i> </center>
 </details>
 
@@ -72,7 +72,7 @@ According to the documentation of the sensors, you need to power them with 5V to
 >
 >The specifications of the sensors in question include curves describing the dependence of the recorded voltage on the measured distance.
 >
-><center><img src="dist_measure_char.png" alt="Distance measuring characteristics" width="450" /></center>
+><center><img src="../images/dist_measure_char.PNG" alt="Distance measuring characteristics" width="450" /></center>
 ><center> <i>Distance measuring characteristics</i> </center>
 >These are expected values that can serve as a reference for the measurements to be made. However, all sensors, especially those of lower quality, may be characterized by a slightly altered course of the curve in question, so a calibration process should be carried out before using each sensor.
 
@@ -104,7 +104,7 @@ The purpose of the exercise is to perform calibration by simultaneously measurin
 > - Paper tape
 > - Length measure tape
 > - Mechanical button
-><center><img src="IR_set.png" alt="IR sensor set" width="350" /></center>
+><center><img src="../images/IR_set.png" alt="IR sensor set" width="350" /></center>
 ><center> <i>Hardware used in exercise</i> </center> 
 >
 > Software
@@ -114,7 +114,7 @@ The purpose of the exercise is to perform calibration by simultaneously measurin
 ### Conduct of the exercise (calibration procedure):
 - First of all, you need to prepare the stand by connecting the IR sensor to the PES Board to the appropriate input pin **PC_2** (detailed instruction is show above under HINT). You should also plug the mechanical button into pin **PC_5** (map of pins can be found [HERE][5])
 - Next, tape the paper tape to the floor from the edge of the wall and use a tape measure to mark the measurement points on the tape (recommended 0 to 15cm every 1cm, then 17.5 to 30cm every 2.5cm and 35 to 75cm every 5cm)
-<center><img src="IR_task.png" alt="IR task" width="350" /></center>
+<center><img src="../images/IR_task.png" alt="IR task" width="350" /></center>
 <center> <i>Performing the exercise</i> </center>
 
 - If you connect and run the program correctly, you will see the distance sensor reading values on the serial monitor. Consider whether these values are reasonable, if not, go through the documentation again.

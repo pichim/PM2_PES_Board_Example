@@ -15,16 +15,19 @@
 #include "pm2_drivers/UltrasonicSensor.h"
 #include "pm2_drivers/IMU.h"
 
+// PES-Board Pin Names
 #define NEW_PES_BOARD_VERSION
 #ifdef NEW_PES_BOARD_VERSION
     #define USER_BUTTON PC_13
     #define USER_LED PA_5
 
+    // Servos and Ultrasonic Sensor
     #define PB_D0 PB_2
     #define PB_D1 PC_8
     #define PB_D2 PC_6
     #define PB_D3 PB_12
 
+    // DC-Motors
     #define PB_PWM_M1 PB_13
     #define PB_PWM_M2 PA_9
     #define PB_PWM_M3 PA_10
@@ -36,10 +39,12 @@
     #define PB_ENC_A_M3 PA_0
     #define PB_ENC_B_M3 PA_1
 
+    #define PN_ENABLE_DCMOTORS PB_15
+
+    // IMU
     #define PB_IMU_SDA PC_9
     #define PB_IMU_SCL PA_8
 
-    #define PN_ENABLE_DCMOTORS PB_15
 #else
     #define USER_BUTTON PC_13
     #define USER_LED PA_5
@@ -60,10 +65,11 @@
     #define PB_ENC_A_M3 PA_1 // ???
     #define PB_ENC_B_M3 PA_0 // ???
 
+    #define PN_ENABLE_DCMOTORS PB_2 // PB_13 ???
+
     #define PB_IMU_SDA // ???
     #define PB_IMU_SCL // ???
     
-    #define PN_ENABLE_DCMOTORS PB_2 // PB_13 ???
 #endif
 
 bool do_execute_main_task = false; // this variable will be toggled via the user button (blue button) and
@@ -199,7 +205,7 @@ int main()
     
 
     // Groove Ultrasonic Ranger V2.0
-    float us_distance_cm = 0.0f;    // define variable to store measurement
+    float us_distance_cm = 0.0f;       // define variable to store measurement
     UltrasonicSensor us_sensor(PB_D3);
 
     // IMU
