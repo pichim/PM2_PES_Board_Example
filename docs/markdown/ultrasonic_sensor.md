@@ -55,9 +55,11 @@ sensor hardware and offers a simple interface for obtaining distance measurement
 Maximum measurment distance is approximately 2 meters (measured 198.1 cm) with a mearuement period of 12000
 microseconds. If no new valid measurement is available, the read() function returns -1.0f.
 
+To start working with the sensor, it is necessary to plug it correclty and create an object in the ``main`` file and assign a digital output.
+
 ### Connection to the PES-Board
 
-The ultrasonic sensor was tested with a 5V power supply and a single pin that transmits the signal. There for, it can use the same ports that are intended for the servos. To start working with the sensor, it is necessary to create an object in the ``main`` file and assign a digital output.
+The ultrasonic sensor was tested with a 5V power supply and a single pin that transmits the signal. There for, it can use the same ports that are intended for the servos.
 
 You can use the following pins:
 
@@ -67,16 +69,17 @@ You can use the following pins:
 #define PB_D2 PC_6
 #define PB_D3 PB_12
 ```
-<center>
-    <img src="../images/pes_board_peripherals.png" alt="board_pins" width="1000" />
-</center>
-<center>
-    <i>PES board Pin Map</i>
-</center>
+**HERE SHOULD BE HYPERLINK TO THE BOARD MAP** 
+
+
+To establish the connection, utilize the cable displayed in the accompanying photo, as it is compatible with the plug and socket on the sensor. Connect a regular jumper wire to the shown cable and use them for linking to the PES_board. The sensor's pins are labeled, but the plug design ensures a single correct connection: the signal is transmitted through the yellow wire.
+
+<center><img src="../images/Grove-Kabel.png" alt="grove kabel" width="350" /></center>
+<center> <i>Cable used to connect to the sensor</i> </center>
 
 ### Create UltrasonicSensor Object
 
-In the following example the sensor is pluged to the PES-Board pin D3:
+In the given example, the sensor is plugged into pin D3 on the PES-Board. Initially, it's essential to add the suitable driver to ``main`` file and then create an object with the pin's name passed as an argument.
 
 ```
 #include "pm2_drivers/UltrasonicSensor.h"

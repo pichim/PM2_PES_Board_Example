@@ -28,10 +28,17 @@ A servo motor is defined as an electric motor that allows for precise control of
 [3]: https://theorycircuit.com/servo-motor-driver-circuit/
 [4]: https://os.mbed.com/platforms/ST-Nucleo-F446RE/
 
+## Practical Tips
+- Remember that each servo must undergo a calibration process to oparate properly, calibrated values not only vary depending on the servo model but may also vary between individual servo units of the same model
+
+
+
 ## Servo driver
-Servo driver is made to control the analog servos by setting the position from range 0 to 1. It also has the ability to control the speed of movement so that so-called "smooth movements" can be made.
-### Fisrt steps
-First step to use the servo driver is to create in the main file the servo object and define the pins that will be assigned to the object. Analog servos are assigned to PES board pins D0 to D3.
+The ``servo`` driver is designed for managing analog servos, determining their position within a range of 0 to 1. Additionally, it can regulate the speed and acceleration of movement, enabling the creation of seamless and smooth motions.
+
+To start using the ``servo`` driver, the initial step in the ``main`` file is to create the servo object and specify the pins to which the object will be assigned.
+### Connection to the PES-board
+For the PES-board, analog servos are associated with specific ports, outlined as follows:
 ```
 // PES-Board Pin Names
 #define PB_D0 PB_2
@@ -39,21 +46,27 @@ First step to use the servo driver is to create in the main file the servo objec
 #define PB_D2 PC_6
 #define PB_D3 PB_12
 ```
-<center><img src="../images/board_pins.png" alt="board_pins" width="600" /></center>
-<center> <i>PES board pin map</i> </center>
+**HERE SHOULD BE HYPERLINK TO THE BOARD MAP** 
 
+### Create servo Object
 
-If the servo  that you want to work on is connected to pin D0, enter **PB_D0** as the argument of the created object.
+In the given example, that servo is plugged into pin D0 on the PES-Board. Initially, it's essential to add the suitable driver to our main file and then create an object with the pin's name passed as an argument.
+
 ```
-// create Servo objects to command servos
+#include "pm2_drivers/Servo.h"
+
+...
+
+
 Servo servo_D0(PB_D0);
-Servo servo_D1(PB_D1);
-Servo servo_D2(PB_D2);
 ```
+
+### Calibration
 In order to properly control the servo, the basic step that should be performed is its calibration.
 
-> For what we need calibration?
->
+<details Closed>
+<summary><b>For what we need calibration?</b></summary>
+
 > Servos are controled by PWM (Pulse Width Modulation) output signal, which allows to set servo motor ratiation and position by using differnt duty cycle PWM pulse. By default we do not know the pulse width corresponding to a specific servo position. Therefore, we need to perform a calibration process to find the minimum pulse width corresponding to position 0 (minimum) and the width assigned to the maximum position. 
 ><center><img src="../images/servo_figures.PNG" alt="drawing" width="600"/></center>
 ><center> <i>Graphs showing the influence of pulse width on PWM output and on servo position</i> </center>
@@ -65,20 +78,62 @@ In order to properly control the servo, the basic step that should be performed 
 >As the illustration of the example servo shows, the zero position of the servo occurs at a pulse width of 1 ms, and the maximum yaw angle is obtained at 2ms. Initially, we do not know these values for the servos we want to operate, so we perform a calibration process to learn them. 
 >
 > For more information see: [HERE][3]
+</details>
 
-In the main file there are given examples of the minimum and maximum angle pulse width values obtained in the calibration process for a given servo model. <b>However, it should be remembered that these values for each servo, even of the same model, may vary, and to use them for accurate operations, each servo must undergo a calibration process.</b> 
+<details Closed>
+<summary><b> How can it be useful?</b></summary>
 
-In addition, the pulse width values determined in the calibration process will be used to calculate the normalized width corresponding to a given servo so that the servo positions can be countermanded from 0 to 1. 
-
->How can it be useful? 
->
 >The indirect goal of calibration is to be able to define the servo position by setting values from 0 to 1. Depending on the application of our servo we do not always want to use the full range of motion sometimes it is enough for us to have a range of 90 degrees. During the calibration process we can measure what value of the pulse width change corresponds to 90 degrees and then assign it to the corresponding variables *servo_D0_ang_min* and *servo_D0_ang_max*. Thanks to this, assigning the value servo_value will make our servo rotate 90 degrees.
+</details>
 
 
-### Calibration procedure
-The calibration procedure assumes that you have a servo with unknown pulse width values for the minimum and maximum angles. In order to carry out this process, the following steps must be followed:
+The calibration process will consist of sending a pulse of increasing width to define, according to theory, what width corresponds to the zero (initial) position of the servo and what value of width corresponds to the maximum deviation. Then these values after registration will be used to determine the normalized pulse width for a given servo, which in effect will allow you to set the servo position by declaring values from 0 to 1.
 
-- In the main file, the function that takes into account calibrated pulses must be commented out: 
+>Hardware:
+> - PES board with NUCLEO-F446RE board
+> - Mini USB cable
+> - Servo Futaba S3001/RELY S-009
+> - Additional wires to connect servo to board
+> - Mechanical button
+>
+><center><img src="../images/servo_set.png" alt="Servo set" width="350" /></center>
+><center> <i>Hardware used in exercise</i> </center>
+
+
+#### Procedure
+- First, it is necessary to define the appropriate variables that will be needed for the calibration process.
+```
+float servo_angle = 0; // servo S1 normalized input: 0...1
+int servo_counter = 0; // define servo counter, this is an additional variable
+                       // to make the servos move
+const int loops_per_seconds = static_cast<int>(ceilf(1.0f / (0.001f * (float)main_task_period_ms)));
+```
+
+- To operate the servo, enable it with the following command, location of the command will enable the servo after starting the program execution with the **USER** button.
+```
+servo_D0.enable()
+```
+- Then the function will be used that allows you to incrementally change the position by changing the value of the pulse width (change either every second or after clicking the mechanical button - think!!!)
+
+```
+    servo_D0.setNormalisedPulseWidth(servo_angle);
+    if (servo_angle < 1.0f & servo_counter % loops_per_seconds == 0 & servo_counter != 0  & mechanical_button.read())
+    {
+        servo_angle += 0.0025f;
+    }
+    servo_counter++;
+```
+
+
+
+- Declare the variables that will take the values obtained in calibration process, these are minimal pulse width and maximal pulse width.
+```
+float servo_D0_ang_min = 0.0150f;
+float servo_D0_ang_max = 0.1150f;
+```
+
+
+- In the ``main``, the function that takes into account calibrated pulses must be commented out: 
 ```
 //servo_D0.calibratePulseMinMax(servo_D0_ang_min, servo_D0_ang_max);
 //servo_D1.calibratePulseMinMax(servo_D1_ang_min, servo_D1_ang_max);
@@ -119,7 +174,7 @@ This function is used when the execution of the main program begins, after press
 
 If the **isEnabled** function returns the argument false, the servo process is initialized using the enable function.
 
-### Ussage
+### Command the servo
 The use of the servo class implies declaring the position of the servo head from 0 to 1. This is realized with the help of a function:
 ```
 servo_D2.setNormalisedPulseWidth(servo_angle);
@@ -164,6 +219,11 @@ The goal is to calibrate the servo with an angular range measurement and then wr
 >Software:
 > - PM2_Pes_board_example
 > - Matlab file: pulse_to_angle_eval.m 
+
+In the main file there are given examples of the minimum and maximum angle pulse width values obtained in the calibration process for a given servo model. <b>However, it should be remembered that these values for each servo, even of the same model, may vary, and to use them for accurate operations, each servo must undergo a calibration process.</b> 
+
+Furthermore, the pulse width values established during the calibration process will be employed to compute the normalized width associated with a specific servo. This enables the servo positions to be adjusted within the range of 0 to 1.
+
 
 ### Conduct of the exercise:
 - First of all, you need to prepare the stand by connecting the servo to the PES Board to the appropriate input (D0 - D3). You should also plug the mechanical button into pin **PC_5** (map of pins can be found [HERE][4])
@@ -245,6 +305,8 @@ if (servo_D0.isEnabled() && servo_D1.isEnabled() && servo_D2.isEnabled())
 }
 ```
 </details>
+
+
 
 
 
