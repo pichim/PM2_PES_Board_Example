@@ -58,7 +58,7 @@ microseconds. If no new valid measurement is available, the read() function retu
 To start working with the sensor, it is necessary to plug it correclty and create an object in the ``main`` file and assign a digital output.
 
 ### Connection to the PES-Board
-
+---------------------------
 The ultrasonic sensor was tested with a 5V power supply and a single pin that transmits the signal. There for, it can use the same ports that are intended for the servos.
 
 You can use the following pins:
@@ -71,14 +71,13 @@ You can use the following pins:
 ```
 **HERE SHOULD BE HYPERLINK TO THE BOARD MAP** 
 
-
 To establish the connection, utilize the cable displayed in the accompanying photo, as it is compatible with the plug and socket on the sensor. Connect a regular jumper wire to the shown cable and use them for linking to the PES_board. The sensor's pins are labeled, but the plug design ensures a single correct connection: the signal is transmitted through the yellow wire.
 
 <center><img src="../images/Grove-Kabel.png" alt="grove kabel" width="350" /></center>
 <center> <i>Cable used to connect to the sensor</i> </center>
 
 ### Create UltrasonicSensor Object
-
+---------------------------
 In the given example, the sensor is plugged into pin D3 on the PES-Board. Initially, it's essential to add the suitable driver to ``main`` file and then create an object with the pin's name passed as an argument.
 
 ```
@@ -94,7 +93,7 @@ UltrasonicSensor us_sensor(PB_D3);
 >By sending a signal to the sensor, we command it to send a pulse with a rising edge followed by a falling edge and a pulse width of 10 microseconds. The device will emit sound with 8 periods of 40 kHz frequency and try to detect the echo (via convolution or similar). The sensor will then send a pulse proportional to the measurment time, which will be detected by the microcontroller. The time between the rising and falling edge is measured and used to calculate the distance on the microcontroller. This process is repeated every 12000 microseconds.
 
 ### Read the Measured Distance
-
+---------------------------
 The operation is straightforward since all processes are encapsulated within the class, yielding a completed function that returns the distance in centimeters (cm). This functionality is accessed through the following command:
 
 ```

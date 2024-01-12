@@ -60,6 +60,7 @@ The ``AnalogIn`` class is a class that belongs to the libraries created by the M
 To start working with the sensor, it is necessary to plug it correclty and create an object in the ``main`` file and assign a analog input.
 
 ### Connection to the Nucleo-Board
+---------------------------
 According to the sensor documentation, it is necessary to power the sensors with 3.3V to ensure the reception of accurate signals. It is evident that three wires emerge from the sensor: one for signal transmission, another for ground, and the last one for power supply. The transmission wire should be connected to the pin that allows the reception of an analog signal, in our example this is the **PC_2** pin.
 
 **HERE SHOULD BE HYPERLINK TO THE BOARD MAP** 
@@ -74,18 +75,20 @@ If you are not sure how to connect the sensor, click the following hint.
 </details>
 
 ### Create analog distance sensor object
+---------------------------
 As previously mentioned, the transmission wire of the sensor is connected to pin **PC_2** on the Nucleo-Board. The appropriate driver, responsible for reading values from the sensor, is already included in the mbed drivers declared at the beginning of the ``main`` file. Proceed to create an object with the pin's name passed as an argument and define a variable to capture the corresponding value read from the sensor.
 ```
 float ir_distance_mV = 0.0f;
 AnalogIn ir_analog_in(PC_2);
 ```
 ### Calibration
+---------------------------
 The next step to use the sensor correctly is to calibrate it.
 
 <details Closed>
 <summary><b>For what we need calibration?</b></summary>
 
->The specifications of the sensors in question include curves describing the dependence of the recorded voltage on the measured distance.
+>Calibrating an IR distance sensor is essential to establish a precise relationship between the sensor's analog voltage readings and actual distances. This process ensures accuracy, accounting for sensor variations and environmental factors, and is vital for reliable distance measurements in diverse applications. In the technical documentation it is possible to find a dependency between voltage readings and distance such as the following:
 >
 ><center><img src="../images/dist_measure_char.png" alt="Distance measuring characteristics" width="450" /></center>
 ><center> <i>Distance measuring characteristics</i> </center>
@@ -120,6 +123,12 @@ ir_distance_mV = 1.0e3f * ir_analog_in.read() * 3.3f;
 - To obtain printouts on the serial monitor, insert the relevant command
 ```
 printf("IR distance mV: %f \n", ir_distance_mV);
+```
+- In order to return these initial values without having to start the program again, reset all values, which will be done after pressing the **USER** button.
+```
+led1 = 0;
+ir_distance_mV = 0.0f;
+ir_distance_cm = 0.0f;
 ```
 - Once the above commands are written, the next step is to compile and run it. This process serves to validate the proper functioning of the program and ensure the accurate reception of sensor readings.
 - During the calibration process, position the sensor's edge at marked points on the tape. The sensor should face the wall to measure the distance from it, and it's important to align the sensor's beam parallel to the ground. Simultaneously, note the distance and the corresponding readout values displayed on the serial monitor after applying it to each designated point.
@@ -172,14 +181,9 @@ ir_distance_cm = ir_sensor_compensation(ir_distance_mV);
 ```
 printf("IR distance mV: %f IR distance cm: %f \n", ir_distance_mV, ir_distance_cm);
 ```
-- Finally, in order to return these initial values without having to start the program again, reset all values, which will be done after pressing the **USER** button.
-```
-led1 = 0;
-ir_distance_mV = 0.0f;
-ir_distance_cm = 0.0f;
-```
 
 ### Read the measured distance
+---------------------------
 To utilize the sensor and capture readings of the signals sent to the board, employ the function:
 ```
 ir_distance_mV = 1.0e3f * ir_analog_in.read() * 3.3f;
@@ -191,6 +195,7 @@ After calibration, employing the sensor is quite similar. However, the measured 
 ```
 ir_distance_cm = ir_sensor_compensation(ir_distance_mV);
 ```
+
 
 
 

@@ -6,12 +6,20 @@ dirImg = paste(dirHome, '/screenshots/image.jpeg', sep = "")
 
 # PM2_PES_Board
 
+Maciej Szarek\
+szar@zhaw.ch\
+TE 302
+
 Michael Peter\
 pmic@zhaw.ch\
 TE 307
 
 # Table of Contents
-1. [Accounts](#accounts)
+1. [General info](docs/markdown/general_info.md)
+    * [Accounts](docs/markdown/general_info.md#accounts)
+    * [Softwate](docs/markdown/general_info.md#software)
+
+2. [Accounts](#accounts)
 2. [Arm Mbed](#arm-mbed)
     * [Mbed Studio](#mbed-studio)
 3. [Hardware](#hardware)
@@ -77,5 +85,4 @@ PDF: [pes_board_pin_mapping.pdf](docs/datasheets/pes_board_pin_mapping.pdf)
 - [<font size="3"> Ultrasonic Sensor </font>](docs/markdown/ultrasonic_sensor.md)
 - [<font size="3"> Servo </font>](docs/markdown/servo.md)
 - [<font size="3"> DC Motor </font>](docs/markdown/dc_motor.md)
-
 

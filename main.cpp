@@ -2,7 +2,8 @@
 
 #include "pm2_drivers/PESBoardPinMap.h"
 #include "pm2_drivers/DebounceIn.h"
-#include "pm2_drivers/Servo.h"
+#include "pm2_drivers/EncoderCounter.h"
+#include "pm2_drivers/DCMotor.h"
 
 bool do_execute_main_task = false; // this variable will be toggled via the user button (blue button) and
                                    // decides whether to execute the main task or not
@@ -23,7 +24,7 @@ int main()
 
     // while loop gets executed every main_task_period_ms milliseconds (simple
     // aproach to repeatedly execute main)
-    const int main_task_period_ms = 10; // define main task period time in ms e.g. 50 ms
+    const int main_task_period_ms = 50; // define main task period time in ms e.g. 50 ms
                                         // -> main task runs 20 times per second
     Timer main_task_timer;              // create Timer object which we use to run the main task every main_task_period_ms
     Timer timer;
@@ -39,15 +40,14 @@ int main()
     DigitalOut led1(PB_8);
     //DigitalOut led2(PB_9);
 
-    // HERE DEFINE OBJECTS (remember about giving comments and proper names)
-    // Servo
-    Servo servo_D0(PB_D0);
+    // mechanical button
+    DigitalIn mechanical_button(PC_5); // create DigitalIn object to evaluate extra mechanical button, you
+                                       // need to specify the mode for proper usage, see below
+    mechanical_button.mode(PullUp);    // set pullup mode: sets pullup between pin and 3.3 V, so that there
+                                       // is a defined potential
 
-    //Variables needed to manage the servo
-    float servo_angle = 0; // servo S1 normalized input: 0...1
-    int servo_counter = 0; // define servo counter, this is an additional variable
-                       // to make the servos move
-    const int loops_per_seconds = static_cast<int>(ceilf(1.0f / (0.001f * (float)main_task_period_ms)));
+    // HERE DEFINE OBJECTS (remember about giving comments and proper names)
+    
 
     // start timer
     main_task_timer.start();
@@ -56,28 +56,16 @@ int main()
     // this loop will run forever
     while (true) {
         main_task_timer.reset();
-        //Servo enabling statement
-        servo_D0.enable();
 
         if (do_execute_main_task) {
             
             // visual feedback that the main task is executed, setting this once would actually be enough
             led1 = 1;
 
-            //Servo enabling statement
-            servo_D0.enable();
-
-            servo_D0.setNormalisedPulseWidth(servo_angle);
-            if (servo_angle < 1.0f & servo_counter % loops_per_seconds == 0 & servo_counter != 0) {
-                servo_angle += 0.0025f;
-            }
-            servo_counter++;
-
         } else {
             if (do_reset_all_once) {
                 do_reset_all_once = false;
                 
-                servo_D0.disable();
             }
         }
 
