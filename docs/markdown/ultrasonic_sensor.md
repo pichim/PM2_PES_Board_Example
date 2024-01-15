@@ -1,9 +1,9 @@
 # Ultrasonic Sensor
 
-An ultrasonic sensor (range fidner / detector) is a type of sensor designed to measure the relative distance between the device and an object that reflects sound waves. This sensor operates by emitting ultrasonic pulses and measuring the time it takes for these pulses to bounce back as echoes. By knowing the speed of sound in air, it is possible to calculate the relative distance to the object based on the time elapsed between the emission of the ultrasonic pulse and the reception of its echo.
+An ultrasonic sensor (range finder / detector) is a type of sensor designed to measure the relative distance between the device and an object that reflects sound waves. This sensor operates by emitting ultrasonic pulses and measuring the time it takes for these pulses to bounce back as echoes. By knowing the speed of sound in air, it is possible to calculate the relative distance to the object based on the time elapsed between the emission of the ultrasonic pulse and the reception of its echo.
 
 <center>
-    <img src="../images/grove_ultrasonic_ranger_v2.png" alt="Grove-Ultrasonic Ranger V2.0" width="500"/>
+    <img src="../images/grove_ultrasonic_ranger_v2.png" alt="Grove-Ultrasonic Ranger V2.0" width="400"/>
 </center>
 <center>
     <i>Grove-Ultrasonic Ranger V2.0</i>
@@ -35,12 +35,17 @@ An ultrasonic sensor (range fidner / detector) is a type of sensor designed to m
 
 ## Links
 
-- [DigiKey][0]
-- [seeed studio][1]
+[DigiKey][0]
+
+[seeed studio][1]
 
 <!-- last updated 03.01.2024 -->
 [0]: https://www.digikey.ch/de/products/detail/seeed-technology-co-ltd/101020010/5482600?s=N4IgTCBcDaIOICUDyA1AogAgKoBkAqCAggMpIByAkgMIZFlxoIYpgB0ADCALoC%2BQA
 [1]: https://wiki.seeedstudio.com/Grove-Ultrasonic_Ranger/
+
+## Datasheets
+
+<!-- TODO: Add links to datasheets (if we have them) -->
 
 ## Practical Tips
 
@@ -59,9 +64,7 @@ To start working with the sensor, it is necessary to plug it correclty and creat
 
 ### Connection to the PES-Board
 ---------------------------
-The ultrasonic sensor was tested with a 5V power supply and a single pin that transmits the signal. There for, it can use the same ports that are intended for the servos.
-
-You can use the following pins:
+The ultrasonic sensor was tested with a 5V power supply and a single pin that transmits the signal. There for, it can use the same ports as the servos. You can use the the following pins:
 
 ```
 #define PB_D0 PB_2
@@ -69,11 +72,13 @@ You can use the following pins:
 #define PB_D2 PC_6
 #define PB_D3 PB_12
 ```
+
+<!-- TODO: Add link -->
 **HERE SHOULD BE HYPERLINK TO THE BOARD MAP** 
 
-To establish the connection, utilize the cable displayed in the accompanying photo, as it is compatible with the plug and socket on the sensor. Connect a regular jumper wire to the shown cable and use them for linking to the PES_board. The sensor's pins are labeled, but the plug design ensures a single correct connection: the signal is transmitted through the yellow wire.
+To establish the connection, utilize the cable displayed in the accompanying photo, as it is compatible with the plug and socket on the sensor. Connect a regular jumper wire to the shown cable and use them for linking to the PES_board. The sensor's pins are labeled, but the plug design ensures a single correct connection: the bidirectional signal is transmitted through the yellow wire.
 
-<center><img src="../images/Grove-Kabel.png" alt="grove kabel" width="350" /></center>
+<center><img src="../images/Grove-Kabel.png" alt="grove kabel" width="400" /></center>
 <center> <i>Cable used to connect to the sensor</i> </center>
 
 ### Create UltrasonicSensor Object
@@ -88,11 +93,12 @@ In the given example, the sensor is plugged into pin D3 on the PES-Board. Initia
 UltrasonicSensor us_sensor(PB_D3);
 ```
 
->Details about the driver?
+<!-- Additional information is greyed out -->
+>Details about the driver
 >
 >By sending a signal to the sensor, we command it to send a pulse with a rising edge followed by a falling edge and a pulse width of 10 microseconds. The device will emit sound with 8 periods of 40 kHz frequency and try to detect the echo (via convolution or similar). The sensor will then send a pulse proportional to the measurment time, which will be detected by the microcontroller. The time between the rising and falling edge is measured and used to calculate the distance on the microcontroller. This process is repeated every 12000 microseconds.
 
-### Read the Measured Distance
+### Read the Distance
 ---------------------------
 The operation is straightforward since all processes are encapsulated within the class, yielding a completed function that returns the distance in centimeters (cm). This functionality is accessed through the following command:
 
@@ -106,10 +112,16 @@ or simply
 us_distance_cm = us_sensor;
 ```
 
-If no new valid measurement is available, the read() function returns -1.0f.
+If no new valid measurement is available, the read() function returns -1.0f. This needs to be handeled appropriately in the application, as a non conclusive example:
+
+```
+if (us_distance_cm < 0.0f) {
+    // handle non-valid measurement
+}
+```
 
 **Notes:**
 
-- Do not readout the sensor faster than every 12000 microseconds, otherwise the sensor can not work properly.
+- Do not readout the sensor faster than every 12000 microseconds, otherwise the sensor will report -1.0f frequently.
 - For highly accurate measurements, every sensor unit should be calibrated individually.
 
