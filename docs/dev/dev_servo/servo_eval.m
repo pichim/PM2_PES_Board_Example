@@ -34,12 +34,12 @@ data = readmatrix("putty_01.log");
 % m_Motion.setProfileDeceleration(max_acceleration);
 data = readmatrix("putty_02.log");
 
-% // set up motion
-% m_Motion.setProfileVelocity(1.0e6f); // 1.0e6f instead of inf
-% float max_acceleration = 0.35f;
-% m_Motion.setProfileAcceleration(max_acceleration);
-% m_Motion.setProfileDeceleration(max_acceleration);
-data = readmatrix("putty_03.log");
+% % // set up motion
+% % m_Motion.setProfileVelocity(1.0e6f); // 1.0e6f instead of inf
+% % float max_acceleration = 0.35f;
+% % m_Motion.setProfileAcceleration(max_acceleration);
+% % m_Motion.setProfileDeceleration(max_acceleration);
+% data = readmatrix("putty_03.log");
 
 time = data(:,1) * 1e-6;
 time = time - time(1);
@@ -47,9 +47,10 @@ data = data(:,2:end);
 
 figure(1)
 ax(1) = subplot(211);
-plot(time, data(:,1:2)), grid on, ylabel('Normalised Pulswidth')
+plot(time - 1.5, data(:,1:2)), grid on, ylabel('Normalised Pulswidth')
 ax(2) = subplot(212);
-plot(time, data(:,3)), grid on, ylabel('Normalised Pulswidth Velocity')
+plot(time - 1.5, data(:,3), 'r'), grid on, ylabel('Normalised Pulswidth Velocity')
 xlabel('Time (sec)')
 linkaxes(ax, 'x'), clear ax
-xlim([2 8])
+xlim([0 4])
+set(findall(gcf, 'type', 'line'), 'linewidth', 2.0)

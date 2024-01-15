@@ -131,8 +131,8 @@ clc, clear variables
 % data = readmatrix('putty_35.log'); % 78:1, pos, p-i-d-f, p, ff, motion planner enabled
 % data = readmatrix('putty_36.log'); % 78:1, pos, p-i-d-f, p, ff, motion planner enabled
 
-% data = readmatrix('putty_37.log'); % 78:1, pos, p-i-d-f, p, ff, motion planner enabled
-data = readmatrix('putty_38.log'); % 31:1, pos, p-i-d-f, p, ff, motion planner enabled
+data = readmatrix('putty_37.log'); % 78:1, pos, p-i-d-f, p, ff, motion planner enabled
+% data = readmatrix('putty_38.log'); % 31:1, pos, p-i-d-f, p, ff, motion planner enabled
 % data = readmatrix('putty_39.log'); % 488:1, pos, p-i-d-f, p, ff, motion planner enabled
 
 time = data(:,1) * 1e-3;
@@ -148,19 +148,23 @@ data = data(:,2:end);
 
 figure(2)
 ax(1) = subplot(221);
-plot(time, [data(:,1:3), data(:,2)-data(:,3)]), grid on
-ylabel('Rotation')
+% plot(time, [data(:,1:3), data(:,2)-data(:,3)]), grid on
+plot(time - 1, [data(:,1:3)]), grid on
+ylabel('Rotation'), xlabel('Time (sec)')
 ax(2) = subplot(223);
-plot(time, data(:,4:6)), grid on
+plot(time - 1, data(:,4:6)), grid on
 ylabel('Velocity (RPS)'), xlabel('Time (sec)')
 ax(3) = subplot(222);
-plot(time(1:end-1), diff(data(:,4:6)) ./ diff(time)), grid on
+% plot(time(1:end-1), diff(data(:,4:6)) ./ diff(time)), grid on
+plot(time(1:end-1) - 1, diff(data(:,4:6)) ./ diff(time)), grid on
 ylabel('Acceleration (RPS/sec)'), xlabel('Time (sec)')
 ax(4) = subplot(224);
-plot(time, data(:,7)), grid on
+% plot(time, data(:,7)), grid on
+plot(time - 1, data(:,7)), grid on
 ylabel('Voltage (V)'), xlabel('Time (sec)')
 linkaxes(ax, 'x'), clear ax
-xlim([0 time(end)])
+% xlim([0 time(end)])
+xlim([0.0 12.0])
 
 figure(3)
 plot(time, data(:,8)), grid on
