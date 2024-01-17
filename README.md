@@ -33,27 +33,19 @@ TE 307
         * [Servo](docs/markdown/servo.md)
         * [DC Motor](docs/markdown/dc_motor.md)
 3. [Tips](#tips)
+
 4. [Workshops](#workshops)
     * [Workshop 1](docs/markdown/ws1.md)
     * [Workshop 2](docs/markdown/ws2.md)
     * [Workshop 3](docs/markdown/ws3.md)
 
 
-<!-- # Using the PES-Board with power On and hardware running while connected to your computer happens at your own risk
-
-# Under now circumstances leave the battery charger connected to the PES-Board when using the PES-Board of having it connected to your computer
-
-# Motor encoder soldering can be wrong. Do not assume that if you plug in one Motor and everything works you can the also use the same pings and everything works. You have to make sure that the physical rotation is according to your assumption and that a positive input leads to a positive change of increments.
-
-# Depending on the PES BOARD version DCMotor M3 rotation direction might be inverted
-
-# Depending on the PES BOARD version the Pin map might differ
-
+<!-- 
 - FastPWM default pwm period is 50 mus
 
 -->
 ## Course setup
-In order to be able to complete the course, one must first register on the platforms and obtain the appropriate tools. All the information needed to start the course can be found at the link: [Course setup](docs/markdown/general_info.md)
+In order to be able to complete the course, one must first register on the platforms and obtain the appropriate tools. All the information needed to start the course can be found at the link: [course setup](docs/markdown/general_info.md)
 
 ## Hardware
 In our course, we'll be utilizing the Nucleo-F446RE microcontroller, which is paired with the PES board designed and developed at ZHAW by ... . The setup includes a variety of sensors and actuators for practical applications.
@@ -83,8 +75,9 @@ PES board is a board created to work with a microcontroller on which appropriate
 >- <b>Depending on the PES BOARD version DCMotor M3 rotation direction might be inverted</b>
 >- <b>Depending on the PES BOARD version the Pin map might differ</b>
 
-The kits come with battery packs that power the motors. Each Battery Pack provides 6V, allowing the motors to function with a 6V power supply when one set is connected or 12V when both are connected. It's crucial to bridge the pins on the second socket if you intend to use the 6V kit.
+The kit includes two sets of 6V batteries, which can be connected to provide a 12V voltage. If using a single battery, the remaining pins should be bridged to utilize a 6V voltage. This voltage powers the motor and is controlled by an external power electronics component known as an H-bridge.
 
+The external power supply enables the board to function independently of the computer, eliminating the need for a connection via the Mini USB cable. Despite this, the board continues to receive a stable 5V supply through electronic elements while offering the option to use a 12V supply for the motors. To activate the external battery power, switch the slider on the PES board to the ON position.
 #### Pheripherals
 <!-- [pes_board_peripherals.PNG](docs/images/pes_board_peripherals.PNG "PES Board Pheripherals") -->
 
@@ -97,6 +90,7 @@ PDF: [pes_board_pin_mapping.pdf](docs/datasheets/pes_board_pin_mapping.pdf)
 
 ### Hardware Tutorials
 ------------------------
+<!-- TODO Add explanation how the files are structured -->
 The following links contain the hardware tutorials:
 - [<font size="3"> IR Sensor </font>](docs/markdown/ir_sensor.md)
 - [<font size="3"> Ultrasonic Sensor </font>](docs/markdown/ultrasonic_sensor.md)

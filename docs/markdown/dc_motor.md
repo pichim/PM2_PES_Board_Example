@@ -5,68 +5,53 @@ A direct current (DC) motor is a type of electric machine that converts electric
 <center><img src="../images/dc_motor.png" alt="dc motor" width="250"/></center>
 <center> <i>Example of dc motor with encoder</i> </center>
 
-<!-- TOODO: Add 488:1 gear box motor  -->
-<!-- TOODO: Maybe only include these parameters that must be adjusted or at least these and only a minimal set of the other parameters -->
 ## Technical Specifications
-| | 31:1 Metal Gearmotor 20Dx41L mm 12V CB | 78:1 Metal Gearmotor 20Dx43L mm 12V CB |?|
+| | 31:1 Metal Gearmotor 20Dx41L mm 12V CB | 78:1 Metal Gearmotor 20Dx43L mm 12V CB |488:1 Metal Gearmotor 20Dx46L mm 12V CB|
 |-|-|-|-|
 |**Dimensions**|
-|Size | 20D x 43.2L mm | 20D x 44.7L mm |-|
-|Weight | 44 g| 45 g|-|
-|Shaft diameter | 4 mm| 4 mm|-|
+|Size                     | 20D x 43.2L mm | 20D x 44.7L mm |20D × 47.7L mm|
+|Weight                   | 44 g           | 45 g           | 47 g         |
+|Shaft diameter           | 4 mm           | 4 mm           | 4 mm         |
 |**General specifications**|
-|Gear ratio               | 31.25:1            | 78.125:1           |-|
-|No-load speed @ 12V      | 450 rpm            | 180 rpm            |-|
-<!-- |No-load current @ 12V    | 0.08 A             | 0.08 A             |-|
-|Stall current @ 12V      | 1.6 A              | 1.6 A              |-|
-|Stall torque @ 12V       | 2.4 kg·cm          | 5.4 kg·cm          |-|
-|Max output power @ 12V   | 2.8 W              | 2.5 W              |-|
-|No-load speed @ 6V       | 225 rpm            | 90 rpm             |-|
-|Stall current @ 6V       | 0.8 A              | 0.8 A              |-|
-|Stall torque @ 6V        | 1.2 kg·cm          | 2.7 kg·cm          |-|
-|Motor type               | 1.6A stall @ 12V CB| 1.6A stall @ 12V CB|-|
-|**Performance at maximum efficency**|
-|Max efficiency @ 12V          | 39 %       | 36 %       |-|
-|Speed at max efficiency       | 360 rpm    | 150 rpm    |-|
-|Torque at max efficiency      | 0.44 kg·cm | 0.93 kg·cm |-|
-|Current at max efficiency     | 0.35 A     | 0.33 A     |-|
-|Output power at max efficiency| 1.7 W      | 1.4 W      |-| -->
-
+|Gear ratio               | 31.25:1        | 78.125:1       | 488.28125:1  |
+|No-load speed @ 12V      | 450 rpm        | 180 rpm        | 28 rpm       |
+|Stall torque @ 12V       | 0.24 Nm        | 0.53 Nm        | 2.45 Nm      |
+|Max output power @ 12V   | 2.8 W          | 2.5 W          | 1.5 W        |
+|No-load speed @ 6V       | 225 rpm        | 90 rpm         | 14 rpm       |
+|Stall torque @ 6V        | 0.12 Nm        | 0.26 Nm        | 1.27 Nm      |
 ## Links
 
-[31:1 Metal Gearmotor 20Dx41L mm 12V CB][1]
-
-[78:1 Metal Gearmotor 20Dx43L mm 12V CB][2]
-
-[488:1 Metal Gearmotor 20Dx46L mm 12V CB][3]
+[31:1 Metal Gearmotor 20Dx41L mm 12V CB][1] <br>
+[78:1 Metal Gearmotor 20Dx43L mm 12V CB][2] <br>
+[488:1 Metal Gearmotor 20Dx46L mm 12V CB][3] <br>
 
 <!-- link list, last updated 15.01.2023 -->
 [1]: https://www.pololu.com/product/3475/specs
 [2]: https://www.pololu.com/product/3477/specs
 [3]: https://www.pololu.com/product/3485/specs
+[4]: https://nathandumont.com/blog/h-bridge-tutorial
+[5]: https://www.electronics-tutorials.ws/blog/pulse-width-modulation.html
+
+## Datasheets
+
+[20D Pololu Motors](../datasheets/pololu-20d-metal-gearmotors.pdf)
 
 ## Static Characteristics of the 78:1 Metal Gearmotor 20Dx43L mm 12V CB
 
 <center><img src="../images/dc_motor_static_characteristics.png" alt="Static Characteristics of 78: DC Motor" width="700"/></center>
 <center> <i>Approximate static characteristics of 78:1 DC Motor</i> </center>
 
-<!-- TODO: Describe grafics above, and fill in bullet points below -->
+- These characteristics are approximations, and actual motors models may exhibit variations. It is advisable to make judicious choices in selecting motors, incorporating safety margins to account for these inaccuracies and avoid operating the motor at its extreme parameters. The top-left graph demonstrates the correlation between increasing torque and amperage, while the graph on the right illustrates the relationship between increasing speed and voltage. The subsequent graphs integrate these characteristics, revealing the interplay between torque and speed, aiding in motor selection. Additionally, the bottom-right graph highlights that the maximum power is generated within a specific range of speed and torque.
+- The selection of different gear ratios significantly influences the capabilities of the engine. While the voltage and amperage ranges remain constant, adjustments in gear ratios impact torque and speed values. Opting for a larger gear ratio like 31:1 yields higher speeds at the expense of reduced available torque. Conversely, a lower gear ratio, such as 488:1, results in a comparatively lower maximum speed but offers significantly higher torque.
+- During the design process, leveraging the presented characteristics proves beneficial for the appropriate motor selection. When aiming for high speeds, emphasizing the speed-voltage relationship is crucial, while lifting heavy objects places greater importance on torque characteristics. Ultimately, a judicious compromise can be achieved by considering the torque-speed relationship, enabling the optimal matching of the motor to the specific design requirements.
 
-- How does it change of a different gear
-- How can students use this grafic to decide which motor thes use
-- Describe that this is only a approximation and that the real characteristics can be different so they better have some margins when evaluating their motors
+## Encoder and relative positioning
+- A magnetic encoder is a sensor device that utilizes magnets and sensors to measure the position of a rotating object. It typically consists of a magnetically encoded disk attached to the rotating part and a sensor that detects changes in the magnetic field, converting them into electrical signals. It provides information about the rotational position of the object.
+- It's important to note that magnetic encoders typically provide relative position information. This means that the encoder only gives data about changes in position relative to a specific reference point, and the initial position upon power-up or system initialization is considered as the zero reference point. Therefore, the accuracy of the measurements relies on the consistency of this reference, and any absolute positioning requires additional measures or sensors.
 
-<!-- TODO: Describe magnetic encoder, an mention that we only receive relative information, so initial position will always determine zero! -->
-## Encoder and relative Position
-
-- sodifjsf
-- öoisjfposifj
-
-<!-- TODO: Describe why this may be needed? -->
 ## Practical Tips
 
-- direction of movement can be changed by M1 and M2 the same with outB outA for encoder
-
+- To alter the motor's movement direction, adjust the power supply connection to the M1 and M2 outputs accordingly, and do the same for the encoder using the outA and outB outputs. It's crucial to note that the speed controller functions accurately when the encoder readings align with the motor's rotation direction. To ensure proper operation, establish the positive direction first, then connect the components to ensure both the direction and encoder readings are positive.
 ## DC motor driver
 
 The ``DCMotor`` class is a versatile tool designed for controlling the velocity and rotation of a DC motor with precision. It incorporates essential components like an EncoderCounter, FastPWM, Motion control, PID controller, and an IIR Filter to ensure accurate control. This class provides user-friendly methods for adjusting velocity, rotation, control gains, and obtaining the current state of the motor, offering a comprehensive set of functionalities for effective motor control for the Pololu Metal Gearmotor family.
@@ -95,12 +80,41 @@ DC motors have assigned pins on the PES board, and since they are equipped with 
 
 Pins M1 and M2 function as PWM pins, commanding the power electronics on the PES Board which then applies voltage on the DC Motors. VCC and GND pins provide power to the encoder, while pins A and B are utilized to receive signals from the encoder.
 
-<!-- TODO: Add link -->
-**HERE SHOULD BE HYPERLINK TO THE BOARD MAP** 
+[PES Board pinmap](../datasheets/pes_board_peripherals.pdf)
+
+
+
+### Enabling power electronics
+---------------------------
+The microcontroller commands DC motors through external power electronics, specifically an H-bridge for motor control. To interface and manage this external circuit, the microcontroller must be configured by setting up GPIO pins, timers, and PWM, the latter being crucial for adjusting the rotational speed of the motors.
+<details Closed>
+<summary><b>H-bridge and PWM</b></summary>
+
+><center><img src="../images/hbridge_switches.png" alt="H-bridge" width="700"/></center>
+> An H-bridge is a configuration of four switches that enables precise control over the direction and speed of a motor. These switches, typically transistors or MOSFETs arranged in the shape of an "H," determine the current flow through the motor. By selectively activating different pairs of switches, the H-bridge can drive the motor forward, backward, or apply braking. Pulse Width Modulation (PWM) is often employed for speed control, allowing the regulation of motor speed by adjusting the ON and OFF times of the switches. 
+
+><center><img src="../images/pwm.png" alt="PWM" width="700"/></center>
+>Pulse Width Modulation (PWM) in DC motor control involves varying the duty cycle of a rapidly switching signal to regulate the average voltage reaching the motor. By adjusting the duty cycle, the speed of the motor can be finely controlled, with higher duty cycles resulting in increased speed and vice versa. This dynamic control is achieved by applying PWM to the H-bridge, allowing bidirectional current flow through the motor for forward, reverse, and braking actions.
+><br>
+><br>
+
+> More about H-bridge: [HERE][4]
+>
+> More abour PWM in DC motors [HERE][5]
+</details>
+
+To power the DC motors, connect a 12V external power source, formed by combining two 6V battery packs, to the back of the PES board. If using a 6V power supply, connect one set of pins and bridge the remaining two. Turn on the PES board using the ON/OFF slider. After turning on the power, enable the external power electronics, represented by an H-bridge, by creating a DigitalOut object with a PIN argument that enables the motors. This object should be created alongside other DC motor objects.
+```
+DigitalOut enable_motors(PB_ENABLE_DCMOTORS); // create DigitalOut object to enable dc motors
+```
+To complete the motor activation process, set the value of the object to 1, enabling the use and control of the motors by utilizing battery power. Place this statement after the trigger statement to ensure it is executed in the foreground and not running in the background without purpose.
+```
+// enable hardwaredriver dc motors: 0 -> disabled, 1 -> enabled
+enable_motors = 1;
+```
 
 ### Create DC motor object
 ---------------------------
-<!-- TODO: Enabling the power electronics should be described seperately and beforehand -->
 In the given example, DC motors and encoders are plugged into pins M1 - M3 on the PES-Board. Initially, it's essential to add the suitable driver to our main file and then create an object with the pin's name passed as an argument, these are the PWM pins, and the A and B pins belonging to the encoder. There should be also DigitalOut object definied to enable DC motors. What is more, the motors will can used in different way:
 - Motor M1 is used open-loop,
 - Motor M2 is used closed-loop to command velocity (rotations per second),
@@ -167,10 +181,10 @@ pwm_M1.write(0.75f)
 Motor M2 is commanded in a closed-loop to set a desired speed for speed controlled dc motors. The desired speed is set through following command that take the value in rotations per second.
 
 ```
-motor_M3.setVelocity(1.0f)
+motor_M2.setVelocity(1.0f)
 ```
 
-#### Motor 3
+#### Motor M3
 ---------------------------
 Motor M3 is commanded in a closed-loop to set a desired position for position controlled dc motors. The desired rotation is set through following command that take the value in degrees.
 

@@ -7,17 +7,15 @@ A servo is an electrical motor usually designed for precise control over angular
 
 ## Technical Specifications
 
-<!-- TODO: Please convert the units to SI (or at least Ncm) -->
 | | Futaba S3001 | Reely S-0090 | 
 |-|-|-|
 |Speed at 60°     | 0.17 / 0.21 s (6.0 / 4.8 V) | 0.14 / 0.12 s (6.0 / 7.0 V)
-|Torque           | 3.0 / 2.4 kgcm (6.0 / 4.8 V)| 88 / 98 Ncm (6.0 / 7.0 V)
+|Torque           | 0.29 / 0.24 Nm (6.0 / 4.8 V)| 0.88 / 0.98 Nm (6.0 / 7.0 V)
 |Operating Voltage| 4.8 - 6.0 V                 | 6.0 - 7.0 V
 |Control Frequency| 50 - 70 Hz                  | 50 - 70 Hz
 |Weight           | 45.1 g                      | 56 g
 |Dimensions       | 40.4 x 19.8 x 36 mm         | 41.0 x 20.0 x 38.0 mm
 |Gear             | Plastic                     | Metall
-
 
 ## Links
 
@@ -31,8 +29,13 @@ A servo is an electrical motor usually designed for precise control over angular
 [3]: https://theorycircuit.com/servo-motor-driver-circuit/
 [4]: https://os.mbed.com/platforms/ST-Nucleo-F446RE/
 
-<!-- TODO: Describe that here we can command absolut Angles / Positions -->
+## Datasheets
+
+[Futaba S3001](../datasheets/Futaba_Servo_S3001.pdf)
+<!-- TODO TRY TO FIND REELY DATASHEET -->
+
 ## Absolut Positioning
+Within this system, users have the capability to command and control servo motors in terms of absolute angles or positions. Unlike relative control, where movements are based on the current position, absolute control allows for the specification of exact angular positions. This level of precision facilitates fine-tuned control over the servo's rotational placement, ensuring that it consistently reaches and maintains specific, predetermined angular orientations. This feature proves particularly valuable in applications where precise and absolute positioning is essential for optimal performance.
 
 ## Practical Tips
 
@@ -57,15 +60,12 @@ For the PES-board, analog servos are associated with specific ports, outlined as
 #define PB_D2 PC_6
 #define PB_D3 PB_12
 ```
-
-<!-- TODO: Add link -->
-**HERE SHOULD BE HYPERLINK TO THE BOARD MAP** 
+[PES Board pinmap](../datasheets/pes_board_peripherals.pdf)
 
 ### Create servo object
 ---------------------------
 In the given example, servos are plugged into pins D0 - D2 on the PES-Board. Initially, it's essential to add the suitable driver to our main file and then create an object with the pin's name passed as an argument.
 
-<!-- TODO: Shorten example to use only one or two servos, depending on how many they receive in their box -->
 
 ```
 #include "pm2_drivers/Servo.h"
@@ -74,7 +74,6 @@ In the given example, servos are plugged into pins D0 - D2 on the PES-Board. Ini
 
 Servo servo_D0(PB_D0);
 Servo servo_D1(PB_D1);
-Servo servo_D2(PB_D2);
 ```
 
 ### Calibration
@@ -133,8 +132,6 @@ if (!servo_D0.isEnabled())
     servo_D0.enable();
 if (!servo_D1.isEnabled())
     servo_D1.enable();
-if (!servo_D2.isEnabled())
-    servo_D2.enable();
 ```
 
 - Next, utilize the following function and statements. These will enable the incremental adjustment of the servo position with each press of a mechanical button, achieved by modifying the pulse width value. It is crucial to ensure that the incremental change in the servo position, i.e., the pulse width, is very small to obtain precise minimum and maximum values.
@@ -143,7 +140,6 @@ if (!servo_D2.isEnabled())
 ```
     servo_D0.setNormalisedPulseWidth(servo_angle);
     servo_D1.setNormalisedPulseWidth(servo_angle);
-    servo_D2.setNormalisedPulseWidth(servo_angle);
     if (servo_angle < 1.0f & servo_counter % loops_per_seconds == 0 & servo_counter != 0  & mechanical_button.read())
     {
         servo_angle += 0.0025f;
@@ -156,7 +152,6 @@ if (!servo_D2.isEnabled())
 ```
 servo_D0.disable();
 servo_D1.disable();
-servo_D2.disable();
 servo_angle = 0.0f;
 ```
 
@@ -172,24 +167,18 @@ float servo_D0_ang_max = 0.1150f;
 // servo 1
 float servo_D1_ang_min = ...;
 float servo_D1_ang_max = ...;
-// servo 2
-float servo_D2_ang_min = ...;
-float servo_D2_ang_max = ...;
 
 // calibrate the servos
 servo_D0.calibratePulseMinMax(servo_D0_ang_min, servo_D0_ang_max);
 servo_D1.calibratePulseMinMax(servo_D1_ang_min, servo_D1_ang_max);
-servo_D2.calibratePulseMinMax(servo_D2_ang_min, servo_D2_ang_max);
 ```
 
 - Now the *servo_angle* variable will be in a range from 0.0f to 1.0f, which will corespond internally to the pulse width range from value of *servo_D0_ang_min* to value of *servo_D0_ang_max*.
 
 ### Command the servo
 ---------------------------
-<!-- TODO: Test enable with initial position not equal to 0.0f, should be possible -->
-To use the servo, the initial step is to enable it. This action starts the servo and sets it to the zero position, as this position is defined as the default. You might also add its initial position as an optional input argument.
+To use the servo, the initial step is to enable it. This action starts the servo and sets it to the zero position, as this position is defined as the default, but the initial possition can be also passed as argument so that servo with move to the particular position during initialization.
 
-<!-- TODO: Do we not need this further up? Similar in ir_sensor.md -->
 The following statement should be positioned after the trigger statement to avoid running in the background without purpose. The code below employs the **isEnabled** function to check if the servo process is already running. If the **isEnabled** function returns false, the servo process is initialized using the enable function.
 
 ```

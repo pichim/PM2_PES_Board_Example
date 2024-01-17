@@ -51,7 +51,11 @@ The analog distance sensor which is equipped with IR diode utilizes triangulatio
 
 ## Datasheets
 
-<!-- TODO: Add links to datasheets (if we have them) -->
+[Sharp GP2D120](../datasheets/GP2D120-DATA-SHEET.pdf)
+
+[Sharp GP2Y0A21YK0F](../datasheets/gp2y0a21yk0f.pdf)
+
+[Sharp GP2Y0A02YK0F](../datasheets/gp2y0a02yk_e.pdf)
 
 ## Practical Tips
 
@@ -68,8 +72,7 @@ To start working with the sensor, it is necessary to plug it correclty and creat
 ---------------------------
 According to the sensor documentation, it is necessary to power the sensors with 3.3V to ensure the reception of accurate signals. It is evident that three wires emerge from the sensor: one for signal transmission, another for ground, and the last one for power supply. The transmission wire should be connected to the pin that allows the reception of an analog signal, in our example this is the **PC_2** pin.
 
-<!-- TODO: Add link -->
-**HERE SHOULD BE HYPERLINK TO THE BOARD MAP** 
+[Nucleo Board pinmap][5]
 
 If you are not sure how to connect the sensor, click the following hint.
 
@@ -80,7 +83,7 @@ If you are not sure how to connect the sensor, click the following hint.
 <center> <i>Connection Pin map with marked wire's colors </i> </center>
 </details>
 
-<!-- TODO: Add link to mbed nulceo f446re where the pinmap is-->
+
 
 ### Create analog distance sensor object
 ---------------------------
@@ -102,7 +105,7 @@ AnalogIn ir_analog_in(PC_2);
 The sensor returns distances in millivolts, there for it is necessary to convert the signal to a unit of length. To do this, it is essential to determine the function that converts the signal from millivolts into distance measure values, e.g. centimeters. This function is determined by the calibration process. The calibration process is described in the folowing section.
 
 <details Closed>
-<summary><b>For what do we need calibration Details?</b></summary>
+<summary><b>For what do we need calibration?</b></summary>
 
 >Calibrating an IR distance sensor is essential to establish a precise relationship between the sensor's analog voltage readings and actual distances. This process ensures accuracy, accounting for sensor variations and environmental factors, and is vital for reliable distance measurements in diverse applications. In the technical documentation it is possible to find a dependency between voltage readings and distance such as the following:
 >
@@ -116,7 +119,6 @@ The sensor returns distances in millivolts, there for it is necessary to convert
 
 The first step of the procedure is the simultaneous measurement of the actual distance and the corresponding voltage readings received from the sensor for several distances. Once the values have been measured, it is best to use a program like MATLAB/Python for data processing, where the measurements can be evaluated and further processed. The goal is to approximate the measured characteristics from millivolts to distance in cm as a non-linear function (a map) and determine the coefficients of the the function that converts the signal from millivolts into a distance. The solution to this problem will be done via nummerical opitimazitaion. A list of hardware and files needed to perform the calibration can be found below:
 
-<!-- TODO: ADD link to matlab file -->
 >Hardware:
 > - NUCLEO-F446RE board
 > - IR sensor (check which one you have, the model name is on the side, it will determine the range of measurement)
@@ -128,7 +130,7 @@ The first step of the procedure is the simultaneous measurement of the actual di
 ><center> <i>Hardware used in exercise</i> </center> 
 >
 > Software:
-> - Matlab file: eval_ir_sensor.m
+> - Matlab file: [IR sensor evaluation](../matlab/eval_ir_sensor.m)
 
 #### Procedure
 
@@ -136,11 +138,13 @@ The first step of the procedure is the simultaneous measurement of the actual di
 <center><img src="../images/IR_task.png" alt="IR task" width="550" /></center>
 <center> <i>Performing the exercise</i> </center>
 
-- To read the values measured by the sensor, it is essential to include a command that will be executed every iteration of the program. There for, this command is positioned within the *while* loop. The command will start reading sensor values after starting the program execution with the **USER** button.
+- To read the values measured by the sensor, it is essential to include a command that will be executed every iteration of the program. There for, this command is positioned within the *while* loop. The command will start reading sensor values after starting the program execution with the **USER** button. 
 
 ```
 ir_distance_mV = 1.0e3f * ir_analog_in.read() * 3.3f;
 ```
+**Notes:**
+- Keep in mind that the signal is mapped to a range of 0 to 1. Consequently, the reading is multiplied by 3.3, representing the maximum range of the sensor, and then by 1000 to convert the signal from volts to millivolts.
 
 - To obtain printouts on the serial monitor, insert the command:
 
@@ -211,23 +215,22 @@ ir_distance_cm = ir_sensor_compensation(ir_distance_mV);
 ```
 printf("IR distance mV: %f IR distance cm: %f \n", ir_distance_mV, ir_distance_cm);
 ```
-
-<!-- TODO: Describe the graph -->
+Below are the graphs obtained during the evaluation of the results obtained in the calibration process.
 <center><img src="../images/ir_sensor_curve_fitting.png" alt="Curve Fitting" width="900" /></center>
 <center> <i>Cruve Fitting example</i> </center>
 
-<!-- TODO: This is needed at the beginning -->
+The initial graph illustrates the non-linear relationship between the sensor's received voltage and its distance from an obstacle, aligning with the technical documentation. Moving to the adjacent graph, two curves are presented: the blue curve representing measured points and the green curve resulting from fitting to identify the best-fit function. The third graph displays the measured (red) and fitted (blue) curves, allowing for the determination of a reliable measurement range consistent with the values specified in the sensor's technical documentation.
+
 ### Read the measured distance
 ---------------------------
 To utilize the sensor and capture readings of the signals sent to the board, employ the function:
 ```
 ir_distance_mV = 1.0e3f * ir_analog_in.read() * 3.3f;
 ```
-
 **Notes:**
 - Keep in mind that the signal is mapped to a range of 0 to 1. Consequently, the reading is multiplied by 3.3, representing the maximum range of the sensor, and then by 1000 to convert the signal from volts to millivolts.
 
-After calibration, employing the sensor is quite similar. However, the measured value needs to be recalculated using the function acquired during the calibration process. This ensures the result is presented in distance units such as centimeters or millimeters. Determining this function is essential before each use of the sensor for the reasons explained earlier.
+After calibration, employing the sensor is quite easy however, the measured value needs to be recalculated using the function acquired during the calibration process. This ensures the result is presented in distance units such as centimeters or millimeters. Determining this function is essential before each use of the sensor for the reasons explained earlier.
 ```
 ir_distance_cm = ir_sensor_compensation(ir_distance_mV);
 ```

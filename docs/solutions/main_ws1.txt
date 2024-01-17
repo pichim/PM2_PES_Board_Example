@@ -41,6 +41,12 @@ int main()
     DigitalOut led1(PB_8);
     //DigitalOut led2(PB_9);
 
+    // mechanical button
+    DigitalIn mechanical_button(PC_5); // create DigitalIn object to evaluate extra mechanical button, you
+                                       // need to specify the mode for proper usage, see below
+    mechanical_button.mode(PullUp);    // set pullup mode: sets pullup between pin and 3.3 V, so that there
+                                       // is a defined potential
+
     // HERE DEFINE OBJECTS (remember about giving comments and proper names)
     // Sharp GP2Y0A41SK0F, 4-40 cm IR Sensor
     float ir_distance_mV = 0.0f; // define variable to store measurement (in mV)
@@ -68,7 +74,7 @@ int main()
             if (do_reset_all_once) {
                 do_reset_all_once = false;
 
-		led1 = 0;
+		        led1 = 0;
                 ir_distance_mV = 0.0f;
                 ir_distance_cm = 0.0f;
             }

@@ -45,7 +45,7 @@ An ultrasonic sensor (range finder / detector) is a type of sensor designed to m
 
 ## Datasheets
 
-<!-- TODO: Add links to datasheets (if we have them) -->
+[Grove-Ultrasonic Ranger V2.0](../datasheets/Grove-Ultrasonic_Ranger_WiKi.pdf)
 
 ## Practical Tips
 
@@ -73,8 +73,7 @@ The ultrasonic sensor was tested with a 5V power supply and a single pin that tr
 #define PB_D3 PB_12
 ```
 
-<!-- TODO: Add link -->
-**HERE SHOULD BE HYPERLINK TO THE BOARD MAP** 
+[PES Board pinmap](../datasheets/pes_board_peripherals.pdf)
 
 To establish the connection, utilize the cable displayed in the accompanying photo, as it is compatible with the plug and socket on the sensor. Connect a regular jumper wire to the shown cable and use them for linking to the PES_board. The sensor's pins are labeled, but the plug design ensures a single correct connection: the bidirectional signal is transmitted through the yellow wire.
 
