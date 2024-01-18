@@ -64,18 +64,18 @@ DC motors have assigned pins on the PES board, and since they are equipped with 
 
 ```
 // PES-Board Pin Names
-#define PB_PWM_M1 PB_13
-#define PB_PWM_M2 PA_9
-#define PB_PWM_M3 PA_10
+PB_PWM_M1
+PB_PWM_M2
+PB_PWM_M3
 
-#define PB_M1_ENC_A PA_6
-#define PB_M1_ENC_B PC_7
-#define PB_M2_ENC_A PB_6
-#define PB_M2_ENC_B PB_7
-#define PB_M3_ENC_A PA_0
-#define PB_M3_ENC_B PA_1
+PB_M1_ENC_A
+PB_M1_ENC_B
+PB_M2_ENC_A
+PB_M2_ENC_B
+PB_M3_ENC_A
+PB_M3_ENC_B
 
-#define PB_ENABLE_DCMOTORS PB_15
+PB_ENABLE_DCMOTORS
 ```
 
 Pins M1 and M2 function as PWM pins, commanding the power electronics on the PES Board which then applies voltage on the DC Motors. VCC and GND pins provide power to the encoder, while pins A and B are utilized to receive signals from the encoder.

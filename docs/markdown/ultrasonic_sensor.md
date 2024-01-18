@@ -67,10 +67,10 @@ To start working with the sensor, it is necessary to plug it correclty and creat
 The ultrasonic sensor was tested with a 5V power supply and a single pin that transmits the signal. There for, it can use the same ports as the servos. You can use the the following pins:
 
 ```
-#define PB_D0 PB_2
-#define PB_D1 PC_8
-#define PB_D2 PC_6
-#define PB_D3 PB_12
+PB_D0
+PB_D1
+PB_D2
+PB_D3
 ```
 
 [PES Board pinmap](../datasheets/pes_board_peripherals.pdf)
@@ -82,7 +82,7 @@ To establish the connection, utilize the cable displayed in the accompanying pho
 
 ### Create UltrasonicSensor Object
 ---------------------------
-In the given example, the sensor is plugged into pin D3 on the PES-Board. Initially, it's essential to add the suitable driver to ``main`` file and then create an object with the pin's name passed as an argument.
+In the given example, the sensor is plugged into pin D3 on the PES-Board. Initially, it's essential to add the suitable driver to ``main`` file and then create an object with the pin's name passed as an argument along with the variable definition that will handle the reading from sensor.
 
 ```
 #include "pm2_drivers/UltrasonicSensor.h"
@@ -90,6 +90,7 @@ In the given example, the sensor is plugged into pin D3 on the PES-Board. Initia
 ...
 
 UltrasonicSensor us_sensor(PB_D3);
+float us_distance_cm = 0.0f;
 ```
 
 <!-- Additional information is greyed out -->

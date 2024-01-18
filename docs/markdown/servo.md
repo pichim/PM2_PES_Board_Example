@@ -55,10 +55,10 @@ For the PES-board, analog servos are associated with specific ports, outlined as
 
 ```
 // PES-Board Pin Names
-#define PB_D0 PB_2
-#define PB_D1 PC_8
-#define PB_D2 PC_6
-#define PB_D3 PB_12
+PB_D0
+PB_D1
+PB_D2
+PB_D3
 ```
 [PES Board pinmap](../datasheets/pes_board_peripherals.pdf)
 

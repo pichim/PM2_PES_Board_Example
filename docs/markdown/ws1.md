@@ -30,7 +30,7 @@ The first task will be to run a test program using an additional diode.
 4. Watch the bottom left corner of the screen, windows will appear there telling you about the progress of the process. When uploading is finished, the LD1 LED will be lit continuously (blinking green and red when uploading)
 5. Now click the **USER** button while watching the LED.
 6. Now click the **USER** button once again, what happend with LED diode?
-7. Unplug Nucleo board from computer.
+7. After finishing unplug Nucleo board from computer.
 
 After finishing task try to read through the code with the comments. Observe how the code structure looks like and how individual objects are defined. **If you have any questions, just ask them.**
 
@@ -42,7 +42,7 @@ The second task will be carried out using an IR distance sensor, and the main go
 2. Read the IR sensor manual, the calibration process is described there step by step. Perform calibrations according to the instruction
 
     > [IR sensor tutorial](../markdown/ir_sensor.md)
-
+3. After finishing unplug Nucleo board from computer.
 ## Summary
 During the first workshop, the first program was launched on the Nucleo-F446RE microcontroller using additional hardware, i. e. LED. Then the IR distance sensor was connected and its calibration was carried out. <br>
 Questions for own consideration:
@@ -51,7 +51,8 @@ Questions for own consideration:
 
 
 
-
+**Answer:**
+[WS1](../solutions/main_ws1.txt)
 
 <!-- Links -->
 [1]: https://os.mbed.com/platforms/ST-Nucleo-F446RE/

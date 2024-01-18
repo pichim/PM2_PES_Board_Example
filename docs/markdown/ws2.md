@@ -12,14 +12,14 @@ The objective of the second workshop is to enhance comprehension of the PES boar
 > - Mechanical button
 > - Jumper wires
 
-<!-- TODO fill it out -->
-<!-- >Second part:
-> - NUCLEO-F446RE board
+>Second part:
+> - PES board with NUCLEO-F446RE board
 > - Mini USB cable
-> - IR sensor (check which one you have, the model name is on the side, it will determine the range of measurement)
+> - Ultrasonic sensor 
+> - Mechanical button
+> - Servo Futaba S3001/REELY S-009
 > - Additional wires to connect the sensor to the NUCLEO board
-> - Paper tape
-> - Length measure tape -->
+> - Jumper wires
 
 ## Assignment
 We assume that you know the general structure of the PES board, if not, go to: [PES board](../../README.md#pes-board)
@@ -28,8 +28,8 @@ We assume that you know the general structure of the PES board, if not, go to: [
 The first task will be servo integration and calibration along with mechanical button integration.
 
 1. Connect the mechanical button to the PC_5 pin and the ground to the corresponding pin (use [Nucleo Board pinmap][1])
-2. After connecting mechanical button, connect the board to the computer using a mini USB cable. Immediately after connecting, a console window should appear in Mbed studio.
-3. In ``main`` function you need to create mechanical button object, with proper pullup mode:
+2. Once you've attached the mechanical button, link the board to the computer using a mini USB cable. Shortly after the connection, a console window should automatically appear in Mbed Studio.
+3. In the ``main`` function, it's essential to create a mechanical button object with the appropriate pullup mode.:
 ```
 // mechanical button
 // create DigitalIn object to evaluate extra mechanical button
@@ -38,28 +38,32 @@ DigitalIn mechanical_button(PC_5);
 mechanical_button.mode(PullUp);
 ```
 4. Connect the servos to the D0 and D1 pins on the PES board (use [PES Board pinmap](../datasheets/pes_board_peripherals.pdf))
-5. Read the Servo manual, the calibration process is described there step by step. Perform calibrations according to the instruction
+5. Refer to the Servo manual for a step-by-step guide on the calibration process. Follow the instructions outlined in the manual to complete the calibration.
 
     > [Servo tutorial](../markdown/servo.md)
 
-5. Unplug Nucleo board from computer.
+6. After finishing unplug Nucleo board from computer.
+<br>
+
 Remember: **If you have any questions, just ask them.**
 
-<!-- TODO change it to US sensor -->
 ### Second part
 ------------------
-The second task will be to design a state machine, which will use additional hardware, which was the subject of the previous workshop, i. e. IR distance sensor.In this task we will create a state machine, which will have 4 states:
+The second task will be to design a state machine, which will use additional hardware - ultrasonic sensor.In this a state machine will be created, with 4 states:
 - initial
 - execution
 - sleep
 - emergency
 
-The general assumption is to construct a mechatronic system that will adjust the deflection of the servo lever depending on the distance measured by the sensor. Sleep state will be the state to which the system will go after pressing the mechanical button, and the system will go into emergency state if the distance measured by the sensor is too small.
+The overall goal is to build a mechatronic system capable of adjusting the deflection of the servo lever based on the distance measured by the sensor. The system will enter a sleep state if readings are out of range, and pressing the mechanical button will trigger an emergency state.
 
-Before doing task look at the .......
+Before doing task look at the 
+<!-- TODO LINK TO STATE MACHINE TUTORIAL -->
 
-1. Connect the IR distance sensor to the PC_2 pin and the ground to the corresponding pin (use [Nucleo Board pinmap][1])
-2. In ``main`` function at the beginning create robot states:
+1. Connect the ultrasonic sensor to the D3 pins on the PES board (use [PES Board pinmap](../datasheets/pes_board_peripherals.pdf))
+2. Read the US sensor manual and create object in the ``main`` function
+    >[US sensor](../markdown/ultrasonic_sensor.md)
+3. At the beginning  ``main`` function create robot states:
 ```
 enum RobotState {
     INITIAL,      
@@ -68,7 +72,7 @@ enum RobotState {
     EMERGENCY
 } robot_state = RobotState::INITIAL;
 ```
-3. Then in the infinite loop after triggering statement (do execute main task), place blank template of state machnie:
+4. Then in the infinite loop after triggering statement (do execute main task), place blank template of state machnie:
 ```
 switch (robot_state) {
     case RobotState::INITIAL: {
@@ -92,7 +96,7 @@ switch (robot_state) {
     }
 }
 ```
-4. Move enabling statements to the initial state case. Add function specifying new robot state - execution.
+5. Move enabling statements to the initial state case. Add function specifying new robot state - execution.
 ```
 case RobotState::INITIAL:
     if (!servo_D0.isEnabled())
@@ -100,12 +104,12 @@ case RobotState::INITIAL:
     robot_state = RobotState::EXECUTION;
     break;
 ```
-5. In the next step you need to enter a routine that will convert the measured distance to the tilting of the servo mechanism. As we know servos are calibrated so our goal is to map servo mechanisms so that the minimum sensor range is zero servo deflection and the maximum range is the maximum servo deflection. Below the sensor definition enter the minimum and maximum range.
+6. In the next step you need to enter a routine that will convert the measured distance to the tilting of the servo mechanism. As we know servos are calibrated so our goal is to map servo mechanisms so that the minimum sensor range is zero servo deflection and the maximum range is the maximum servo deflection. Below the sensor definition enter the minimum and maximum range, you can use a smaller range included in the measurement range:
 ```
-float min_range = 4.0f;
-float max_range = 40.0f;
+float min_range = 5.0f;
+float max_range = 50.0f;
 ```
-6. Now you need to enter function that will map distance measurments to servo deflation along with servo commanding statement:
+7. Enter function that will map distance measurments to servo deflation along with servo commanding statement:
 ```
 case RobotState::EXECUTION: {
     //Function to map the distnace to servo movement
@@ -115,43 +119,56 @@ case RobotState::EXECUTION: {
     break;
 }
 ```
-7. Now it is time for conditions that will make us jump to another states. As we mentioned sleep state will be initialized when pressing mechanical button and emergency state will be initialized when range will be too small. Inside the execution state:
+
+<!-- FOR MICHI - I CHANGED THE CONDITIONS -> EMERGENCY AFTER MECHANICAL BUTTON | SLEEP AFTER DISTANCE OUT OF RANGE  due to the problems with mechanical button I would need to add another conditions and it would get messy-->
+
+8. Now, let's establish the conditions that prompt transitions to other states. As previously mentioned, pressing the mechanical button will trigger the initiation of the sleep state, while the emergency state will be initialized when the sensor readout falls below the minimum range. Within the execution state:
 ```
 case RobotState::EXECUTION: {
     //Function to map the distnace to servo movement
-    float servo_ang = (1 / (max_range - min_range)) * ir_distance_cm - (min_range / (max_range - min_range));
+    float servo_ang = (1 / (max_range - min_range)) * us_distance_cm - (min_range / (max_range - min_range));
     servo_D0.setNormalisedPulseWidth(servo_ang);
 
-    if (mechanical_button.read()){
+    if (us_distance_cm < min_range | us_distance_cm > max_range) {
         robot_state = RobotState::SLEEP;
-    }
-    else if (ir_distance_cm > max_range) {
+    } else if (mechanical_button.read()) {
         robot_state = RobotState::EMERGENCY;
     }
 
     break;
 }
 ```
-8. To jump back from sleep to execution we also need to click the button. Inside sleep state:
+9. The console window will display the message "SLEEP MODE". To transition back from the sleep state to execution, the sensor readings must fall within the specified range. What's more, the emergency switch can also be activated in the sleep state. Within the sleep state:
 ```
 case RobotState::SLEEP: {
-    if (mechanical_button.read()){
+    printf("SLEEP MODE");
+    if (us_distance_cm > min_range | us_distance_cm < max_range){
         robot_state = RobotState::EXECUTION;
+    } else if (mechanical_button.read()) {
+        robot_state = RobotState::EMERGENCY;
     }
     break;
 }
 ```
-9. Emergency state is the state when are values are set to 0 and servos are disabled. Inside emergency state:
+10. Emergency state is the state when are values are set to 0 and servos are disabled. To use the mechatronic system once again you need to reset the machine with **RESET** button. Inside emergency state:
 ```
 case RobotState::EMERGENCY: {
     user_button_pressed_fcn();  
     break;
 }
 ```
-10. To use the mechatronic system once again you need to reset the machine with **RESET** button.
+11. Upload the program to the microcontroller using the **PLAY** button in Mbed studio and then point the sensor at an object that is at a distance that is within the range specified in the code and click **USER** button.
+12. Experiment by directing the sensor towards an object that is out of range. Press the mechanical button and observe the console window for the outcome.
+13. After finishing unplug Nucleo board from computer.
 
 ## Summary
+In the second workshop, familiarization with the PES board, handling, and calibration of the servo were initiated. Subsequently, a state machine was constructed, integrating an ultrasonic sensor as an additional distance sensor. A straightforward mechatronic mechanism to control the servo based on distance was developed, and understanding was gained regarding transitioning between different states in the robot. <br>
+Questions for own consideration:
+<!-- TODO think about it, about those question -->
+- THINK ABOUT IT
 
+**Answer:**
+[WS2](../solutions/main_ws2.txt)
 
 <!-- Links -->
 [1]: https://os.mbed.com/platforms/ST-Nucleo-F446RE/

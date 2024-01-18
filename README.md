@@ -1,8 +1,9 @@
-# Directory
+
+<!-- # Directory
 dirHome = getwd()
 
 # Image directory
-dirImg = paste(dirHome, '/screenshots/image.jpeg', sep = "")
+dirImg = paste(dirHome, '/screenshots/image.jpeg', sep = "") -->
 
 # PM2_PES_Board
 
@@ -57,7 +58,7 @@ The Nucleo-F446RE is a microcontroller development board featuring the STM32F446
 
 Arm MBed has prepared a special platform containing key information on the controller used. On it you can find technical information, but most importantly the pinmap of outputs, which is necessary for the correct connection of peripheral devices.
 #### Nucleo platform (pinmap)
-Link: https://os.mbed.com/platforms/ST-Nucleo-F446RE/
+[Link][1]
 
 ### PES Board
 ------------------------
@@ -106,3 +107,6 @@ The following links contain the workshops instructions:
 - [<font size="3"> Workshop 3 </font>](docs/markdown/ws3.md)
 
 ## Links
+
+<!-- Links -->
+[1]: https://os.mbed.com/platforms/ST-Nucleo-F446RE/
