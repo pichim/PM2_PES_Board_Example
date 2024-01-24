@@ -44,7 +44,7 @@ The second task will be carried out using an IR distance sensor, and the main go
     > [IR sensor tutorial](../markdown/ir_sensor.md)
 3. After finishing unplug Nucleo board from computer.
 ## Summary
-During the first workshop, the first program was launched on the Nucleo-F446RE microcontroller using additional hardware, i. e. LED. Then the IR distance sensor was connected and its calibration was carried out. <br>
+In first workshop, participants were introduced to the Nucleo-F446RE microcontroller and a custom PES board, acquiring familiarity with the Mbed Studio environment for coding. The workshop included the construction of the ``main`` file, comprehension of its structure, and implementation of essential commands. Additionally, exploration of hardware utilization, particularly the IR diode, and calibration using Matlab software were conducted. This foundational workshop aimed to put first steps in using microcontroler, laying the groundwork for further exploration in robotics and mechatronics.<br>
 Questions for own consideration:
 <!-- TODO think about it, about those question -->
 - THINK ABOUT IT

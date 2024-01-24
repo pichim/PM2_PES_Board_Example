@@ -28,8 +28,7 @@ We assume that you know the general structure of the PES board, if not, go to: [
 The first task will be servo integration and calibration along with mechanical button integration.
 
 1. Connect the mechanical button to the PC_5 pin and the ground to the corresponding pin (use [Nucleo Board pinmap][1])
-2. Once you've attached the mechanical button, link the board to the computer using a mini USB cable. Shortly after the connection, a console window should automatically appear in Mbed Studio.
-3. In the ``main`` function, it's essential to create a mechanical button object with the appropriate pullup mode.:
+2. In the ``main`` function, it's essential to create a mechanical button object with the appropriate pullup mode.:
 ```
 // mechanical button
 // create DigitalIn object to evaluate extra mechanical button
@@ -37,12 +36,12 @@ DigitalIn mechanical_button(PC_5);
 // set pullup mode: sets pullup between pin and 3.3 V, so that there is a defined potential
 mechanical_button.mode(PullUp);
 ```
-4. Connect the servos to the D0 and D1 pins on the PES board (use [PES Board pinmap](../datasheets/pes_board_peripherals.pdf))
-5. Refer to the Servo manual for a step-by-step guide on the calibration process. Follow the instructions outlined in the manual to complete the calibration.
+3. Connect the servos to the D0 and D1 pins on the PES board (use [PES Board pinmap](../datasheets/pes_board_peripherals.pdf))
+4. Refer to the Servo manual for a step-by-step guide on the calibration process. Follow the instructions outlined in the manual to complete the calibration.
 
     > [Servo tutorial](../markdown/servo.md)
 
-6. After finishing unplug Nucleo board from computer.
+5. After finishing unplug Nucleo board from computer.
 <br>
 
 Remember: **If you have any questions, just ask them.**
@@ -119,9 +118,6 @@ case RobotState::EXECUTION: {
     break;
 }
 ```
-
-<!-- FOR MICHI - I CHANGED THE CONDITIONS -> EMERGENCY AFTER MECHANICAL BUTTON | SLEEP AFTER DISTANCE OUT OF RANGE  due to the problems with mechanical button I would need to add another conditions and it would get messy-->
-
 8. Now, let's establish the conditions that prompt transitions to other states. As previously mentioned, pressing the mechanical button will trigger the initiation of the sleep state, while the emergency state will be initialized when the sensor readout falls below the minimum range. Within the execution state:
 ```
 case RobotState::EXECUTION: {
@@ -162,7 +158,7 @@ case RobotState::EMERGENCY: {
 13. After finishing unplug Nucleo board from computer.
 
 ## Summary
-In the second workshop, familiarization with the PES board, handling, and calibration of the servo were initiated. Subsequently, a state machine was constructed, integrating an ultrasonic sensor as an additional distance sensor. A straightforward mechatronic mechanism to control the servo based on distance was developed, and understanding was gained regarding transitioning between different states in the robot. <br>
+In second workshop, the integration of a servo into the PES board, calibration learning, and mechanical button incorporation were emphasized. Additionally, the creation of a state machine using an ultrasonic sensor was explored. By establishing robot states and implementing transition conditions, a simulated mechatronic system capable of adjusting a servo lever based on sensor readings was achieved. This workshop delivered hands-on experience in hardware integration and state machine design, fostering proficiency in robotics and mechatronics.<br>
 Questions for own consideration:
 <!-- TODO think about it, about those question -->
 - THINK ABOUT IT

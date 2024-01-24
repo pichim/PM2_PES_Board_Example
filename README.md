@@ -45,6 +45,8 @@ TE 307
 - FastPWM default pwm period is 50 mus
 
 -->
+
+<!-- TODO Do something with font sizes, to make it look better -->
 ## Course setup
 In order to be able to complete the course, one must first register on the platforms and obtain the appropriate tools. All the information needed to start the course can be found at the link: [course setup](docs/markdown/general_info.md)
 
@@ -52,13 +54,13 @@ In order to be able to complete the course, one must first register on the platf
 In our course, we'll be utilizing the Nucleo-F446RE microcontroller, which is paired with the PES board designed and developed at ZHAW by ... . The setup includes a variety of sensors and actuators for practical applications.
 ### Nucleo F446RE
 ------------------------
-The Nucleo-F446RE is a microcontroller development board featuring the STM32F446RET6 microcontroller from STMicroelectronics. It provides a versatile platform for prototyping and developing embedded systems, offering a wide range of peripherals, connectivity options, and compatibility with the Arduino and ST Morpho ecosystems. All of the technical details can be found here: https://www.st.com/en/microcontrollers-microprocessors/stm32f446re.html#documentation 
+The Nucleo-F446RE is a microcontroller development board featuring the STM32F446RET6 microcontroller from STMicroelectronics. It provides a versatile platform for prototyping and developing embedded systems, offering a wide range of peripherals, connectivity options, and compatibility with the Arduino and ST Morpho ecosystems. All of the technical details can be found here: [STM32F446RE Documentation][2] 
 
 <center><img src="docs/images/nucleo_overview.png" alt="Nucleo overview" width="600" /></center>
 
 Arm MBed has prepared a special platform containing key information on the controller used. On it you can find technical information, but most importantly the pinmap of outputs, which is necessary for the correct connection of peripheral devices.
 #### Nucleo platform (pinmap)
-[Link][1]
+[<font size="3"> Link </font>][1]
 
 ### PES Board
 ------------------------
@@ -110,3 +112,4 @@ The following links contain the workshops instructions:
 
 <!-- Links -->
 [1]: https://os.mbed.com/platforms/ST-Nucleo-F446RE/
+[2]: https://www.st.com/en/microcontrollers-microprocessors/stm32f446re.html#documentation 
