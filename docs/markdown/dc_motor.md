@@ -19,6 +19,8 @@ A direct current (DC) motor is a type of electric machine that converts electric
 |Max output power @ 12V   | 2.8 W          | 2.5 W          | 1.5 W        |
 |No-load speed @ 6V       | 225 rpm        | 90 rpm         | 14 rpm       |
 |Stall torque @ 6V        | 0.12 Nm        | 0.26 Nm        | 1.27 Nm      |
+|**Encoder**|
+|Resolution               | 20             | 20             | 20           |
 ## Links
 
 [31:1 Metal Gearmotor 20Dx41L mm 12V CB][1] <br>
@@ -48,6 +50,8 @@ A direct current (DC) motor is a type of electric machine that converts electric
 ## Encoder and relative positioning
 - A magnetic encoder is a sensor device that utilizes magnets and sensors to measure the position of a rotating object. It typically consists of a magnetically encoded disk attached to the rotating part and a sensor that detects changes in the magnetic field, converting them into electrical signals. It provides information about the rotational position of the object.
 - It's important to note that magnetic encoders typically provide relative position information. This means that the encoder only gives data about changes in position relative to a specific reference point, and the initial position upon power-up or system initialization is considered as the zero reference point. Therefore, the accuracy of the measurements relies on the consistency of this reference, and any absolute positioning requires additional measures or sensors.
+- The encoder resolution significantly impacts the performance of a PID controller for DC motors. A higher encoder resolution provides more detailed feedback about the motor's position, enabling the PID controller to make finer adjustments and achieve greater precision in controlling the motor's speed and position. This increased resolution allows the PID controller to respond more accurately to deviations from the desired setpoint, resulting in smoother and more controlled motor movements. Conversely, a lower encoder resolution may limit the controller's ability to detect small changes, potentially leading to less accurate control and decreased overall performance.
+
 
 ## Practical Tips
 
@@ -121,8 +125,6 @@ The motors can be used in different way and the following example provides all t
 
 In the example provided for the purpose of explaining the differences in controll of DC motors, we assume that we have three DC motors and encoders that are plugged into pins M1 - M3 on the PES-Board.
 
-<!-- TODO: Change the example below, and add a bullet point list afterwards with a description.
-In general the dcmotor harddware description needs some love! Maybe think about creating WS3 first and then based on this finalise the hardware description. -->
 #### Motor M1
 To use Motor M1 in open loop, start by adding the appropriate driver to the ``main`` file. Next, create an object by passing the pin names as arguments; these should only be PWM pins since Motor M1 is controlled in open loop. Additionally, define a DigitalOut object to enable the DC motor.
 ```
@@ -185,10 +187,10 @@ If there is no command to set the speed inside the while loop, add one and run t
 ```
 motor_M2.setVelocity(motor_M2.getMaxVelocity());
 ```
-<!-- TODO - CHCECK IT OUT Below are graphs of velocity and acceleration versus time. As you can see on the left side where the planner was not used the acceleration of the motor is more abrupt as shown in the acceleration graphs, there is also some overdrive of speed, which means a jump in speed over the target value. In the second case on the right, the acceleration is smoother (longer in time), as can be seen in the acceleration graph, as well as in the speed graph where the value without overdrive reaches the target value.
-
+<!-- TODO - CHCECK IT OUT IF IT IS CORRECT EXPLANATION, CAUSE BY THE DESCRIPTION OF THE GRAPH I AM NOT SURE IF BOTH ARE CONTROLLED OR ONLY THE SECOND ONE. Below are graphs of velocity and acceleration versus time. As you can see on the left side where the planner was not used the acceleration of the motor is more abrupt as shown in the acceleration graphs, there is also some overdrive of speed, which means a jump in speed over the target value. In the second case on the right, the acceleration is smoother (longer in time), as can be seen in the acceleration graph, as well as in the speed graph where the value without overdrive reaches the target value.
+-->
 <center><img src="../images/acc_vel_graphs.png" alt="DC Motor acceleration and velocity with and without planner" width="900"/></center>
-<center> <i>DC Motor acceleration and velocity with and without planner</i> </center> -->
+<center> <i>DC Motor acceleration and velocity with and without planner</i> </center>
 
 Adjustments to the maximum acceleration or maximum speed values can be made by using the following commands, which should be placed after declaring the motor.
 ```
@@ -239,10 +241,14 @@ If there is no command to set the speed inside the while loop, add one and run t
 ```
 motor_M3.setPosition(10.0f);
 ```
-<!-- TODO Below are graphs of position, velocity, voltage and acceleration versus time.
+<!-- TODO I WANT TO MAKE SURE, CAUSE IN THE FIRST GRAPH I DONT KNOW IF BOTH ARE CONTROLLED OR I CAN DESCRIBE IT SIMILARY TO THE VELOCITY COMMANDING
+Below are graphs of position, velocity, voltage and acceleration versus time.
 
+<center><img src="../images/pos_acc_vel_graphs.png" alt="DC Motor Positioning" width="900"/></center> -->
+
+In the provided graphs, the smooth positioning of the DC motor is illustrated. In the first graph (upper left corner), the blue line represents the set position, while the red line depicts the actual position. Notably, the red line exhibits smooth transitions at the beginning and end, indicative of uniform acceleration and deceleration. The speed graph illustrates the motor's acceleration to its maximum speed, maintaining it consistently before decelerating uniformly. This process repeats in the opposite direction. Given the direct proportionality between speed and voltage, the voltage graph mirrors the speed graph's curve. The acceleration graph showcases an initial acceleration phase, followed by oscillations around zero when the shaft moves at a constant speed.
 <center><img src="../images/dc_motor_smooth_positioning.png" alt="DC Motor Smooth Positioning" width="900"/></center>
-<center> <i>Smooth Positioning of 78:1 DC Motor</i> </center> -->
+<center> <i>Smooth Positioning of 78:1 DC Motor</i> </center>
 
 Adjustments to the maximum acceleration or maximum speed values can be made by using the following commands, which should be placed after declaring the motor.
 ```

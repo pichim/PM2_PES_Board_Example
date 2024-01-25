@@ -45,8 +45,7 @@ In the second part, we'll design a state machine using the hardware introduced i
 
 The ultimate objective is to construct a mechatronic system that mimics a can crusher press. Pressing the mechanical button will prompt the to forward state in which motor will move forward a specific number of revolutions (representing the press going down), and then backward to its initial position and then to sleep state. If the distance from the ultrasonic sensor is too small (e.g., an obstacle in the way), the device should rapidly return to its initial position and shut down as an emergency response.
 
-Before doing task look at the 
-<!-- TODO LINK TO STATE MACHINE TUTORIAL -->
+Before doing task you may look at [structuring a robot task tutorial](../markdown/tips.md#structuring-a-robot-task).
 
 1. Connect the mechanical button to the PC_5 pin and the ground to the corresponding pin (use [Nucleo Board pinmap][1])
 2. In the ``main`` function, it's essential to create a mechanical button object with the appropriate pullup mode
@@ -179,6 +178,7 @@ printf("%f, %f \n", us_distance_cm, motor_M3.getRotation());
 ## Summary
 In third workshop, exploration into the intricacies of DC motors was done involved understanding various control methods and utilizing the capabilities of the controller. The first segment focused on comprehending DC motors' functionality and control mechanisms, while the subsequent part centered on refining a state machine. The incorporation of mechanical buttons, ultrasonic sensors, and the implementation of a state machine provided practical insights into the control of mechatronic systems. <br>
 Questions for own consideration:
+<!-- TODO think about it, about those question -->
 
 **Answer:**
 [WS3](../solutions/main_ws3.txt)

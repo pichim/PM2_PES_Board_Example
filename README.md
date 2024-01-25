@@ -16,7 +16,7 @@ pmic@zhaw.ch\
 TE 307
 
 # Table of Contents
-1. [Course setup](docs/markdown/general_info.md)
+1. [Course setup](#course-setup)
     * [Accounts](docs/markdown/general_info.md#accounts)
     * [Software](docs/markdown/general_info.md#software)
     * [GitHub](docs/markdown/general_info.md#github)
@@ -34,6 +34,9 @@ TE 307
         * [Servo](docs/markdown/servo.md)
         * [DC Motor](docs/markdown/dc_motor.md)
 3. [Tips](#tips)
+    * [Project development](docs/markdown/tips.md#project-development)
+    * [Programming tips](docs/markdown/tips.md#programming-tips)
+    * [Structuring a robot task](docs/markdown/tips.md#structuring-a-robot-task)
 
 4. [Workshops](#workshops)
     * [Workshop 1](docs/markdown/ws1.md)
@@ -46,10 +49,12 @@ TE 307
 
 -->
 
-<!-- TODO Do something with font sizes, to make it look better -->
 ## Course setup
-In order to be able to complete the course, one must first register on the platforms and obtain the appropriate tools. All the information needed to start the course can be found at the link: [course setup](docs/markdown/general_info.md)
-
+In order to be able to complete the course, one must first register on the platforms and obtain the appropriate tools. All the information needed to start the course can be found [here](docs/markdown/general_info.md). The file covers all the information about: 
+- [<font size="3"> Accounts </font>](docs/markdown/general_info.md#accounts)
+- [<font size="3">Software </font>](docs/markdown/general_info.md#software)
+- [<font size="3">GitHub </font>](docs/markdown/general_info.md#github)
+- [<font size="3">Arm MBed </font>](docs/markdown/general_info.md#arm-mbed)
 ## Hardware
 In our course, we'll be utilizing the Nucleo-F446RE microcontroller, which is paired with the PES board designed and developed at ZHAW by ... . The setup includes a variety of sensors and actuators for practical applications.
 ### Nucleo F446RE
@@ -86,21 +91,24 @@ The external power supply enables the board to function independently of the com
 
 <center><img src="docs/images/pes_board_peripherals.png" alt="Nucleo overview" width="600" /></center>
 
-PDF: [pes_board_peripherals.pdf](docs/datasheets/pes_board_peripherals.pdf)
+PDF: [<font size="3"> pes_board_peripherals.pdf </font>](docs/datasheets/pes_board_peripherals.pdf)
 
 #### Pin-Mapping
-PDF: [pes_board_pin_mapping.pdf](docs/datasheets/pes_board_pin_mapping.pdf)
+PDF: [<font size="3"> pes_board_pin_mapping.pdf </font>](docs/datasheets/pes_board_pin_mapping.pdf)
 
 ### Hardware Tutorials
 ------------------------
-<!-- TODO Add explanation how the files are structured -->
-The following links contain the hardware tutorials:
+The following links contain the hardware tutorials. The files structure encompass specifications and technical notes detailing the components. Following that, there's guidance on connecting to the microcontroller. The subsequent sections cover creating software objects, calibration procedures, and controlling actuators or retrieving pertinent information from sensors as needed.
 - [<font size="3"> IR Sensor </font>](docs/markdown/ir_sensor.md)
 - [<font size="3"> Ultrasonic Sensor </font>](docs/markdown/ultrasonic_sensor.md)
 - [<font size="3"> Servo </font>](docs/markdown/servo.md)
 - [<font size="3"> DC Motor </font>](docs/markdown/dc_motor.md)
 
 ## Tips
+All the tips that you might find useful can be found [here](docs/markdown/tips.md). In the file you can find information about: 
+- [<font size="3"> Project development </font>](docs/markdown/tips.md#project-development)
+- [<font size="3"> Programming tips </font>](docs/markdown/tips.md#programming-tips)
+- [<font size="3"> Structuring a robot task </font>](docs/markdown/tips.md#structuring-a-robot-task)
 
 ## Workshops
 The following links contain the workshops instructions:
@@ -109,6 +117,10 @@ The following links contain the workshops instructions:
 - [<font size="3"> Workshop 3 </font>](docs/markdown/ws3.md)
 
 ## Links
+<!-- TODO Find some nice things -->
+
+
+
 
 <!-- Links -->
 [1]: https://os.mbed.com/platforms/ST-Nucleo-F446RE/

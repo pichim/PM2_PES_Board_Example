@@ -56,8 +56,7 @@ The second task will be to design a state machine, which will use additional har
 
 The overall goal is to build a mechatronic system capable of adjusting the deflection of the servo lever based on the distance measured by the sensor. The system will enter a sleep state if readings are out of range, and pressing the mechanical button will trigger an emergency state.
 
-Before doing task look at the 
-<!-- TODO LINK TO STATE MACHINE TUTORIAL -->
+Before doing task you may look at [structuring a robot task tutorial](../markdown/tips.md#structuring-a-robot-task).
 
 1. Connect the ultrasonic sensor to the D3 pins on the PES board (use [PES Board pinmap](../datasheets/pes_board_peripherals.pdf))
 2. Read the US sensor manual and create object in the ``main`` function
