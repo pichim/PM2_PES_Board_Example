@@ -116,10 +116,10 @@ After registering these values, sending 0 as a command will move the servo to it
 - Initially, define the necessary variables required for the calibration process. Additionally, to monitor the *servo_angle* value, it's crucial to include an appropriate printing statement.
 
 ```
-float servo_angle = 0.0f; // servo S1 normalized input: 0...1
+float servo_input = 0.0f;
 int servo_counter = 0; // define servo counter, this is an additional variable
-                       // to make the servos move
-const int loops_per_seconds = static_cast<int>(ceilf(1.0f / (0.001f * (float)main_task_period_ms)));
+                       // used to command the servo
+const int loops_per_seconds = static_cast<int>(ceilf(1.0f / (0.001f * static_cast<float>(main_task_period_ms))));
 ...
 
 printf("Pulse width: %f \n", servo_angle);
@@ -138,13 +138,12 @@ if (!servo_D1.isEnabled())
 
 
 ```
-    servo_D0.setNormalisedPulseWidth(servo_angle);
-    servo_D1.setNormalisedPulseWidth(servo_angle);
-    if (servo_angle < 1.0f & servo_counter % loops_per_seconds == 0 & servo_counter != 0  & mechanical_button.read())
-    {
-        servo_angle += 0.0025f;
-    }
-    servo_counter++;
+if ((servo_input < 1.0f) &&                     // constrain servo_input to be < 1.0f
+    (servo_counter % loops_per_seconds == 0) && // true if servo_counter is a multiple of loops_per_second
+    (servo_counter != 0) &&                     // avoid servo_counter = 0
+    mechanical_button.read())                   // mechanical button is pressed
+    servo_input += 0.1f;
+servo_counter++;
 ```
 
 - In order to return to the *servo_angle* initial values and disable the servos without having to start the program again, reset all values, which will be done after pressing the **USER** button.
