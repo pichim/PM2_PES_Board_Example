@@ -93,8 +93,7 @@ Pins M1 and M2 are the output of the H-Bridge, so voltage + and -. VCC and GND p
 
 ### Enabling the Power Electronics
 ----------------------------------
-<!-- TODO: GPIO and timers? We just use FastPWM, no? This sounds like ChatGPT or im missing something? -->
-The microcontroller (Nucleo F446RE) can command up to 3 DC motors through external power electronics (H-Bridge on PES-Board). To interface and manage this external circuit, the microcontroller must be configured by setting up GPIO pins, timers, and PWM, the latter being crucial for adjusting the rotational speed of the motors.
+The Nucleo F446RE microcontroller can control up to 3 DC motors using external power electronics (H-Bridge on PES-Board). Configuring the microcontroller involves setting up PWM pins, essential for adjusting the rotational speed of the motors in the external circuit.
 <details Closed>
 <summary><b>H-bridge and PWM</b></summary>
 
@@ -190,7 +189,8 @@ const float voltage_max = 12.0f; // maximum voltage of battery packs, adjust thi
 
 Crucially, the default motor driver does not employ a motion planner, meaning the declared speed will be reached as quickly as possible. To test this, you can place the following command inside a while loop.
 
-**Note:** The maximum velocity is calculated and set in the driver based on the input arguments.
+**Note:** 
+- The maximum velocity is calculated and set in the driver based on the input arguments.
 
 ```
 motor_M2.setVelocity(1.0f); // set setpoint to 1 rotation per second
@@ -248,7 +248,8 @@ const float kn_M3 = 180.0f / 12.0f;
 DCMotor motor_M3(PB_PWM_M3, PB_ENC_A_M3, PB_ENC_B_M3, gear_ratio_M3, kn_M3, voltage_max);
 ```
 
-**Note:** The argument passed represents the value in units of rotations.
+**Note:** 
+- The argument passed represents the value in units of rotations.
 
 ```
 motor_M3.setRotation(10.0f);
@@ -278,13 +279,11 @@ If there is no command to set the speed inside the while loop, add one and run t
 motor_M3.setPosition(10.0f);
 ```
 
-<!-- TODO: The question here is do we want and need the old graph showing both without and with the motion planner active or do we think using just the new graph is enough? -->
-<!-- TODO I WANT TO MAKE SURE, CAUSE IN THE FIRST GRAPH I DONT KNOW IF BOTH ARE CONTROLLED OR I CAN DESCRIBE IT SIMILARY TO THE VELOCITY COMMANDING -->
-<!-- Lest  -->
-<!-- Below are graphs of position, velocity, voltage and acceleration versus time. -->
-<center><img src="../images/pos_acc_vel_graphs.png" alt="DC Motor Positioning" width="900"/></center>
-
 In the provided graph a smooth positioning step of the DC motor is illustrated. In the first graph (upper left corner), the blue line represents the position setpoint, while the red line depicts the actual position. Notably, the red line exhibits smooth transitions at the beginning and end, indicative of uniform acceleration and deceleration. The speed graph illustrates the motor's acceleration to its maximum speed, maintaining it consistently before decelerating uniformly. This process repeats in the opposite direction. Given the direct proportionality between speed and voltage, the voltage graph mirrors the speed graph's curve. The acceleration graph showcases an initial acceleration phase, followed by quantization noise around zero when the shaft moves at a constant speed.
 
 <center><img src="../images/dc_motor_smooth_positioning.png" alt="DC Motor Smooth Positioning" width="900"/></center>
 <center> <i>Smooth Positioning of 78:1 DC Motor</i> </center>
+
+Below are graphs of position, velocity and acceleration against time. On the right are the graphs when the motion planner is not used and on the left when the planner is active.
+<center><img src="../images/pos_acc_vel_graphs.png" alt="DC Motor Positioning" width="900"/></center>
+<center> <i> DC Motor position, velocity and acceleration with and without motion planner</i> </center>

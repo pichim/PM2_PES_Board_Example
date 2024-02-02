@@ -13,7 +13,7 @@ bool do_reset_all_once = false;    // this variable is used to reset certain var
 // objects for user button (blue button) handling on nucleo board
 DebounceIn user_button(USER_BUTTON); // create DebounceIn object to evaluate the user button
                                      // falling and rising edge
-void user_button_pressed_fcn();      // custom function which is getting executed when user
+void toggle_do_execute_main_fcn();   // custom function which is getting executed when user
                                      // button gets pressed, definition below
 
 // main runs as an own thread
@@ -28,7 +28,7 @@ int main()
     } robot_state = RobotState::INITIAL;
 
     // attach button fall function address to user button object, button has a pull-up resistor
-    user_button.fall(&user_button_pressed_fcn);
+    user_button.fall(&toggle_do_execute_main_fcn);
 
     // while loop gets executed every main_task_period_ms milliseconds, this is a
     // simple approach to repeatedly execute main
@@ -54,7 +54,7 @@ int main()
     // ultra sonic sensor
     UltrasonicSensor us_sensor(PB_D3);
     float us_distance_cm = 0.0f;
-    float us_distance_min = 4.0f;
+    float us_distance_min = 7.0f;
     float us_distance_max = 50.0f;
 
     // servo
@@ -94,17 +94,21 @@ int main()
 
             // read us sensor distance
             us_distance_cm = us_sensor.read();
+	    if (us_distance_cm < 0.0f) {
+                us_distance_cm = 0.0f;
+            }
 
             // state machine
             switch (robot_state) {
-                case RobotState::INITIAL:
+                case RobotState::INITIAL: {
                     // enable the servo
                     if (!servo_D0.isEnabled())
                         servo_D0.enable();
                     robot_state = RobotState::EXECUTION;
 
                     break;
-                case RobotState::EXECUTION:
+		}
+                case RobotState::EXECUTION: {
                     // function to map the distance to the servo movement
                     float servo_input = (1 / (us_distance_max - us_distance_min)) * us_distance_cm - (us_distance_min / (us_distance_max - us_distance_min));
                     servo_D0.setNormalisedPulseWidth(servo_input);
@@ -112,38 +116,37 @@ int main()
                     // if the measurement is outside the min and max range go to SLEEP
                     if ((us_distance_cm < us_distance_min) || (us_distance_cm > us_distance_max)) {
                         robot_state = RobotState::SLEEP;
-                        // TODO: Don't you want this statement in a seperate if (independently)?
-                    } else if (mechanical_button.read()) {
+                    }
+                    if (mechanical_button.read()) {
                         robot_state = RobotState::EMERGENCY;
                     }
 
                     break;
-                case RobotState::SLEEP:
-                    // TODO: Why do we print to the terminal here?
-                    printf("SLEEP MODE \n");
-
+		}
+                case RobotState::SLEEP: {
                     // if the measurement is within the min and max range go to EXECUTION
                     if ((us_distance_cm > us_distance_min) || (us_distance_cm < us_distance_max)) {
                         robot_state = RobotState::EXECUTION;
-                        // TODO: Don't you want this statement in a seperate if (independently)?
-                    } else if (mechanical_button.read()) {
+                    }
+                    if (mechanical_button.read()) {
                         robot_state = RobotState::EMERGENCY;
                     }
 
                     break;
-                case RobotState::EMERGENCY:
-                    // TODO: We should create a new function that calls this function
-                    //       Please insert some comments here to describe what is happening
-                    user_button_pressed_fcn();
+		}
+                case RobotState::EMERGENCY: {
+                    // The transition to the emergency state actually causes
+                    // the execution of the commands contained in the else statement,
+                    // that is, it disables the servo and resets the values read from the sensors.
+                    toggle_do_execute_main_fcn();
 
                     break;
+		}
                 default:
 
                     break; // do nothing
             }
-        }
-        else
-        {
+        } else {
             // the following code block gets executed only once
             if (do_reset_all_once) {
                 do_reset_all_once = false;
@@ -151,8 +154,6 @@ int main()
                 // reset variables and objects
                 led1 = 0;
                 servo_D0.disable();
-                servo_D1.disable();
-                servo_input = 0.0f;
                 us_distance_cm = 0.0f;
             }
         }
@@ -169,7 +170,7 @@ int main()
     }
 }
 
-void user_button_pressed_fcn()
+void toggle_do_execute_main_fcn()
 {
     // toggle do_execute_main_task if the button was pressed
     do_execute_main_task = !do_execute_main_task;

@@ -52,8 +52,6 @@ int main()
     // DCMotor motor_M2(PB_PWM_M1, PB_ENC_A_M1, PB_ENC_B_M1, gear_ratio_M2, kn_M2, voltage_max);
     // motor_M2.setEnableMotionPlanner(true);
     // motor_M2.setMaxVelocity(motor_M2.getMaxVelocity() * 0.5f);
-    // TODO: Why do we set this to half of the maximum acceleration?
-    // motor_M2.setMaxAcceleration(motor_M2.getMaxAcceleration() * 0.5f);
 
     // motor M3
     const float gear_ratio_M3 = 78.125f;
@@ -61,8 +59,6 @@ int main()
     DCMotor motor_M3(PB_PWM_M1, PB_ENC_A_M1, PB_ENC_B_M1, gear_ratio_M3, kn_M3, voltage_max);
     motor_M3.setEnableMotionPlanner(true);
     motor_M3.setMaxVelocity(motor_M3.getMaxVelocity() * 0.5f);
-    // TODO: Why do we set this to half of the maximum acceleration?
-    motor_M3.setMaxAcceleration(motor_M3.getMaxAcceleration() * 0.5f);
 
     // start timer
     main_task_timer.start();

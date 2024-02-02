@@ -68,8 +68,6 @@ int main()
     const float kn_M3 = 180.0f / 12.0f;
     DCMotor motor_M3(PB_PWM_M1, PB_ENC_A_M1, PB_ENC_B_M1, gear_ratio_M3, kn_M3, voltage_max);
     motor_M3.setEnableMotionPlanner(true);
-    // TODO: Why do we set this to half of the maximum acceleration?
-    motor_M3.setMaxAcceleration(0.5 * motor_M3.getMaxAcceleration());
 
     // start timer
     main_task_timer.start();
@@ -105,8 +103,8 @@ int main()
                     motor_M3.setRotation(10.0f);
                     if (motor_M3.getRotation() > 9.95f) {
                         robot_state = RobotState::BACKWARD;
-                        // TODO: Don't you want this statement in a seperate if (independently)?
-                    } else if (us_distance_cm < 7.0f) {
+                    }
+		    if (us_distance_cm < 7.0f) {
                         robot_state = RobotState::EMERGENCY;
                     }
 

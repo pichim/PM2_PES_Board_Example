@@ -105,15 +105,16 @@ After registering these values, sending 0 as a command will move the servo to it
 >Hardware:
 > - PES board with NUCLEO-F446RE board
 > - Mini USB cable
-> - Servo Futaba S3001/RELY S-009
+> - Servo Futaba S3001/RELY S-0090
 > - Additional wires to connect the servo to the board
-> - Mechanical button
+> - Jumper wires
+<!-- TODO Add the picture of the set, actual one -->
 ><center><img src="../images/servo_set.png" alt="Servo set" width="500" /></center>
 ><center> <i>Hardware used in exercise</i> </center>
 
 #### Procedure
 
-- Initially, define the necessary variables required for the calibration process. Additionally, to monitor the *servo_angle* value, it's crucial to include an appropriate printing statement.
+- Initially, define the necessary variables required for the calibration process. Additionally, to monitor the *servo_input* value, it's crucial to include an appropriate printing statement.
 
 ```
 float servo_input = 0.0f;
@@ -122,7 +123,7 @@ int servo_counter = 0; // define servo counter, this is an additional variable
 const int loops_per_seconds = static_cast<int>(ceilf(1.0f / (0.001f * static_cast<float>(main_task_period_ms))));
 ...
 
-printf("Pulse width: %f \n", servo_angle);
+printf("Pulse width: %f \n", servo_input);
 ```
 
 - To activate the servo, use the following command. Place this command strategically to enable the servo after initiating program execution with the **USER** button.
@@ -134,28 +135,28 @@ if (!servo_D1.isEnabled())
     servo_D1.enable();
 ```
 
-- Next, utilize the following function and statements. These will enable the incremental adjustment of the servo position with each press of a mechanical button, achieved by modifying the pulse width value. It is crucial to ensure that the incremental change in the servo position, i.e., the pulse width, is very small to obtain precise minimum and maximum values.
+- Next, utilize the following function and statements. These will enable the incremental adjustment of the servo position every one second, achieved by modifying the pulse width value. It is crucial to ensure that the incremental change in the servo position, i.e., the pulse width, is very small to obtain precise minimum and maximum values.
 
 
 ```
+servo_D0.setNormalisedPulseWidth(servo_input);
+servo_D1.setNormalisedPulseWidth(servo_input);
 if ((servo_input < 1.0f) &&                     // constrain servo_input to be < 1.0f
     (servo_counter % loops_per_seconds == 0) && // true if servo_counter is a multiple of loops_per_second
-    (servo_counter != 0) &&                     // avoid servo_counter = 0
-    mechanical_button.read())                   // mechanical button is pressed
-    servo_input += 0.1f;
+    (servo_counter != 0))                       // avoid servo_counter = 0
+    servo_input += 0.0025f;
 servo_counter++;
 ```
-
-- In order to return to the *servo_angle* initial values and disable the servos without having to start the program again, reset all values, which will be done after pressing the **USER** button.
+To reset *servo_input* variable to initial value and disable the servos without restarting the program, add the following command to the else statement, triggered by pressing the **USER** button while program is running.
 
 ```
 servo_D0.disable();
 servo_D1.disable();
-servo_angle = 0.0f;
+servo_input = 0.0f;
 ```
 
-- In the subsequent step, compile the program. Once compilation is complete, click the **USER** button to initiate the execution. This action prompts the *servo_angle* variable value to display on the serial monitor.
-- The goal is to monitor the servo_angle variable and the servo. With each click of the mechanical button, this variable increases by the specified script value. Record the displayed value on paper after the servo initial movement will take place. Continue monitoring the variable and the servo until increasing the variable no longer results in further rotation of the head. At this point, record the maximum value displayed on the screen.
+- In the subsequent step, compile the program. Once compilation is complete, click the **USER** button to initiate the execution. This action prompts the *servo_input* variable value to display on the serial monitor.
+- The goal is to monitor the servo_input variable and the servo. Every one second, this variable increases by the specified script value. Record the displayed value on paper after the servo initial movement will take place. Continue monitoring the variable and the servo until increasing the variable no longer results in further rotation of the head. At this point, record the maximum value displayed on the screen.
 - Now that the values are known, beneath the servo object declaration, define the appropriate variables with the values obtained in the process.
 
 ```
@@ -172,7 +173,7 @@ servo_D0.calibratePulseMinMax(servo_D0_ang_min, servo_D0_ang_max);
 servo_D1.calibratePulseMinMax(servo_D1_ang_min, servo_D1_ang_max);
 ```
 
-- Now the *servo_angle* variable will be in a range from 0.0f to 1.0f, which will corespond internally to the pulse width range from value of *servo_D0_ang_min* to value of *servo_D0_ang_max*.
+- Now the *servo_input* variable will be in a range from 0.0f to 1.0f, which will corespond internally to the pulse width range from value of *servo_D0_ang_min* to value of *servo_D0_ang_max*.
 
 ### Command the servo
 ---------------------------
@@ -189,10 +190,10 @@ if (!servo_D0.isEnabled()) {
 Utilizing the ``servo`` class involves declaring the position of the servo head within the range of 0 to 1. This is achieved through the use of a function:
 
 ```
-servo_D2.setNormalisedPulseWidth(servo_angle);
+servo_D2.setNormalisedPulseWidth(servo_input);
 ```
 
-where *servo_angle* is a variable that we can freely change in the right range.
+where *servo_input* is a variable that we can freely change in the right range.
 
 The class design incorporates the capability to execute smooth movements by adjusting the servo's acceleration and initiating gradual deceleration before reaching the target head position. This feature is suitable for activities that demand smooth and steady motions, eliminating abrupt movements. However, there is also an option for rapid motion if a specific requirement necessitates it.
 

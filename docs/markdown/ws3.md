@@ -38,17 +38,19 @@ In the initial phase, we will focus solely on understanding motor functionality 
 ------------------
 In the second part, we'll design a state machine using the hardware introduced in the previous workshop. The state machine will consist of five states:
 
-0. **Initial**
-1. **Sleep**
-2. **Forward**
-3. **Sleep**
-4. **Emergency**
+**0. Initial**
+**1. Sleep**
+**2. Forward**
+**3. Backward**
+**4. Emergency**
 
 The ultimate objective is to construct a mechatronic system that mimics a can crusher press. Pressing the mechanical button will prompt to the **Forward** state in which the motor will move forward a specific number of revolutions (representing the press going down), and then backward to its initial position and then to the **Sleep** state. If the distance from the ultrasonic sensor is too small (e.g. an obstacle is in the way), the device should rapidly return to its initial position and shut down as an emergency response.
 
 Before doing the task you may look at the [structuring a robot task tutorial](../markdown/tips.md#structuring-a-robot-task).
 
-<!-- TODO: We might use the solution of this as the example for the flow-chart diagram in the tutorial directly -->
+Below you can find the flow chart showing the logic of the transitions to each state.
+<center><img src="../images/ws3_flowchart.png" alt="WS3 flow chart" width="400" /></center>
+<center> <i>Flow chart</i> </center>
 
 1. Connect the mechanical button to the PC_5 pin and the ground to the corresponding pin (see [Nucleo Board pinmap][1])
 
@@ -88,8 +90,7 @@ DCMotor motor_M3(PB_PWM_M1, PB_ENC_A_M1, PB_ENC_B_M1, gear_ratio_M3, kn_M3, volt
 motor_M3.setEnableMotionPlanner(true);
 motor_M3.setMaxAcceleration(0.5 * motor_M3.getMaxAcceleration());
 ```
-<!-- TODO: Write this better please. -->
-At the beginning  ``main`` function create robot states:
+At the start of the ``main`` function, include the enumerators representing different robot states:
 
 ```
 enum RobotState {
@@ -207,7 +208,8 @@ Questions for own consideration:
 
 [Workshop 3, Part 2](../solutions/main_ws3_p2.txt)
 
-<!-- TODO: Place grafic or the link to the flow-chart diagram here -->
+<center><img src="../images/ws3_flowchart.png" alt="WS3 flow chart" width="400" /></center>
+<center> <i>Flow chart for workshop 3</i> </center>
 
 <!-- Links -->
 [1]: https://os.mbed.com/platforms/ST-Nucleo-F446RE/

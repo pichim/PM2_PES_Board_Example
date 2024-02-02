@@ -9,33 +9,31 @@ Here, you'll find guidance on the initial steps in project creation and its subs
 ### 1. Brainstorming
 --------------------
 This stage holds significant importance, particularly in group collaboration, as it encourages the exchange and mutual influence of initial ideas. No specific tools are needed; simply grab a blank sheet or use a whiteboard for ample space. Express your ideas visually or verbally in paragraphs. For projects centered on mechatronic systems, consider essential elements like:
-- Think about the main purpose - define the device's purpose, functionalities, and prioritize factors such as speed or accuracy. These considerations guide the direction for formulating specific solutions in the project.
-- Think about pitfalls - in the early stages, identifying pitfalls might be challenging, but leveraging your imagination allows you to swiftly eliminate potential paths that may pose challenges or setbacks.
+- <b>Think about the main purpose</b> - define the device's purpose, functionalities, and prioritize factors such as speed or accuracy. These considerations guide the direction for formulating specific solutions in the project.
+- <b>Think about pitfalls</b> - in the early stages, identifying pitfalls might be challenging, but leveraging your imagination allows you to swiftly eliminate potential paths that may pose challenges or setbacks.
 
 <center><img src="../images/sensors_actuators.png" alt="Sensors and actuators" width="500" /></center>
 
-- Evaluate actuators - once you've outlined initial design sketches and established the tasks for your system, the next step involves determining the most suitable components for task execution. While general knowledge of these elements is crucial, it's equally important to factor in the available hardware capabilities and assess which elements of the mechanisms can be feasibly constructed.
-- Evaluate sensors - When considering actuators, a crucial step is determining the sensors to pair with them. Sensors play a vital role in providing comprehensive control over the system's operation, offering both safety features to prevent accidents and enhancing the precision of the device's functionality.
+- <b>Evaluate actuators</b> - once you've outlined initial design sketches and established the tasks for your system, the next step involves determining the most suitable components for task execution. While general knowledge of these elements is crucial, it's equally important to factor in the available hardware capabilities and assess which elements of the mechanisms can be feasibly constructed.
+- <b>Evaluate sensors</b> - When considering actuators, a crucial step is determining the sensors to pair with them. Sensors play a vital role in providing comprehensive control over the system's operation, offering both safety features to prevent accidents and enhancing the precision of the device's functionality.
 
 ### 2. Flow-Chart
 -----------------
-Creating a flowchart at the project's outset offers crucial benefits. It provides a visual roadmap, aiding in understanding the project's structure and fostering collaboration within the team. The flowchart serves as an early detection tool for potential bottlenecks or complexities, allowing for strategic problem-solving. Detailed planning during flowchart creation minimizes oversights and unexpected issues during execution. The flowchart acts as a reference guide, ensuring ongoing alignment with project objectives. Overall, it enhances clarity, communication, and project efficiency. More about creating good flow-chart can be found in further part [here].....
-<!-- TODO: ADD link. Please also describe the value of a flowchart diagram for the acutal implementation. Before starting to code the hole logic should already exist. So that the programmer basically can just implement the flowchart and the underlying logic. Each individual step can be implemented and tested seperatly. This is how the software should evolve to finally execute the robots operation.... something like this but in better englisch. -->
+Creating a flowchart at the project's outset offers crucial benefits. It provides a visual roadmap, aiding in understanding the project's structure and fostering collaboration within the team. The flowchart serves as an early detection tool for potential bottlenecks or complexities, allowing for strategic problem-solving. Detailed planning during flowchart creation minimizes oversights and unexpected issues during execution. The flowchart acts as a reference guide, ensuring ongoing alignment with project objectives. Prior to coding, having a comprehensive flowchart allows for the existence of the entire logic. The programmer can systematically implement the flowchart and its underlying logic, breaking down the process into individual steps that can be implemented and tested separately. This approach facilitates the gradual evolution of the software, ensuring a structured and efficient execution of the robot's operations. More about creating good flow-chart can be found in further part [here](#1-flow-chart)
 
 ### 3. Coding
 -------------
-- Have no Fear - Start programming as soon as possible. Even if you don't have a clear idea of what you are doing DO IT! You will learn a lot and gain experience that will be useful in the future.
-- Just play - Start small, play with your system, maker errors, learn from them, and have fun!
-- Step by Step Implementation - Start implementing the ideas you have gathered. With an idea of what actuators and sensors you want to use, as well as how your robot is supposed to work - start writing code gradually. Familiarize yourself with the capabilities of the elements you are using and think about their application to your project. 
-- Test - Test what you have written. Testing after each step is implemented is very important due to the fact that only doing so will protect you from larger errors, which will be very difficult to detect in a long block of code.
-- Debug - When encountering issues in your code, embrace debugging as a crucial problem-solving tool. It entails identifying and resolving errors, ensuring your program functions seamlessly.After detecting each error and before making each change, think about the solution and then make changes, and go back to the previous point!
+-  <b>Have no Fear - Start programming as soon as possible. Even if you don't have a clear idea of what you are doing DO IT! You will learn a lot and gain experience that will be useful in the future.
+- <b>Just play</b> - Start small, play with your system, maker errors, learn from them, and have fun!
+- <b>Step by Step Implementation</b> - Start implementing the ideas you have gathered. With an idea of what actuators and sensors you want to use, as well as how your robot is supposed to work - start writing code gradually. Familiarize yourself with the capabilities of the elements you are using and think about their application to your project. 
+- <b>Test</b> - Test what you have written. Testing after each step is implemented is very important due to the fact that only doing so will protect you from larger errors, which will be very difficult to detect in a long block of code.
+- <b>Debug</b> - When encountering issues in your code, embrace debugging as a crucial problem-solving tool. It entails identifying and resolving errors, ensuring your program functions seamlessly.After detecting each error and before making each change, think about the solution and then make changes, and go back to the previous point!
 
 Some useful programming tips can be found [here](#programming-tips).
 
 ### 4. Prototyping
 ------------------
-<!-- TODO: Mention 3d printing here -->
-Through (fast) prototyping, you not only validate the feasibility of your design but also uncover potential challenges early on. Identifying and addressing issues during the prototyping phase mitigates risks, streamlines the development process, and contributes to the overall success of the project. Regularly test and iterate on your prototypes, leveraging the insights gained to ensure a robust and well-optimized final solution.
+Through (fast) prototyping, you not only validate the feasibility of your design but also uncover potential challenges early on. Identifying and addressing issues during the prototyping phase mitigates risks, streamlines the development process, and contributes to the overall success of the project. To achieve this goal, incorporating 3D printing in the preliminary stages of part design proves beneficial. It offers crucial insights, enables the testing of solutions challenging to assess without a physical model, and, importantly, avoids potential time-consuming adjustments to parameters that may not yield effective results in the end. Regularly test and iterate on your prototypes, leveraging the insights gained to ensure a robust and well-optimized final solution.
 <center><img src="../images/3d_printing.png" alt="3D printing" width="450" /></center>
 
 ## Programming tips
@@ -107,13 +105,12 @@ int main() {
 
 #### 5. Printf Debugging
 
-<!-- TODO: Use printf, not cout -->
-- Use std::cout to print the values of variables during debugging. This provides insights into the state of the program at different points.
+- Use *printf* to print the values of variables during debugging. This provides insights into the state of the program at different points.
 - Enhance readability by formatting the debugging output. Include informative labels or context to quickly identify the purpose of the printed values.
 
 ```
 int value = 42;
-std::cout << "Debugging: " << value << std::endl;
+printf("Debugging: %d", value);
 ```
 
 #### 6. Use ChatGPT, GitHub Copilot and similar tools
@@ -138,10 +135,10 @@ To create a state machine the first step is to design a flow chart diagram. A we
 - <b>Consider Error Handling</b> - Integrate error or exception states in the flow chart to address unexpected conditions. Define how the robot should behave in the presence of errors.
 - <b>Iterate and Refine</b> - Review and refine the flow chart iteratively. Ensure that the logical flow is coherent, and states and transitions align with the desired robot behavior.
 
-<!-- TODO: Think of creating a flow chart diagram for one of the workshops that can be showen here. -->
-Below you can find an example of a flow chart of a robot used to collect eggs.
 
-<center><img src="../images/flow_chart_example.png" alt="Flow chart example" width="600" /></center>
+Below you can find an example of a flow chart of a mechatronic system that is designed in workshop 2.
+
+<center><img src="../images/ws2_flowchart.png" alt="WS2 flow chart" width="400" /></center>
 
 ### 2. State machine
 ------------------------
@@ -153,48 +150,63 @@ Implement a switch-case structure to handle state transitions based on condition
 Execute corresponding actions or functions for each state. Example:
 - <b>Be aware</b> - When changing states, prioritize sensor input for effective transitions, avoiding code blocks or time-based decisions that may lead to blocking code. In general, blocking code should be avoided! 
 
-<!-- TODO: Please create an example that directly corresponds to the image above and that would work 
-           when students copy paste this. -->
-
+Here is the code used to implement the state machine based on the preceding flowchart. Analyze the code to compare how the steps correspond between the flowchart and the code implementation.
 ```
 // set up states for state machine
 enum RobotState {
     INITIAL,
-    MOVING,
-    OBSTACLE_DETECTED
-} robotState = INITIAL; // create object of type RobotState and initialize to INITIAL state
+    EXECUTION,
+    SLEEP,
+    EMERGENCY
+} robot_state = RobotState::INITIAL;
 
 ...
 
 // state machine
-switch (robotState) {
-    case IDLE:
-        // initiate the hardware, after that go to another state
-        hardware = 1;
-        robotState = MOVING;
+switch (robot_state) {
+    case RobotState::INITIAL: {
+        // enable the servo
+        if (!servo_D0.isEnabled())
+            servo_D0.enable();
+        robot_state = RobotState::EXECUTION;
 
         break;
-    case MOVING:
-        // Perform action
-        // Check conditions for transition to other states
-        if (/* condition */) {
-            robotState = OBSTACLE_DETECTED;
-            // Perform actions for transition
+    }
+    case RobotState::EXECUTION: {
+        // function to map the distance to the servo movement
+        //function to command servo
+
+        // if the measurement is outside the min and max range go to SLEEP
+        if ((us_distance_cm < us_distance_min) || (us_distance_cm > us_distance_max)) {
+            robot_state = RobotState::SLEEP;
+        }
+        if (mechanical_button.read()) {
+            robot_state = RobotState::EMERGENCY;
         }
 
         break;
-    case OBSTACLE_DETECTED:
-        // Handle actions for the OBSTACLE_DETECTED state
-
-        // rememeber, you can go back to another states after fulfiling some conditions:
-        if (/* condition */) {
-            robotState = MOVING;
-            // Perform actions for transition
+    }
+    case RobotState::SLEEP: {
+        // if the measurement is within the min and max range go to EXECUTION
+        if ((us_distance_cm > us_distance_min) || (us_distance_cm < us_distance_max)) {
+            robot_state = RobotState::EXECUTION;
+        }
+        if (mechanical_button.read()) {
+            robot_state = RobotState::EMERGENCY;
         }
 
         break;
+    }
+    case RobotState::EMERGENCY: {
+        // The transition to the emergency state actually causes
+        // the execution of the commands contained in the else statement,
+        // that is, it disables the servo and resets the values read from the sensors.
+        toggle_do_execute_main_fcn();
+
+        break;
+    }
     default:
-        // handle error state
-        break;
+
+        break; // do nothing
 }
 ```

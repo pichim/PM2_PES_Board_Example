@@ -5,7 +5,7 @@
 |-|-|-|
 | wuem@zhaw.ch | szar@zhaw.ch | pmic@zhaw.ch |
 | TE 301 | TE 302 | TE 307 |
-
+<!-- TODO Update the table of contents-->
 # Table of Contents
 1. [Course setup](#course-setup)
     * [Accounts](docs/markdown/general_info.md#accounts)
@@ -54,8 +54,8 @@ The Nucleo-F446RE is a microcontroller development board featuring the STM32F446
 <center><img src="docs/images/nucleo_overview.png" alt="Nucleo overview" width="600" /></center>
 
 </br>
-<!-- TODO: Please write this sentence nicer -->
-Arm MBed has prepared a special platform containing key information on the controller used. On it you can find technical information, but most importantly the pinmap of outputs, which is necessary for the correct connection of peripheral devices.
+
+Arm MBed provides a dedicated platform with essential information about the controller. This platform includes technical details and, crucially, the pinmap of outputs, essential for accurately connecting peripheral devices.
 
 </br>
 

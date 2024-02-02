@@ -70,7 +70,7 @@ To start working with the sensor, it is necessary to plug it correclty and creat
 
 ### Connection to the Nucleo-Board
 ---------------------------
-According to the sensor documentation, it is necessary to power the sensors with 3.3V to ensure the reception of accurate signals. It is evident that three wires emerge from the sensor: one for signal transmission, another for ground, and the last one for power supply. The transmission wire should be connected to the pin that allows the reception of an analog signal, in our example this is the **PC_2** pin.
+According to the sensor documentation, it is necessary to power the sensors with 5.0V to ensure the reception of accurate signals. It is evident that three wires emerge from the sensor: one for signal transmission, another for ground, and the last one for power supply. The transmission wire should be connected to the pin that allows the reception of an analog signal, in our example this is the **PC_2** pin.
 
 [Nucleo Board pinmap][5]
 
@@ -146,18 +146,16 @@ ir_distance_mV = 1.0e3f * ir_analog_in.read() * 3.3f;
 **Notes:**
 - Keep in mind that the signal is mapped to a range of 0 to 1. Consequently, the reading is multiplied by 3.3, representing the maximum range of the sensor, and then by 1000 to convert the signal from volts to millivolts.
 
-- To obtain printouts on the serial monitor, insert the command:
+- To continuously receive printouts on the serial monitor, incorporate the command within a while loop, ensuring constant output regardless of the main task execution:
 
 ```
 printf("IR distance mV: %f \n", ir_distance_mV);
 ```
 
-- In order to return these initial values without having to start the program again, reset all values, which will be done after pressing the **USER** button.
+- To reset the variables to initial values without restarting the program, add command in the else statement, triggered by pressing the **USER** button while program is running.
 
 ```
-led1 = 0;
 ir_distance_mV = 0.0f;
-ir_distance_cm = 0.0f;
 ```
 
 - Once the above commands are written, the next step is to compile and run the application.
@@ -209,7 +207,11 @@ Following this, proceed to call the function for evaluation within the *while* l
 ```
 ir_distance_cm = ir_sensor_compensation(ir_distance_mV);
 ```
+- To reset the variables to initial values without restarting the program, add the following command to the else statement, triggered by pressing the **USER** button while program is running.
 
+```
+ir_distance_cm = 0.0f;
+```
 - Finally, add the new variable to the printing command as the last step.
 
 ```

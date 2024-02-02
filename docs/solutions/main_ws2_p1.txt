@@ -12,14 +12,14 @@ bool do_reset_all_once = false;    // this variable is used to reset certain var
 // objects for user button (blue button) handling on nucleo board
 DebounceIn user_button(USER_BUTTON); // create DebounceIn object to evaluate the user button
                                      // falling and rising edge
-void user_button_pressed_fcn();      // custom function which is getting executed when user
+void toggle_do_execute_main_fcn();      // custom function which is getting executed when user
                                      // button gets pressed, definition below
 
 // main runs as an own thread
 int main()
 {
     // attach button fall function address to user button object, button has a pull-up resistor
-    user_button.fall(&user_button_pressed_fcn);
+    user_button.fall(&toggle_do_execute_main_fcn);
 
     // while loop gets executed every main_task_period_ms milliseconds, this is a
     // simple approach to repeatedly execute main
@@ -35,12 +35,6 @@ int main()
     // create DigitalOut object to command extra led, you need to add an aditional resistor, e.g. 220...500 Ohm
     // a led has an anode (+) and a cathode (-), the cathode needs to be connected to ground via a resistor
     DigitalOut led1(PB_9);
-
-    // mechanical button
-    DigitalIn mechanical_button(PC_5); // create DigitalIn object to evaluate mechanical button, you
-                                       // need to specify the mode for proper usage, see below
-    mechanical_button.mode(PullUp);    // sets pullup between pin and 3.3 V, so that there
-                                       // is a defined potential
 
     // servo
     Servo servo_D0(PB_D0);
@@ -90,8 +84,7 @@ int main()
             // calculate inputs for the servos for the next cycle
             if ((servo_input < 1.0f) &&                     // constrain servo_input to be < 1.0f
                 (servo_counter % loops_per_seconds == 0) && // true if servo_counter is a multiple of loops_per_second
-                (servo_counter != 0) &&                     // avoid servo_counter = 0
-                mechanical_button.read())                   // mechanical button is pressed
+                (servo_counter != 0))                       // avoid servo_counter = 0
                 servo_input += 0.1f;
             servo_counter++;
         } else {
@@ -118,7 +111,7 @@ int main()
     }
 }
 
-void user_button_pressed_fcn()
+void toggle_do_execute_main_fcn()
 {
     // toggle do_execute_main_task if the button was pressed
     do_execute_main_task = !do_execute_main_task;
