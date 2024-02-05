@@ -126,8 +126,6 @@ The first step of the procedure is the simultaneous measurement of the actual di
 > - Additional wires to connect the sensor to the NUCLEO board
 > - Paper tape
 > - Length measure tape
-><center><img src="../images/IR_set.png" alt="IR sensor set" width="550" /></center>
-><center> <i>Hardware used in exercise</i> </center> 
 >
 > Software:
 > - Matlab file: [IR sensor evaluation](../matlab/ir_sensor_eval.m)
@@ -160,7 +158,7 @@ ir_distance_mV = 0.0f;
 
 - Once the above commands are written, the next step is to compile and run the application.
 - During the calibration process, position the sensor's edge at the marked points on the tape. The sensor should face the wall to measure the distance from, and it's important to align the sensor beam parallel to the ground. Simultaneously, note the distance and the corresponding readout values displayed on the serial monitor after applying it to each designated point.
-- After collecting the data points, input them into [ir_sensor_eval.m](./ir_sensor_eval.m) under the respective headings dist_cm and dist_mV. This file aids in determining the coefficients for the optimal-fit curve. To achieve accurate results, it's crucial to define a suitable range of values for the curve fitting, as this range establishes the sensor minimum and maximum range.
+- After collecting the data points, input them into [ir_sensor_eval.m](../matlab/ir_sensor_eval.m) under the respective headings dist_cm and dist_mV. This file aids in determining the coefficients for the optimal-fit curve. To achieve accurate results, it's crucial to define a suitable range of values for the curve fitting, as this range establishes the sensor minimum and maximum range.
 - Following this, proceed to create a function that converts the sensor readings into a physical length (cm). While the function definition can be positioned at the end of the ``main`` file, it must be declared before *main* function to ensure successful compilation.
 
 Function definition (at the end of the **main** file)

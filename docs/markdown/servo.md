@@ -32,7 +32,6 @@ A servo is an electrical motor usually designed for precise control over angular
 ## Datasheets
 
 [Futaba S3001](../datasheets/Futaba_Servo_S3001.pdf)
-<!-- TODO TRY TO FIND REELY DATASHEET -->
 
 ## Absolut Positioning
 Within this system, users have the capability to command and control servo motors in terms of absolute angles or positions. Unlike relative control, where movements are based on the current position, absolute control allows for the specification of exact angular positions. This level of precision facilitates fine-tuned control over the servo's rotational placement, ensuring that it consistently reaches and maintains specific, predetermined angular orientations. This feature proves particularly valuable in applications where precise and absolute positioning is essential for optimal performance.
@@ -108,9 +107,9 @@ After registering these values, sending 0 as a command will move the servo to it
 > - Servo Futaba S3001/RELY S-0090
 > - Additional wires to connect the servo to the board
 > - Jumper wires
-<!-- TODO Add the picture of the set, actual one -->
-><center><img src="../images/servo_set.png" alt="Servo set" width="500" /></center>
-><center> <i>Hardware used in exercise</i> </center>
+>
+> Software:
+> - Matlab file: [Pulse to postion evaluation](../matlab/pulse_to_pos_eval.m)
 
 #### Procedure
 
@@ -157,6 +156,7 @@ servo_input = 0.0f;
 
 - In the subsequent step, compile the program. Once compilation is complete, click the **USER** button to initiate the execution. This action prompts the *servo_input* variable value to display on the serial monitor.
 - The goal is to monitor the servo_input variable and the servo. Every one second, this variable increases by the specified script value. Record the displayed value on paper after the servo initial movement will take place. Continue monitoring the variable and the servo until increasing the variable no longer results in further rotation of the head. At this point, record the maximum value displayed on the screen.
+- After collecting the data points, input them into [pulse_to_pos_eval.m](../matlab/pulse_to_pos_eval.m) under the respective headings *servo1_pulse_start*, *servo1_pulse_end* for both servos. This file will output the plot which will present the position dependence on pulse width.
 - Now that the values are known, beneath the servo object declaration, define the appropriate variables with the values obtained in the process.
 
 ```

@@ -17,6 +17,7 @@ ft = fittype('a / (x + b)')
 % ft = fittype('c*x^2 + b*x + a')
 f1 = fit(dist_mV(ind_fit), dist_cm(ind_fit), ft)
 
+% plot creation
 figure(1)
 subplot(131)
 plot(dist_cm, dist_mV, 'x-'), grid on

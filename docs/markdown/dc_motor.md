@@ -135,7 +135,7 @@ The provided examples show three different used cases of a DC motor and how to u
 
 #### Motor M1 Open-Loop
 
-To use Motor M1 in an open loop configuration, start by adding the PWM driver to the ``main`` file. Next, create an object by passing the pin names as arguments; these should only be PWM pins since Motor M1 is used in open loop. Additionally, define a DigitalOut object to enable the DC motor.
+To use Motor M1 in an open loop configuration, start by adding the PWM driver to the ``main`` file. Next, create an object by passing the pin names as arguments; these should only be PWM pins since Motor M1 is used in open loop. Additionally, define a DigitalOut object to enable the DC motor inside ``main`` function.
 
 ```
 #include "pm2_drivers/FastPWM/FastPWM.h"
@@ -160,16 +160,17 @@ Motor M1 is used open-loop, meaning we just apply a certain voltage to the motor
 A positive voltage will cause the motor to rotate in one direction and a negative voltage will cause the motor to rotate in the opposite direction. You can alter the direction by changing the cables connected to the motor.
 
 ```
-pwm_M1.write(0.75f) // apply 6V to the motor (assuming +/-12V are available)
+pwm_M1.write(0.75f); // apply 6V to the motor (assuming +/-12V are available)
 ```
 
 #### Motor M2 Closed-Loop Velocity Control
 
-Motor M2 operates in a closed loop to control the velocity. To utilize it, it's necessary to include the appropriate driver in our ``main`` file. Then, create an object with the PWM pins, as well as the A and B pins associated with the encoder. Additionally, define a DigitalOut object to enable the DC motor. 
+Motor M2 operates in a closed loop to control the velocity. To utilize it, it's necessary to include the appropriate driver in our ``main`` file. Additionally, define a DigitalOut object to enable the DC motor. 
 
 ```
-#include "pm2_drivers/DCMotor.h"        
-
+#include "pm2_drivers/DCMotor.h"
+#include "pm2_drivers/EncoderCounter.h"
+     
 ...
 
 DigitalOut enable_motors(PB_ENABLE_DCMOTORS); // create DigitalOut object to enable dc motors
@@ -182,18 +183,22 @@ const float voltage_max = 12.0f; // maximum voltage of battery packs, adjust thi
                                  // 6.0f V if you only use one battery pack
 
 // motor M2
-// const float gear_ratio_M2 = 78.125f;
-// const float kn_M2 = 180.0f / 12.0f;
-// DCMotor motor_M2(PB_PWM_M1, PB_ENC_A_M1, PB_ENC_B_M1, gear_ratio_M2, kn_M2, voltage_max);
+const float gear_ratio_M2 = 78.125f;
+const float kn_M2 = 180.0f / 12.0f;
+DCMotor motor_M2(PB_PWM_M1, PB_ENC_A_M1, PB_ENC_B_M1, gear_ratio_M2, kn_M2, voltage_max);
 ```
 
+To receive feedback from the motor, include a command inside the while loop that retrieves motor speed values. This allows us to verify the correctness of our connection, ensuring that the motor's rotation direction aligns with our expectations and corresponds to the displayed speed values.
+```
+printf("Motor velocity: %f \n", motor_M2.getVelocity());
+```
 Crucially, the default motor driver does not employ a motion planner, meaning the declared speed will be reached as quickly as possible. To test this, you can place the following command inside a while loop.
 
 **Note:** 
 - The maximum velocity is calculated and set in the driver based on the input arguments.
 
 ```
-motor_M2.setVelocity(1.0f); // set setpoint to 1 rotation per second
+motor_M2.setVelocity(3.0f); // set setpoint to 3 rotation per second
 ```
 
 Nevertheless, the driver is designed to facilitate smooth movements, incorporating features like gradual velocity increasing. The process adheres to the outlined diagram, wherein the motion planner defines trajectories. Subsequently, feedback from the motor (leveraging encoders) is obtained, and the speed controller governs the motor's movement.
@@ -229,7 +234,8 @@ motor_M2.setMaxAcceleration(motor_M2.getMaxAcceleration() * 0.5f); // half of de
 To utilize Motor M3 in closed loop for position control, it is crucial to include the appropriate driver in the main file and create an object with the pin's name passed as an argument. These include the PWM pins, as well as the A and B pins associated with the encoder. Additionally, a DigitalOut object should be defined to enable the DC motor.
 
 ```
-#include "pm2_drivers/DCMotor.h"        
+#include "pm2_drivers/DCMotor.h"
+#include "pm2_drivers/EncoderCounter.h"        
 
 ...
 
@@ -245,9 +251,13 @@ const float voltage_max = 12.0f; // maximum voltage of battery packs, adjust thi
 // motor M3
 const float gear_ratio_M3 = 78.125f;
 const float kn_M3 = 180.0f / 12.0f;
-DCMotor motor_M3(PB_PWM_M3, PB_ENC_A_M3, PB_ENC_B_M3, gear_ratio_M3, kn_M3, voltage_max);
+DCMotor motor_M3(PB_PWM_M1, PB_ENC_A_M1, PB_ENC_B_M1, gear_ratio_M3, kn_M3, voltage_max);
 ```
-
+Update the printing command to the following:
+```
+printf("Motor position: %f \n", motor_M3.getRotation());
+```
+Then include the command that will rotate the motor to the desired position:
 **Note:** 
 - The argument passed represents the value in units of rotations.
 
@@ -257,27 +267,21 @@ motor_M3.setRotation(10.0f);
 
 Nevertheless, the driver is engineered to facilitate smooth movements, including gradual velocity change. The process adheres to the illustrated diagram, wherein the motion planner establishes trajectories for the position setpoint. Subsequently, it receives position feedback from the motor (utilizing encoders for this purpose). The discrepancy is then forwarded, along with velocity feedback, to the speed controller, governing the motor's movement.
 
-Adjustments to the maximum acceleration or maximum speed values can be made by using the following commands, which should be placed after declaring the motor.
-
-```
-motor_M3.setMaxVelocity(motor_M2.getMaxVelocity() * 0.5f); // half of maximum velocity
-motor_M3.setMaxAcceleration(motor_M2.getMaxAcceleration() * 0.5f); // half of default acceleration
-```
-
-<center><img src="../images/dc_motor_control_scheme.PNG" alt="DC Motor Control Scheme" width="800"/></center>
-<center> <i>DC Motor Control Block Diagram</i> </center>
-
 To use the motion planner, the motion planner module needs to be activated with the following command, that is placed below motor declaration:
 
 ```
 motor_M3.setEnableMotionPlanner(true);
 ```
 
-If there is no command to set the speed inside the while loop, add one and run the program.
+Adjustments to the maximum acceleration or maximum speed values can be made by using the following commands, which should be placed after declaring the motor.
 
 ```
-motor_M3.setPosition(10.0f);
+motor_M3.setMaxVelocity(motor_M3.getMaxVelocity() * 0.5f); // half of maximum velocity
+motor_M3.setMaxAcceleration(motor_M3.getMaxAcceleration() * 0.5f); // half of default acceleration
 ```
+
+<center><img src="../images/dc_motor_control_scheme.PNG" alt="DC Motor Control Scheme" width="800"/></center>
+<center> <i>DC Motor Control Block Diagram</i> </center>
 
 In the provided graph a smooth positioning step of the DC motor is illustrated. In the first graph (upper left corner), the blue line represents the position setpoint, while the red line depicts the actual position. Notably, the red line exhibits smooth transitions at the beginning and end, indicative of uniform acceleration and deceleration. The speed graph illustrates the motor's acceleration to its maximum speed, maintaining it consistently before decelerating uniformly. This process repeats in the opposite direction. Given the direct proportionality between speed and voltage, the voltage graph mirrors the speed graph's curve. The acceleration graph showcases an initial acceleration phase, followed by quantization noise around zero when the shaft moves at a constant speed.
 

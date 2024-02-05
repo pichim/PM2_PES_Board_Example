@@ -5,7 +5,7 @@
 |-|-|-|
 | wuem@zhaw.ch | szar@zhaw.ch | pmic@zhaw.ch |
 | TE 301 | TE 302 | TE 307 |
-<!-- TODO Update the table of contents-->
+
 # Table of Contents
 1. [Course setup](#course-setup)
     * [Accounts](docs/markdown/general_info.md#accounts)
