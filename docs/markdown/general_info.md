@@ -51,7 +51,7 @@ Importing a program from GitHub to Mbed Studio involves linking the local reposi
 <center><img src="../images/importing_mbed.png" alt="Importing program" width="400" /></center>
 
 * Visit the GitHub page of your repository (e.g., https://github.com/YOUR_NICK/NAME_OF_FORKED_REPOSITORY) and copy the **HTTPS** URL, located below the box on your forked repository.
-<center><img src="../images/https_github.png" alt="https github" width="400" /></center>
+<center><img src="../images/https_link_github.png" alt="https link github" width="400" /></center>
 
 * Paste the full HTTPS URL of the relevant web page and (optionally) edit the program name. * If you are changing **Program name**, it is a good a practice to name programs with capital letters, so they can be distinguished from libaries (lowercase letters).
 <center><img src="../images/importing_mbed_1.png" alt="Importing program 1" width="400" /></center>
