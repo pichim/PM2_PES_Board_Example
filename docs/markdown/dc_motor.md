@@ -139,9 +139,8 @@ To use Motor M1 in an open loop configuration, start by adding the PWM driver to
 
 ```
 #include "pm2_drivers/FastPWM/FastPWM.h"
-
-...
-
+```
+```
 DigitalOut enable_motors(PB_ENABLE_DCMOTORS); // create DigitalOut object to enable dc motors
 ```
 
@@ -170,9 +169,8 @@ Motor M2 operates in a closed loop to control the velocity. To utilize it, it's 
 ```
 #include "pm2_drivers/DCMotor.h"
 #include "pm2_drivers/EncoderCounter.h"
-     
-...
-
+```
+```
 DigitalOut enable_motors(PB_ENABLE_DCMOTORS); // create DigitalOut object to enable dc motors
 ```
 
@@ -236,9 +234,8 @@ To utilize Motor M3 in closed loop for position control, it is crucial to includ
 ```
 #include "pm2_drivers/DCMotor.h"
 #include "pm2_drivers/EncoderCounter.h"        
-
-...
-
+```
+```
 DigitalOut enable_motors(PB_ENABLE_DCMOTORS); // create DigitalOut object to enable dc motors
 ```
 

@@ -29,7 +29,7 @@ An ultrasonic sensor (range finder / detector) is a type of sensor designed to m
 <!-- |Echo signal          | TTL             |  -->
 
 
-**Note:**
+**NOTE:**
 
 - The measurements showed a relatively high variation above 2 meters, there for the measurment range is limited to 2 meters (with the current driver implementation).
 
@@ -86,9 +86,8 @@ In the given example, the sensor is plugged into pin D3 on the PES-Board. Initia
 
 ```
 #include "pm2_drivers/UltrasonicSensor.h"
-
-...
-
+```
+```
 UltrasonicSensor us_sensor(PB_D3);
 float us_distance_cm = 0.0f;
 ```
@@ -120,7 +119,7 @@ if (us_distance_cm < 0.0f) {
 }
 ```
 
-**Notes:**
+**NOTE:**
 
 - Do not readout the sensor faster than every 12000 microseconds, otherwise the sensor will report -1.0f frequently.
 - For highly accurate measurements, every sensor unit should be calibrated individually.

@@ -73,13 +73,17 @@ mechanical_button.mode(PullUp);    // sets pullup between pin and 3.3 V, so that
 UltrasonicSensor us_sensor(PB_D3);
 float us_distance_cm = 0.0f;
 ```
-6. Make sure that you added statement to handle non-valid measurment below distance reading command e.g.:
+6. Within the while loop, include the following command to enable distance reading from the sensor regardless of the robot's current state.
+```
+us_distance_cm = us_sensor.read();
+```
+7. Make sure that you added statement to handle non-valid measurment below distance reading command e.g.:
 ```
 if (us_distance_cm < 0.0f) {
     us_distance_cm = 0.0f;
 }
 ```
-7. Create an object for [Motor M3](../markdown/dc_motor.md#motor-m3), which will be controlled by setting its position. Activate the motion planner and configure the maximum acceleration to 0.5 of the value assigned to the motor by default.
+8. Create an object for [Motor M3](../markdown/dc_motor.md#motor-m3), which will be controlled by setting its position. Activate the motion planner and configure the maximum acceleration to 0.5 of the value assigned to the motor by default.
 
 ```
 const float voltage_max = 12.0f; // maximum voltage of battery packs, adjust this to 
@@ -92,7 +96,8 @@ DCMotor motor_M3(PB_PWM_M1, PB_ENC_A_M1, PB_ENC_B_M1, gear_ratio_M3, kn_M3, volt
 motor_M3.setEnableMotionPlanner(true);
 motor_M3.setMaxAcceleration(0.5 * motor_M3.getMaxAcceleration());
 ```
-8. At the start of the ``main`` function, include the enumerators representing different robot states:
+
+9. At the start of the ``main`` function, include the enumerators representing different robot states:
 
 ```
 enum RobotState {
@@ -104,7 +109,7 @@ enum RobotState {
 } robot_state = RobotState::INITIAL;
 ```
 
-9. Then in the infinite loop after triggering the statement (do execute main task), place a blank template of the state machine:
+10. Then in the infinite loop after triggering the statement (do execute main task), place a blank template of the state machine:
 
 ```
 switch (robot_state) {
@@ -133,7 +138,7 @@ switch (robot_state) {
 }
 ```
 
-10. Insert the DC motor enable statement in the initial state case. Subsequently, specify the next state, which is the **Sleep** state
+11. Insert the DC motor enable statement in the initial state case. Subsequently, specify the next state, which is the **Sleep** state
 
 ```
 case RobotState::INITIAL: {
@@ -144,7 +149,7 @@ case RobotState::INITIAL: {
 }
 ```
 
-11. The sleep state is the state in which system will wait for the signal to execute task, so to go to forward case, this signal will be provided by clicking mechanical button.
+12. The sleep state is the state in which system will wait for the signal to execute task, so to go to forward case, this signal will be provided by clicking mechanical button.
 
 ```
 case RobotState::SLEEP: {
@@ -155,7 +160,7 @@ case RobotState::SLEEP: {
 }
 ```
 
-12.  In the Forward case, include a command to execute 10 forward rotations and a condition that transitions to another state (**Backward**) after reaching 10 revolutions. Also, add a condition that, if the distance measured by the ultrasonic sensor is less than 7 cm, the system will enter the emergency state.
+13.  In the Forward case, include a command to execute 10 forward rotations and a condition that transitions to another state (**Backward**) after reaching 10 revolutions. Also, add a condition that, if the distance measured by the ultrasonic sensor is less than 7 cm, the system will enter the emergency state.
 
 ```
 case RobotState::FORWARD: {
@@ -171,7 +176,7 @@ case RobotState::FORWARD: {
 }
 ```
 
-13.  In the Backward case, the device returns to the initial position. Additionally, include a statement to transition to the Sleep state after reaching that position.
+14.  In the Backward case, the device returns to the initial position. Additionally, include a statement to transition to the Sleep state after reaching that position.
 
 ```
 case RobotState::BACKWARD: {
@@ -182,7 +187,7 @@ case RobotState::BACKWARD: {
 }
 ```
 
-14.  In the **Emergency** state, the machine needs to quickly return to the initial position and turn off. To achieve this, disable the motion planner, as it allows for the fastest possible movement. Subsequently, turn off the machine, simulating the effect of pressing the emergency button. To reuse the mechatronic system, reset the machine using the **RESET** button. Inside the **Emergency** state:
+15.  In the **Emergency** state, the machine needs to quickly return to the initial position and turn off. To achieve this, disable the motion planner, as it allows for the fastest possible movement. Subsequently, turn off the machine, simulating the effect of pressing the emergency button. To reuse the mechatronic system, reset the machine using the **RESET** button. Inside the **Emergency** state:
 
 ```
 case RobotState::EMERGENCY: {
@@ -195,29 +200,28 @@ case RobotState::EMERGENCY: {
 }
 ```
 
-15.  In the end, add a printing command to read the distance measured by the sensor and motor's rotations.
+16.  In the end, add a printing command to read the distance measured by the sensor and motor's rotations.
 
 ```
 printf("%f, %f \n", us_distance_cm, motor_M3.getRotation());
 ```
-16. Include the following command in the else statement, triggered by pressing the USER button while the program is running, to reset the variables to their initial values without restarting the program.
+17. Include the following command in the else statement, triggered by pressing the USER button while the program is running, to reset the variables to their initial values without restarting the program.
 ```
 // reset variables and objects
 led1 = 0;
 enable_motors = 0;
 us_distance_cm = 0.0f;
 ```
-17.  Upload the program to the microcontroller using the **PLAY** button in Mbed Studio. Then, aim the sensor at an object that is beyond the distance triggering the emergency state. Press the **USER** button, and subsequently, click the mechanical button.
-18.  Experiment by pressing the mechanical button and pointing the sensor at an object that is below the threshold specified in the code.
-19.  After finishing unplug the Nucleo board.
+18.  Upload the program to the microcontroller using the **PLAY** button in Mbed Studio. Then, aim the sensor at an object that is beyond the distance triggering the emergency state. Press the **USER** button, and subsequently, click the mechanical button.
+19.  Experiment by pressing the mechanical button and pointing the sensor at an object that is below the threshold specified in the code.
+20.  After finishing unplug the Nucleo board.
 
 ## Summary
 
 In the third workshop, exploration into the intricacies of DC motors was done involved understanding various control methods and utilizing the capabilities of the controller. The first segment focused on comprehending DC motors functionality and control mechanisms, while the subsequent part centered on refining a state machine. The incorporation of mechanical buttons, ultrasonic sensors, and the implementation of a state machine provided practical insights into the control of mechatronic systems.
 
 Questions for own consideration:
-<!-- TODO think about it, about those question -->
-- THINK ABOUT IT
+- Why is it crucial that the program execution starts only after a specific action, such as pressing the **USER** button?
 
 ## Solution
 

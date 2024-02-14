@@ -155,7 +155,7 @@ case RobotState::EXECUTION: {
 ```
 case RobotState::SLEEP: {
     // if the measurement is within the min and max range go to EXECUTION
-    if ((us_distance_cm > us_distance_min) || (us_distance_cm < us_distance_max)) {
+    if ((us_distance_cm > us_distance_min) && (us_distance_cm < us_distance_max)) {
         robot_state = RobotState::EXECUTION;
     }
     if (mechanical_button.read()) {
@@ -196,8 +196,7 @@ us_distance_cm = 0.0f;
 In the second workshop, the integration of a servo along with the PES board, servo calibration, and mechanical button incorporation were emphasized. Additionally, the creation of a state machine using an ultrasonic sensor was explored. By establishing robot states and implementing transition conditions, a mechatronic system capable of adjusting a servo lever based on sensor readings was achieved. This workshop delivered hands-on experience in hardware integration and state machine design.
 
 Questions for own consideration:
-<!-- TODO think about it, about those question -->
-- THINK ABOUT IT
+- How can you create a state machine without using the syntax demonstrated in the exercise?
 
 ## Solution
 

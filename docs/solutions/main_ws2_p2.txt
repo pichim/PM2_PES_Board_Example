@@ -125,7 +125,7 @@ int main()
 		}
                 case RobotState::SLEEP: {
                     // if the measurement is within the min and max range go to EXECUTION
-                    if ((us_distance_cm > us_distance_min) || (us_distance_cm < us_distance_max)) {
+                    if ((us_distance_cm > us_distance_min) && (us_distance_cm < us_distance_max)) {
                         robot_state = RobotState::EXECUTION;
                     }
                     if (mechanical_button.read()) {

@@ -23,7 +23,7 @@ Creating a flowchart at the project's outset offers crucial benefits. It provide
 
 ### 3. Coding
 -------------
--  <b>Have no Fear - Start programming as soon as possible. Even if you don't have a clear idea of what you are doing DO IT! You will learn a lot and gain experience that will be useful in the future.
+-  <b>Have no Fear </b>- Start programming as soon as possible. Even if you don't have a clear idea of what you are doing DO IT! You will learn a lot and gain experience that will be useful in the future.
 - <b>Just play</b> - Start small, play with your system, maker errors, learn from them, and have fun!
 - <b>Step by Step Implementation</b> - Start implementing the ideas you have gathered. With an idea of what actuators and sensors you want to use, as well as how your robot is supposed to work - start writing code gradually. Familiarize yourself with the capabilities of the elements you are using and think about their application to your project. 
 - <b>Test</b> - Test what you have written. Testing after each step is implemented is very important due to the fact that only doing so will protect you from larger errors, which will be very difficult to detect in a long block of code.
@@ -188,7 +188,7 @@ switch (robot_state) {
     }
     case RobotState::SLEEP: {
         // if the measurement is within the min and max range go to EXECUTION
-        if ((us_distance_cm > us_distance_min) || (us_distance_cm < us_distance_max)) {
+        if ((us_distance_cm > us_distance_min) && (us_distance_cm < us_distance_max)) {
             robot_state = RobotState::EXECUTION;
         }
         if (mechanical_button.read()) {

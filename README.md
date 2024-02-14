@@ -24,6 +24,7 @@
         * [Ultrasonic Sensor](docs/markdown/ultrasonic_sensor.md)
         * [Servo](docs/markdown/servo.md)
         * [DC Motor](docs/markdown/dc_motor.md)
+        * [Line Follower Array](docs/markdown/line_follower.md)
 3. [Tips](#tips)
     * [Project development](docs/markdown/tips.md#project-development)
     * [Programming tips](docs/markdown/tips.md#programming-tips)
@@ -33,6 +34,7 @@
     * [Workshop 1](docs/markdown/ws1.md)
     * [Workshop 2](docs/markdown/ws2.md)
     * [Workshop 3](docs/markdown/ws3.md)
+5. [Links](#links)
 
 ## Course setup
 
@@ -81,7 +83,10 @@ The PES Board is a hardware board created to work with the Nucleo F446RE on whic
 
 </br>
 
-The kit includes two sets of 6V battery packs, which can be connected parallel provide 12V voltage. If you are using a single battery pack, the remaining pins should be bridged.
+The kit includes two sets of 6V battery packs, which can be connected is series to provide 12 volts. The external power source is connected on the opposite side of the board. The picture below illustrates the proper battery connection required to attain a voltage of 12 volts. 
+<center><img src="docs/images/battery_packs.png" alt="Battery packs" width="500" /></center>
+
+If you are using a single battery pack, the remaining active and ground pin should be bridged.
 
 The batteries enables the board to function independently of the computer, eliminating the need for a connection via the Mini USB cable. Despite this, the board continues to receive a stable 5V supply while offering the option to use a 12V supply for the motors. To activate the external battery power, switch the slider on the PES board to the ON position.
 
@@ -105,6 +110,7 @@ The following links contain the hardware tutorials. The files structure encompas
 - [<font size="3"> Ultrasonic Sensor </font>](docs/markdown/ultrasonic_sensor.md)
 - [<font size="3"> Servo </font>](docs/markdown/servo.md)
 - [<font size="3"> DC Motor </font>](docs/markdown/dc_motor.md)
+- [<font size="3"> Line Follower Array </font>](docs/markdown/line_follower.md)
 
 ## Tips
 
@@ -121,7 +127,33 @@ The following links contain the workshops instructions:
 - [<font size="3"> Workshop 3 </font>](docs/markdown/ws3.md)
 
 ## Links
-<!-- TODO Find some nice things -->
+Git and GitHub Tutorial for Beginners from 32:40 about Github:
+https://www.youtube.com/watch?v=tRZGeaHPoaw
+
+C++ step by step tutorials: https://www.w3schools.com/cpp/default.asp
+
+Detailed explanation of C++ programming language: https://cplusplus.com/
+
+C++ data types: https://www.tutorialspoint.com/cplusplus/cpp_data_types.htm
+
+Printf format convention: https://cplusplus.com/reference/cstdio/printf/
+
+Flowchart diagram maker: https://app.diagrams.net/
+
+Hardware links: <br>
+https://www.pololu.com​ <br>
+https://www.adafruit.com​ <br>
+https://www.sparkfun.com​ <br>
+https://www.seeedstudio.com​ <br>
+https://www.robotshop.com​ <br>
+https://boxtec.ch​ <br>
+https://www.play-zone.ch​ <br>
+http://farnell.ch​ <br>
+https://www.mouser.ch​ <br>
+https://www.digikey.com​ <br>
+https://www.conrad.ch​ <br>
+https://www.distrelec.ch <br>
+
 
 <!-- Links -->
 [1]: https://os.mbed.com/platforms/ST-Nucleo-F446RE/

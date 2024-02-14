@@ -62,7 +62,7 @@ Importing a program from GitHub to Mbed Studio involves linking the local reposi
 
 ### Building
 -------------------------
-Building a program in Mbed Studio involves the process of compiling and linking the source code to create an executable binary file (*.hex file) that can run on a specific microcontroller or embedded system. The build process ensures that the code is translated into machine code compatible with the target platform, and it may involve resolving dependencies, optimizing code, and generating the necessary files for deployment. Once the program is successfully built, the resulting binary file can be loaded onto the microcontroller board to execute the desired functionality. Building is a crucial step to convert human-readable code into a format understandable by the hardware.
+Building a program in Mbed Studio involves the process of compiling and linking the source code to create an executable binary file (*.bin file) that can run on a specific microcontroller or embedded system. The build process ensures that the code is translated into machine code compatible with the target platform, and it may involve resolving dependencies, optimizing code, and generating the necessary files for deployment. Once the program is successfully built, the resulting binary file can be loaded onto the microcontroller board to execute the desired functionality. Building is a crucial step to convert human-readable code into a format understandable by the hardware.
 
 In Mbed Studio, there are three build profiles:
 
@@ -88,7 +88,7 @@ Choosing the appropriate build profile depends on the development stage and requ
 The build process, which translates human-readable code into a format understandable by the hardware, can be performed without a connected board. After importing the program, specify build profile and initiate the build process by clicking the **HAMMER** button.
 <center><img src="../images/building_mbed.png" alt="Building program" width="400" /></center>
 
-After the building process in Mbed Studio, the compiled files, including *.hex file are typically stored in the **BUILD** directory within your project folder. 
+After the building process in Mbed Studio, the compiled files, including *.bin file are typically stored in the **BUILD** directory within your project folder. 
 
 ### Flashing
 -------------------------
@@ -109,7 +109,7 @@ This drive serves as a convenient avenue for transferring the compiled binary (f
 
 ### File Storage Location
 -------------------------
-In Mbed Studio, the Mbed project folder is typically situated in the workspace directory where you created or imported the project. To locate the Mbed project folder and the .hex file:
+In Mbed Studio, the Mbed project folder is typically situated in the workspace directory where you created or imported the project. To locate the Mbed project folder and the .bin file:
 
 **1. Project Folder Location:**
 - Open the "This PC" folder.
@@ -119,9 +119,9 @@ In Mbed Studio, the Mbed project folder is typically situated in the workspace d
 - Look for the "Mbed Programs" directory within your profile directory.
 - Inside "Mbed Programs," you'll find folders containing your Mbed programs.
 
-**2. Locating the .hex File:**
+**2. Locating the .bin File:**
 - Inside your project folder, go to the "BUILD" directory.
 - Within the "BUILD" directory, locate the folder named after your target hardware (e.g., "NUCLEO_F446RE").
-- Open this specific folder, where you will find the .hex file bearing the project name and ".hex" extension.
+- Open this specific folder, where you will find the .bin file bearing the project name and ".bin" extension.
 
-This .hex file serves as the compiled binary for flashing your microcontroller with the updated firmware. You can either drag and drop it onto the corresponding drive representing your microcontroller or utilize external tools for programming.
+This .bin file serves as the compiled binary for flashing your microcontroller with the updated firmware. You can either drag and drop it onto the corresponding drive representing your microcontroller or utilize external tools for programming. When you drag and drop the file into the window that appears when the microcontroller is connected, the file disappears from view. However, it's actually uploaded to the microcontroller and should work as expected.
