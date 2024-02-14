@@ -91,7 +91,7 @@ If you are using a single battery pack, the remaining active and ground pin shou
 The batteries enables the board to function independently of the computer, eliminating the need for a connection via the Mini USB cable. Despite this, the board continues to receive a stable 5V supply while offering the option to use a 12V supply for the motors. To activate the external battery power, switch the slider on the PES board to the ON position.
 
 #### Pheripherals
-
+------------------------
 <center><img src="docs/images/pes_board_peripherals.png" alt="Nucleo overview" width="600" /></center>
 
 </br>
@@ -99,7 +99,7 @@ The batteries enables the board to function independently of the computer, elimi
 PDF: [<font size="3"> pes_board_peripherals.pdf </font>](docs/datasheets/pes_board_peripherals.pdf)
 
 #### Pin-Mapping
-
+------------------------
 PDF: [<font size="3"> pes_board_pin_mapping.pdf </font>](docs/datasheets/pes_board_pin_mapping.pdf)
 
 ### Hardware Tutorials

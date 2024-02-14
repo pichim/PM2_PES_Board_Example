@@ -56,7 +56,7 @@ $\displaystyle v = \frac{\omega_1 * r}{L} + \frac{\omega_2 * r}{L} $
 From the above equations, a transformation matrix can be determined that allows linear and rotational speed to be determined from the speed of the wheels.
 <!-- TODO solve the problems with pictures - matrixies -->
 
-<center><img src="../images/Cwheel2robot.png" alt="Cwheel2robot" width="200" /></center>
+<center><img src="../images/Cwheel2robot.png" alt="Cwheel2robot" width="100" /></center>
 
 <!-- \begin{bmatrix}
 \frac{r}{2} & \frac{r}{2} \\
@@ -84,7 +84,7 @@ Therefore, to calculate linear and rotational speed, you need to multiply the tr
 
 However, our goal is usually the reverse calculation, that is, from linear and rotational speed to wheel speed. In this case, the transformation matrix must be inverted resulting in the following matrix. 
 
-<center><img src="../images/Crobot2wheel.png" alt="Crobot2wheel" width="200" /></center>
+<center><img src="../images/Crobot2wheel.png" alt="Crobot2wheel" width="100" /></center>
 
 <!-- \begin{bmatrix}
 \frac{1}{r} & \frac{L}{2*r} \\

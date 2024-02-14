@@ -138,7 +138,7 @@ To create a state machine the first step is to design a flow chart diagram. A we
 
 Below you can find an example of a flow chart of a mechatronic system that is designed in workshop 2.
 
-<center><img src="../images/ws2_flowchart.png" alt="WS2 flow chart" width="400" /></center>
+<center><img src="../images/ws2_flowchart.png" alt="WS2 flow chart" width="600" /></center>
 
 ### 2. State machine
 ------------------------

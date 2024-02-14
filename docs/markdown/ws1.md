@@ -60,7 +60,7 @@ In this workshop, participants were introduced to the Nucleo-F446RE microcontrol
 
 [Workshop 1](../solutions/main_ws1.txt)
 
-<center><img src="../images/ir_sensor_eval.png" alt="IR sensor evaluation" width="400" /></center>
+<center><img src="../images/ir_sensor_eval.png" alt="IR sensor evaluation" width="600" /></center>
 <center> <i>IR sensor evaluation graph</i> </center>
 
 

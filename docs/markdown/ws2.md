@@ -48,7 +48,7 @@ The overall goal is to build a mechatronic system capable of adjusting the defle
 Before doing the task you should look at [structuring a robot task tutorial](../markdown/tips.md#structuring-a-robot-task).
 
 Below you can find the flow chart showing the logic of the transitions to each state.
-<center><img src="../images/ws2_flowchart.png" alt="WS2 flow chart" width="400" /></center>
+<center><img src="../images/ws2_flowchart.png" alt="WS2 flow chart" width="600" /></center>
 <center> <i>Flow chart</i> </center>
 
 1. Connect the mechanical button to the PC_5 pin on the Nucleo board (see [Nucleo Board pinmap][1])
@@ -204,10 +204,10 @@ Questions for own consideration:
 
 [Workshop 2, Part 2](../solutions/main_ws2_p2.txt)
 
-<center><img src="../images/pulse_position_eval.png" alt="Pulse to position eval" width="400" /></center>
+<center><img src="../images/pulse_position_eval.png" alt="Pulse to position eval" width="600" /></center>
 <center> <i>Pulse width to position graph</i> </center>
 
-<center><img src="../images/ws2_flowchart.png" alt="WS2 flow chart" width="400" /></center>
+<center><img src="../images/ws2_flowchart.png" alt="WS2 flow chart" width="600" /></center>
 <center> <i>Flow chart for workshop 2</i> </center>
 
 <!-- Links -->

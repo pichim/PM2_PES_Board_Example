@@ -229,7 +229,7 @@ Questions for own consideration:
 
 [Workshop 3, Part 2](../solutions/main_ws3_p2.txt)
 
-<center><img src="../images/ws3_flowchart.png" alt="WS3 flow chart" width="400" /></center>
+<center><img src="../images/ws3_flowchart.png" alt="WS3 flow chart" width="500" /></center>
 <center> <i>Flow chart for workshop 3</i> </center>
 
 <!-- Links -->
