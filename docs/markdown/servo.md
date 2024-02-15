@@ -1,6 +1,6 @@
 # Analog Servos
 
-A servo is an electrical motor usually designed for precise control over angular or linear position. It typically comprises a motor connected to a sensor for position feedback and a controller that adjusts the motor's movement to match a specified setpoint. Analog Servos function using voltage signals transmitted through pulses width modulation (PWM).
+A servo is an electrical motor designed for precise control over angular or linear position. It typically consists of a motor connected to a sensor for angle or position feedback and a controller that adjusts the motor's movement to track the specified setpoint. Typically used in applications such as robotics, automation, and remote control, servos are available in various types, including analog, digital, and continuous rotation. This document focuses on analog servos, which are widely used in various applications due to their simplicity and cost-effectiveness.
 
 <center><img src="../images/servo_image.png" alt="servo example" width="350"/></center>
 <center> <i>Example of analog servo</i> </center>
@@ -19,8 +19,7 @@ A servo is an electrical motor usually designed for precise control over angular
 
 ## Links
 
-[Futaba S3001][1]
-
+[Futaba S3001][1]</br>
 [Reely S-0090][2]
 
 <!-- link list, last updated 07.12.2023 -->
@@ -33,42 +32,47 @@ A servo is an electrical motor usually designed for precise control over angular
 
 [Futaba S3001](../datasheets/Futaba_Servo_S3001.pdf)
 
-## Absolut Positioning
-Within this system, users have the capability to command and control servo motors in terms of absolute angles or positions. Unlike relative control, where movements are based on the current position, absolute control allows for the specification of exact angular positions. This level of precision facilitates fine-tuned control over the servo's rotational placement, ensuring that it consistently reaches and maintains specific, predetermined angular orientations. This feature proves particularly valuable in applications where precise and absolute positioning is essential for optimal performance.
+## Absolut Angle/Positioning
 
-## Practical Tips
+The internally used sensor measures the angle of the servo's output shaft absolute. This means that the servo knows it's absolute position independently of the angle where the system was turned on. Even when power cycling the servo, it will always moves to the same position when commanded to do so. This is a very useful feature for applications where the servo is used to control a specific angle or position. There for these actuators do not need to be homed or initialized before use.
 
-- Keep in mind that every servo requires calibration for proper operation. Calibrated values can differ not only between different servo models but also among individual units of the same model.
+## Practical Tips - Calibration
+
+- Keep in mind that every servo requires calibration for proper operation. Calibration values can differ not only between different servo models but also among individual units of the same model.
 - The plug and pin arrangement provides two connection options, but one is incorrect and can result in servo failure. Pay close attention to matching the GND pin with the GND servo wire.
-- Operating servos beyond the minimum and maximum values may cause audible stuttering in the device. It's advisable to either disable this behavior or, preferably, calibrate the device accurately.
+- Operating servos beyond the minimum and maximum values may cause audible stuttering in the device. It's advisable to either disable via software when not used, or even better, to do a proper and precise calibration to avoid this issue.
 
 ## Servo driver
 
-The ``servo`` driver is designed for managing servos, commanding the angle within a normalized range of 0 to 1. Internally there is a motion planner running which is used to perform smooth movements.
-
-To start using the ``servo`` driver, the initial step in the ``main`` file is to create the servo object and specify the pins to which the object will be assigned.
+The ``servo`` driver is designed for controlling servos, commanding the angle within a normalized range of 0.0f to 1.0f. Internally there is a motion planner running which can be used to perform smooth movements (acceleration constrained trajectories).
 
 ### Connection to the PES-board
 ---------------------------
 For the PES-board, analog servos are associated with specific ports, outlined as follows:
 
 ```
-// PES-Board Pin Names
+// pes-board pin names
 PB_D0
 PB_D1
 PB_D2
 PB_D3
 ```
+
 [PES Board pinmap](../datasheets/pes_board_peripherals.pdf)
 
-### Create servo object
+### Create Servo Objects
 ---------------------------
-In the given example, servos are plugged into pins D0 - D2 on the PES-Board. Initially, it's essential to add the suitable driver to our main file and then create an object with the pin's name passed as an argument.
 
+Add the servo driver ``Servo.h`` to the top of the ``main.cpp`` file:
 
 ```
 #include "pm2_drivers/Servo.h"
 ```
+
+To be able to start to use the ``servo`` driver, the initial step is to create the servo objects and specify the pins to which the hardware will be connected in the ``main`` scope.
+
+In the following step, two servos are plugged into pins D0 - D1 on the PES-Board. Then create an object with the associated pins passed as an argument:
+
 ```
 Servo servo_D0(PB_D0);
 Servo servo_D1(PB_D1);
@@ -76,29 +80,28 @@ Servo servo_D1(PB_D1);
 
 ### Calibration
 ---------------------------
-In order to properly control the servo, the basic step that should be performed is its calibration.
+
+In order to properly control the servo, the basic step that should be performed is the calibration.
 
 <details Closed>
 <summary><b>Why calibration?</b></summary>
 
->Servos operate through PWM (Pulse Width Modulation) signals, enabling the adjustment of the servo motor rotation through varying duty cycle PWM pulses. Initially, the specific pulse width corresponding to a particular servo angle is unknown. Hence, a calibration process is necessary to determine the minimum pulse width for the minimun position and the width associated with the maximum position.
-><center><img src="../images/servo_figures.png" alt="drawing" width="600"/></center>
-><center> <i>Graphs showing the influence of pulse width on PWM output and on servo position</i> </center>
+>Servos are commanded through PWM (Pulse Width Modulation) signals, enabling the adjustment of the servo motor rotation through varying duty cycle PWM pulses. Initially, the specific pulse width corresponding to a particular servo angle is unknown. Hence, a calibration process is necessary to determine the minimum pulse width for the minimun angle and the maximum pulse width associated with the maximum angle. Carefull, these is just an example and does not represent the real values for the servos we use nor the real maximum angle the servos can reach.
+><center><img src="../images/servo_figures.png" alt="drawing" width="800"/></center>
+><center> <i>Example pulse widht, PWM and servo angle</i> </center>
 >
->The charts above illustrate a direct correlation between pulse width and servo position. As the pulse width increases, the servo position changes accordingly. Keep in mind the minimum angle might not be at 0 pulse width. This relationship is further demonstrated in the accompanying illustration below.
-><center><img src="../images/servo-motor-pwm-signal-rotation.png" alt="drawing" width="600"/></center>
-><center> <i>Pulse widths and corresponding positions for the example servo</i> </center>
+>The charts above illustrate a direct dependency between pulse width and servo angle. As the pulse width increases, the servo anlge changes proportianal. Keep in mind the minimum angle might not be at zero pulse width. This relationship is further demonstrated in the illustration below.
+><center><img src="../images/servo-motor-pwm-signal-rotation.png" alt="drawing" width="650"/></center>
+><center> <i>Example pulse widths and corresponding angles</i> </center>
 >
->In the example servo illustration, the zero position corresponds to a pulse width of 1 ms, while the maximum yaw angle is achieved at 2 ms. These values are specific to the illustrated servo. Initially, for the servos we intend to use, these values are different. Hence, a calibration process is undertaken to determine these crucial values.
->
->The ultimate aim of calibration is to establish the servo position by assigning values within the range of 0 to 1. Depending on the servo's application, there might not be a need to utilize the entire range of motion; for instance, a 90-degree range could suffice. Through the calibration process, we can determine the pulse width change value corresponding to a 90-degree rotation and assign it to the variables *servo_D0_ang_min* and *servo_D0_ang_max*. Consequently, setting the *servo_value* to this assigned value will result in a 90-degree rotation of our servo.
+>In the second servo illustrations, the zero position corresponds to a pulse width of 1 ms, while the maximum angle is achieved at 2 ms. Hence, a calibration process is undertaken to determine these calibration values. These calibration values are specific to the example shown in the figure and do not hold for the servos we use. Also, our servo drivers runs at 50 Hz, therefor the servo period resp. pulse with is 20 ms.
 >
 > For more information see: [HERE][3]
 </details>
 
-The calibration process involves sending progressively wider pulses to determine, in theory, the pulse width corresponding to the zero position and the width corresponding to the maximum movement of the servo. Best practice is to start with a very small pulse width and gradually increase it until the servo starts moving. This process is repeated until the servo reaches its maximum position. The pulse width values corresponding to the minimum and maximum positions are then recorded. It may be necessary to use a slightly higher minimal value and a slightly lower maximum value to ensure that the servo is working correctly.
+The calibration process involves sending progressively wider pulses to determine, the pulse width corresponding to the minimal angle and the pulse width corresponding to the maximum angle of the servo. Best practice is to start with a very small pulse width and gradually increase it until the servo starts moving. This process is repeated until the servo reaches its maximum angle and stops moving, even though the pulse width is further increased. The pulse width values corresponding to the minimum and maximum positions are used as calibration values. It may be necessary to use a slightly higher minimal value and a slightly lower maximum value to ensure that the servo is working as expected (safety margins).
 
-After registering these values, sending 0 as a command will move the servo to its minimal angle, while sending 1 will move it to its maximum angle. The servo will not move beyond these values, even if the command is higher than 1.
+After setting the minimum and maximum pulse width via the servo driver, sending 0.0f as a command will move the servo to its minimal angle, while sending 1.0f will move it to it's maximum angle. The servo will not move beyond these values, even if the command is smaller than 0.0f or bigger than 1.0f.
 
 >Hardware:
 > - PES board with NUCLEO-F446RE board
@@ -106,13 +109,10 @@ After registering these values, sending 0 as a command will move the servo to it
 > - Servo Futaba S3001/RELY S-0090
 > - Additional wires to connect the servo to the board
 > - Jumper wires
->
-> Software:
-> - Matlab file: [Pulse to postion evaluation](../matlab/pulse_to_pos_eval.m)
 
 #### Procedure
 
-- Initially, define the necessary variables required for the calibration process. Additionally, to monitor the *servo_input* value, it's crucial to include an appropriate printing statement.
+- Define the necessary variables required for the calibration process.
 
 ```
 float servo_input = 0.0f;
@@ -120,21 +120,25 @@ int servo_counter = 0; // define servo counter, this is an additional variable
                        // used to command the servo
 const int loops_per_seconds = static_cast<int>(ceilf(1.0f / (0.001f * static_cast<float>(main_task_period_ms))));
 ```
+
+To monitor the *servo_input* value, it's necessary to include the following printing statement outside of the do execute main task scope:
+
 ```
+// print to the serial terminal
 printf("Pulse width: %f \n", servo_input);
 ```
 
-- To activate the servo, use the following command. Place this command strategically to enable the servo after initiating program execution with the **USER** button.
+- To activate the servo, use the following command. Place this command to enable the servo after the initiating the program execution with the **USER** button:
 
 ```
+// enable the servos
 if (!servo_D0.isEnabled())
     servo_D0.enable();
 if (!servo_D1.isEnabled())
     servo_D1.enable();
 ```
 
-- Next, utilize the following function and statements. These will enable the incremental adjustment of the servo position every one second, achieved by modifying the pulse width value. It is crucial to ensure that the incremental change in the servo position, i.e., the pulse width, is very small to obtain precise minimum and maximum values.
-
+- Next, use the following function and statements. These will enable the incremental adjustment of the servo position every one second. It is important to ensure that the incremental change in the servo position, i.e., the pulse width, is very small to obtain precise minimum and maximum values. Try to find a tradoff between too large and therefor too long execution time to wait for and too small and therefor not long enough values.
 
 ```
 servo_D0.setNormalisedPulseWidth(servo_input);
@@ -142,72 +146,84 @@ servo_D1.setNormalisedPulseWidth(servo_input);
 if ((servo_input < 1.0f) &&                     // constrain servo_input to be < 1.0f
     (servo_counter % loops_per_seconds == 0) && // true if servo_counter is a multiple of loops_per_second
     (servo_counter != 0))                       // avoid servo_counter = 0
-    servo_input += 0.0025f;
+    servo_input += 0.005f;
 servo_counter++;
 ```
-To reset *servo_input* variable to initial value and disable the servos without restarting the program, add the following command to the else statement, triggered by pressing the **USER** button while program is running.
+
+To reset the *servo_input* variable to zero and disable the servos without restarting the program, add the following command to the else statement. This is triggered by pressing the **USER** button while the main task is running (second time you press the button).
 
 ```
+// reset variables and objects
+led1 = 0;
 servo_D0.disable();
 servo_D1.disable();
 servo_input = 0.0f;
 ```
 
 - In the subsequent step, compile the program. Once compilation is complete, click the **USER** button to initiate the execution. This action prompts the *servo_input* variable value to display on the serial monitor.
-- The goal is to monitor the servo_input variable and the servo. Every one second, this variable increases by the specified script value. Record the displayed value on paper after the servo initial movement will take place. Continue monitoring the variable and the servo until increasing the variable no longer results in further rotation of the head. At this point, record the maximum value displayed on the screen.
-- After collecting the data points, input them into [pulse_to_pos_eval.m](../matlab/pulse_to_pos_eval.m) under the respective headings *servo1_pulse_start*, *servo1_pulse_end* for both servos. This file will output the plot which will present the position dependence on pulse width.
+- The goal is to monitor the servo_input variable and the servo. Every one second, this variable increases by the specified value. Record the displayed value on paper after the servo initial movement will take place. Continue monitoring the variable and the servo until increasing the variable no longer results in further rotation. At this point, record the maximum value displayed on the screen.
+- After collecting the data points, input them into [pulse_to_pos_eval.m](../matlab/pulse_to_pos_eval.m) under the respective headings *servo1_pulse_start*, *servo1_pulse_end* for both servos. This file will create a plot that presents the position dependency before and after the calibration process.
 - Now that the values are known, beneath the servo object declaration, define the appropriate variables with the values obtained in the process.
 
 ```
-// example values
-// servo 0
-float servo_D0_ang_min = 0.0150f;
+// minimal pulse width and maximal pulse width obtained from the servo calibration process
+// futuba S3001
+float servo_D0_ang_min = 0.0150f; // carefull, these values might differ from servo to servo
 float servo_D0_ang_max = 0.1150f;
-// servo 1
-float servo_D1_ang_min = ...;
-float servo_D1_ang_max = ...;
+// reely S0090
+float servo_D1_ang_min = 0.0325f;
+float servo_D1_ang_max = 0.1175f;
 
-// calibrate the servos
+// servo.setNormalisedPulseWidth: before calibration (0,1) -> (min pwm, max pwm)
+// servo.setNormalisedPulseWidth: after calibration (0,1) -> (servo_D0_ang_min, servo_D0_ang_max)
 servo_D0.calibratePulseMinMax(servo_D0_ang_min, servo_D0_ang_max);
 servo_D1.calibratePulseMinMax(servo_D1_ang_min, servo_D1_ang_max);
 ```
 
-- Now the *servo_input* variable will be in a range from 0.0f to 1.0f, which will corespond internally to the pulse width range from value of *servo_D0_ang_min* to value of *servo_D0_ang_max*.
+- Now the *servo_input* variable in the range from 0.0f to 1.0f will be maped in the driver internally to the pulse width range from value of *servo_D0_ang_min* to value of *servo_D0_ang_max*.
 
-### Command the servo
+### Further Information
 ---------------------------
-To use the servo, the initial step is to enable it. This action starts the servo and sets it to the zero position, as this position is defined as the default, but the initial possition can be also passed as argument so that servo with move to the particular position during initialization.
 
-The following statement should be positioned after the trigger statement to avoid running in the background without purpose. The code below employs the **isEnabled** function to check if the servo process is already running. If the **isEnabled** function returns false, the servo process is initialized using the enable function.
+#### Enabling the servo
+
+To use the servo, the initial step is to enable it. This action starts the servo and moves it to the zero position, as this position is defined as the default. But the initial possition can also be passed as argument so that servo will move to the particular position after enabling it.
 
 ```
+// enable the servo and move it to zero
 if (!servo_D0.isEnabled()) {
     servo_D0.enable();
 }
 ```
 
-Utilizing the ``servo`` class involves declaring the position of the servo head within the range of 0 to 1. This is achieved through the use of a function:
-
 ```
-servo_D2.setNormalisedPulseWidth(servo_input);
-```
-
-where *servo_input* is a variable that we can freely change in the right range.
-
-The class design incorporates the capability to execute smooth movements by adjusting the servo's acceleration and initiating gradual deceleration before reaching the target head position. This feature is suitable for activities that demand smooth and steady motions, eliminating abrupt movements. However, there is also an option for rapid motion if a specific requirement necessitates it.
-
-The following function is used for this and should be entered below ``servo`` object declaration:  
-
-```
-servo_D0.setMotionProfileAcceleration(0.3f);
+// enable the servo and move it to the center
+if (!servo_D0.isEnabled()) {
+    servo_D0.enable(0.5f);
+}
 ```
 
-This function allows for the adjustment of the accelerations during movement by altering its argument. If the argument is omitted, the function defaults to a very large number, resulting in the fastest possible movement. For a smooth motion, you can input any argument greater than 0, bearing in mind that lower parameter values correspond to smaller acceleration values.
+#### Smooth Movement
 
-<center><img src="../images/servo_smooth.png" alt="Servo movement" width="500" /></center>
+The class design incorporates the capability to execute smooth movements by adjusting the servo's maximum acceleration. This feature is suitable for movements that need smooth motions, eliminating abrupt movements. As default, the servo will move as fast as possible.
+
+The following function can be used as an example to establish smooth movement and needs to be placed after the ``servo`` calibration:  
+
+```
+// servo.setNormalisedPulseWidth: before calibration (0,1) -> (min pwm, max pwm)
+// servo.setNormalisedPulseWidth: after calibration (0,1) -> (servo_D0_ang_min, servo_D0_ang_max)
+servo_D0.calibratePulseMinMax(servo_D0_ang_min, servo_D0_ang_max);
+
+// default acceleration of the servo motion profile is 1.0e6f
+servo_D0.setMaxAcceleration(0.**3f**);
+```
+
+This function allows the adjustment of the maximum acceleration during the movement. If the argument is omitted, the function defaults to a very large number, resulting in the fastest possible movement. For a smooth motion, you can input any argument greater than zero.
+
+<center><img src="../images/servo_smooth.png" alt="Servo movement" width="650" /></center>
 <center> <i>Servo movement with maximum acceleration of 0.3f</i> </center>
 
 |<center>Default settings</center>|<center>Acceleration limited</center>|
 |-|-|
 |<center><i> </i></center> |<center><i>``servo_D0.setMaxAcceleration(0.3f);``</i></center> |
-|Without setting the acceleration the servo will move to its commanded position as fast as possible, leading to fast but not very smooth movements.|In scenarios involving set acceleration, the movement becomes smooth, and acceleration values are constrained by the driver. The velocity during the initial stage increases with a constant acceleration and then decreases, maintaining the same acceleration value but with negative sign. This results in a smooth movement. The velocity in- and decreases linearly, for the first increase of the velocity the derivative is approximately 0.1545/(0.95 - 0.435) = 0.3f as set via the class interface.|
+|Without setting the acceleration the servo will move to its commanded position as fast as possible, leading to fast but not very smooth movements.|With a maximum acceleration, the movement becomes smooth, and acceleration values are constrained by the driver. The velocity during the initial stage increases with a constant acceleration and then decreases, maintaining the same acceleration value but with negative sign. This results in a smooth movement. The velocity in- and decreases linearly, for the first increase of the velocity the derivative is approximately 0.1545/(0.95 - 0.435) = 0.3f as set via the class interface.|

@@ -1,10 +1,12 @@
 #include "mbed.h"
 
+// pes board pin map
 #include "pm2_drivers/PESBoardPinMap.h"
+
+// drivers
 #include "pm2_drivers/DebounceIn.h"
-#include "pm2_drivers/UltrasonicSensor.h"
-#include "pm2_drivers/EncoderCounter.h"
 #include "pm2_drivers/DCMotor.h"
+#include "pm2_drivers/UltrasonicSensor.h"
 
 bool do_execute_main_task = false; // this variable will be toggled via the user button (blue button) and
                                    // decides whether to execute the main task or not
@@ -57,7 +59,8 @@ int main()
     UltrasonicSensor us_sensor(PB_D3);
     float us_distance_cm = 0.0f;
 
-    DigitalOut enable_motors(PB_ENABLE_DCMOTORS); // create DigitalOut object to enable dc motors
+    // create object to enable power electronics for the dc motors
+    DigitalOut enable_motors(PB_ENABLE_DCMOTORS);
 
     const float voltage_max = 12.0f; // maximum voltage of battery packs, adjust this to
                                      // 6.0f V if you only use one battery pack
@@ -66,7 +69,7 @@ int main()
     const float gear_ratio_M3 = 78.125f;
     const float kn_M3 = 180.0f / 12.0f;
     DCMotor motor_M3(PB_PWM_M1, PB_ENC_A_M1, PB_ENC_B_M1, gear_ratio_M3, kn_M3, voltage_max);
-    motor_M3.setEnableMotionPlanner(true);
+    motor_M3.enableMotionPlanner(true);
 
     // start timer
     main_task_timer.start();
@@ -109,11 +112,11 @@ int main()
                     // after that it is switching to backward mode
                     // if the distance from the sensor is less then set minimum,
                     // it switches to emergency state
-                    motor_M3.setRotation(10.0f);
-                    if (motor_M3.getRotation() > 9.95f) {
+                    motor_M3.setRotation(2.9f);
+                    if (motor_M3.getRotation() > 2.85f) {
                         robot_state = RobotState::BACKWARD;
                     }
-                    if (us_distance_cm < 7.0f) {
+                    if (us_distance_cm < 4.5f) {
                         robot_state = RobotState::EMERGENCY;
                     }
 
@@ -130,7 +133,7 @@ int main()
                 case RobotState::EMERGENCY:
                     // in emergency state machine is going to initial position
                     // as fast as possible and turning off after reaching that position
-                    motor_M3.setEnableMotionPlanner(false);
+                    motor_M3.enableMotionPlanner(false);
                     motor_M3.setRotation(0.0f);
                     if (motor_M3.getRotation() < 0.05f) {
                         toggle_do_execute_main_fcn();
@@ -157,7 +160,7 @@ int main()
         // toggling the user led
         user_led = !user_led;
 
-        // printing to the serial terminal
+        // print to the serial terminal
         printf("%f, %f \n", us_distance_cm, motor_M3.getRotation());
 
         // read timer and make the main thread sleep for the remaining time span (non blocking)

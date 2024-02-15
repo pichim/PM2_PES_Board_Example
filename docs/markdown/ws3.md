@@ -1,8 +1,11 @@
 # Workshop 3
 
-## Scope of Workshop 3
+<!-- Links -->
+[1]: https://os.mbed.com/platforms/ST-Nucleo-F446RE/
 
-In the third workshop, we aim to delve into the intricacies of DC motors, exploring various control methods and understanding how to leverage the capabilities of the prived soft and hardware. We will discuss different commands tailored for motor control. Additionally, we will revisit the construction of a state machine, incorporating sensor-equipped motors for distance measurement and integrating a mechanical button into the system.
+In the third workshop, we will be using DC motors, exploring various control methods and understanding how to use the capabilities of the available drivers and hardware. DC motors are often used as drive systems, e.g. to drive a small vehicle or robot forward.
+
+We will discuss different control strategies for motor control, e.g. speed controlled and position controller (angular speed and rotation). Additionally, we will revisit the construction of a state machine, incorporating sensor-equipped motors for distance measurement and integrating a mechanical button into the system.
 
 ## Hardware
 
@@ -21,21 +24,20 @@ In the third workshop, we aim to delve into the intricacies of DC motors, explor
 > - Additional wires to connect the sensor to the NUCLEO board
 > - Jumper wires
 
-## Assignment
+### Assignment
 
-### Part 1
-------------------
-In the initial phase, we will focus solely on understanding motor functionality and control mechanisms. To achieve this understanding, we'll rely on the information provided in the manual, supplemented by guidance from the hardware tutorial.
+## Part 1
+
+In the first task, we will focus solely on understanding the motor functionality and control mechanisms. To achieve this, we'll rely on the information provided in the manual, supplemented by guidance from the hardware tutorial.
 
 1. First, familiarize yourself with the safety rules for using a DC motor. 
-2. Read the instructions for DC motors to the point under the title "DC motor driver".
-    > [DC motor tutorial](../markdown/dc_motor.md)
-3. Connect the motor to pin row M1. You can find a description later in the DC motor tutorial or by clicking [here](../markdown/dc_motor.md#connection-to-the-pes-board)
-4. Proceed to understand enabling the power electronics, as outlined in the next step of the instructions.
-5. Continue with the [tutorial](../markdown/dc_motor.md#create-and-command-dc-motor-objects) and proceed with the subsequent commands for motors M1, M2, and M3.<br> **Important note: In this tutorial, the motors are consistently connected to the same pins. However, it's worth noting that there is an option to connect them to different pins, specifically M2 and M3. If you choose to do so, remember to adjust the code accordingly by deactivating or modifying the object for the previous motor, ensuring proper functionality and preventing voltage transfer to the pins.**
+2. Read the instructions for DC motors to the point above the section [DC Motor Driver](../markdown/dc_motor.md#dc-motor-driver)
+3. Connect the motor to the pin row **M1**, see [Connection to the PES-Board](../markdown/dc_motor.md#connection-to-the-pes-board)
+4. Proceed to understand how to enable the power electronics, as outlined in the next step of the instructions.
+5. Continue with the [Create DC motor Object and command the DC motor](../markdown/dc_motor.md#create-dc-motor-object-and-command-the-dc-motor) and proceed with the subsequent commands for motors M1, M2, and M3.<br> **Important note: In this tutorial, the motors are consistently connected to the same pin. However, it's worth noting that there is an option to connect them to different pins: M2 and M3. You can run up to 3 DC motors with one PES board.**
 
-### Part 2
-------------------
+## Part 2
+
 In the second part, we'll design a state machine using the hardware introduced in the previous workshop. The state machine will consist of five states:
 
 **0. Initial** <br>
@@ -46,10 +48,10 @@ In the second part, we'll design a state machine using the hardware introduced i
 
 The ultimate objective is to construct a mechatronic system that mimics a can crusher press. Pressing the mechanical button will prompt to the **Forward** state in which the motor will move forward a specific number of revolutions (representing the press going down), and then, after reaching specyfic number of rotation, backward to its initial position and then to the **Sleep** state. If the distance from the ultrasonic sensor while being in **Forward** state is too small (e.g. an obstacle is in the way), the device should switch to emergency state, so rapidly return to its initial position and shut down.
 
-Before doing the task you may look at the [structuring a robot task tutorial](../markdown/tips.md#structuring-a-robot-task).
+Before doing the task you may look at the [Structuring a Robot Task Tutorial](../markdown/tips.md#structuring-a-robot-task).
 
 1. Create flow chart according to the description above.
-2. Connect the mechanical button to the PC_5 pin and the ground to the corresponding pin (see [Nucleo Board pinmap][1])
+2. Connect the mechanical button to the PC_5 pin and the ground to the corresponding pin (see [Nucleo Board Pinmap][1])
 
 3. In the ``main`` function, it's essential to create a mechanical button object with the appropriate pullup mode
 
@@ -61,9 +63,9 @@ mechanical_button.mode(PullUp);    // sets pullup between pin and 3.3 V, so that
                                    // is a defined potential
 ```
 
-4. Connect the ultrasonic sensor to the D3 pins on the PES board (see [PES Board pinmap](../datasheets/pes_board_peripherals.pdf)) 
+4. Connect the ultrasonic sensor to the D3 pins on the PES board (see [PES Board Pinmap](../datasheets/pes_board_peripherals.pdf)) 
 
-5. In the ``main`` function, it's essential to include the apropriate driver and create the ultrasonic sensor object along with a variable to store the value. For more details refer to [Ultrasonic distance sernsor](../markdown/ultrasonic_sensor.md)
+5. In the ``main`` function, it's essential to include the apropriate driver and create the ultrasonic sensor object along with a variable to store the value. For more details refer to [Ultrasonic Distance Sernsor](../markdown/ultrasonic_sensor.md)
 
 ```
 #include "pm2_drivers/UltrasonicSensor.h"
@@ -73,16 +75,21 @@ mechanical_button.mode(PullUp);    // sets pullup between pin and 3.3 V, so that
 UltrasonicSensor us_sensor(PB_D3);
 float us_distance_cm = 0.0f;
 ```
+
 6. Within the while loop, include the following command to enable distance reading from the sensor regardless of the robot's current state.
+
 ```
 us_distance_cm = us_sensor.read();
 ```
+
 7. Make sure that you added statement to handle non-valid measurment below distance reading command e.g.:
+
 ```
 if (us_distance_cm < 0.0f) {
     us_distance_cm = 0.0f;
 }
 ```
+
 8. Create an object for [Motor M3](../markdown/dc_motor.md#motor-m3), which will be controlled by setting its position. Activate the motion planner and configure the maximum acceleration to 0.5 of the value assigned to the motor by default.
 
 ```
@@ -205,16 +212,19 @@ case RobotState::EMERGENCY: {
 ```
 printf("%f, %f \n", us_distance_cm, motor_M3.getRotation());
 ```
+
 17. Include the following command in the else statement, triggered by pressing the USER button while the program is running, to reset the variables to their initial values without restarting the program.
+
 ```
 // reset variables and objects
 led1 = 0;
 enable_motors = 0;
 us_distance_cm = 0.0f;
 ```
-18.  Upload the program to the microcontroller using the **PLAY** button in Mbed Studio. Then, aim the sensor at an object that is beyond the distance triggering the emergency state. Press the **USER** button, and subsequently, click the mechanical button.
-19.  Experiment by pressing the mechanical button and pointing the sensor at an object that is below the threshold specified in the code.
-20.  After finishing unplug the Nucleo board.
+
+18.   Upload the program to the microcontroller using the **PLAY** button in Mbed Studio. Then, aim the sensor at an object that is beyond the distance triggering the emergency state. Press the **USER** button, and subsequently, click the mechanical button.
+19.   Experiment by pressing the mechanical button and pointing the sensor at an object that is below the threshold specified in the code.
+20.   After finishing unplug the Nucleo board.
 
 ## Summary
 
@@ -223,15 +233,12 @@ In the third workshop, exploration into the intricacies of DC motors was done in
 Questions for own consideration:
 - Why is it crucial that the program execution starts only after a specific action, such as pressing the **USER** button?
 
-## Solution
+## Solutions
 
-[Workshop 3, Part 1](../solutions/main_ws3_p1.txt)
+- [Workshop 3, Part 1](../solutions/main_ws3_p1.cpp)
+- [Workshop 3, Part 2](../solutions/main_ws3_p2.cpp)
 
-[Workshop 3, Part 2](../solutions/main_ws3_p2.txt)
-
-<center><img src="../images/ws3_flowchart.png" alt="WS3 flow chart" width="500" /></center>
-<center> <i>Flow chart for workshop 3</i> </center>
-
-<!-- Links -->
-[1]: https://os.mbed.com/platforms/ST-Nucleo-F446RE/
-
+<p align="center">
+    <img src="../images/ws3_flowchart.png" alt="Flow Chart for Workshop 3" width="500" /> </br>
+    <i>Flow Chart for Workshop 3</i>
+</p>

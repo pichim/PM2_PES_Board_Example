@@ -1,9 +1,18 @@
 # DC Motor
 
-A direct current (DC) motor is a type of electric machine that converts electrical energy into mechanical energy. DC motors take electrical power through direct current, and convert this energy into mechanical rotation transmisioned by the electric field. DC motors use magnetic fields that occur from the electrical currents generated, which powers the movement of a rotor fixed within the output shaft. The output torque and speed depends upon both the electrical input and the design of the motor.
+<!-- link list, last updated 15.01.2023 -->
+[1]: https://www.pololu.com/product/3475/specs
+[2]: https://www.pololu.com/product/3477/specs
+[3]: https://www.pololu.com/product/3485/specs
+[4]: https://nathandumont.com/blog/h-bridge-tutorial
+[5]: https://www.electronics-tutorials.ws/blog/pulse-width-modulation.html
 
-<center><img src="../images/dc_motor.png" alt="dc motor" width="300"/></center>
-<center> <i>Example of dc motor with encoder</i> </center>
+A direct current (DC) motor is an electrical machine that converts electrical energy into mechanical energy. DC motors take electrical power through direct current, and convert this energy into mechanical rotation transmisioned by the electric field. DC motors use magnetic fields that occur from the electrical currents generated, which powers the movement of a rotor fixed within the output shaft. The output torque and speed depends upon both the electrical input and the design of the motor.
+
+<p align="center">
+    <img src="../images/dc_motor.png" alt="dc motor" width="340" /> </br>
+    <i>Example of a brushed DC Motor with an Encoder</i>
+</p>
 
 ## Technical Specifications
 
@@ -29,47 +38,43 @@ A direct current (DC) motor is a type of electric machine that converts electric
 [78:1 Metal Gearmotor 20Dx43L mm 12V CB][2] <br>
 [488:1 Metal Gearmotor 20Dx46L mm 12V CB][3] <br>
 
-<!-- link list, last updated 15.01.2023 -->
-[1]: https://www.pololu.com/product/3475/specs
-[2]: https://www.pololu.com/product/3477/specs
-[3]: https://www.pololu.com/product/3485/specs
-[4]: https://nathandumont.com/blog/h-bridge-tutorial
-[5]: https://www.electronics-tutorials.ws/blog/pulse-width-modulation.html
-
 ## Datasheets including measrued static Characteristics
 
 [20D Pololu Motors](../datasheets/pololu-20d-metal-gearmotors.pdf)
 
 ## Static Characteristics of the 78:1 Metal Gearmotor 20Dx43L mm 12V CB
 
-<center><img src="../images/dc_motor_static_characteristics.png" alt="Static Characteristics of 78: DC Motor" width="650"/></center>
-<center> <i>Approximate static characteristics of 78:1 DC Motor</i> </center>
-<br>
+<p align="center">
+    <img src="../images/dc_motor_static_characteristics.png" alt="Static Characteristics of 78: DC Motor" width="1000" /> </br>
+    <i>Approximate static characteristics of 78:1 DC Motor</i>
+</p>
 
-
-- The above motor characteristics are conservative approximations based on a simplified model. Measured and precise motor characteristics ca be found in the datasheet [20D Pololu Motors](../datasheets/pololu-20d-metal-gearmotors.pdf). It is advisable to make judicious choices in selecting motors, incorporating safety margins to account for these inaccuracies and avoid operating the motor at its extreme parameters. The top-left graph demonstrates the correlation between increasing torque and amperage, while the graph on the right illustrates the relationship between increasing speed and voltage. The subsequent graphs integrate these characteristics, revealing the interplay between torque and speed, aiding in motor selection. To evaluate the appropriate gear ratio, it is necessary to consider the needed speed and torque values.
-- The selection of different gear ratios significantly influences the capabilities of the drive system. While the motor itself remains the same, adjustments in gear ratios impact torque and speed values at the gear end. Opting for a lower gear ratio like 31:1 yields higher speeds at the expense of reduced available torque. Conversely, a higher gear ratio, such as 488:1, results in a comparatively lower maximum speed but offers significantly higher torque.
-- During the design process, leveraging the presented characteristics proves beneficial for the appropriate motor selection. When aiming for high speeds, emphasizing the speed-voltage relationship is crucial, while lifting heavy objects places greater importance on torque characteristics.
+- The above static motor characteristics represent measured and interpolated data from the 78:1 DC Motor. The static characteristics from other gear boxes ca be found in the datasheet [20D Pololu Motors](../datasheets/pololu-20d-metal-gearmotors.pdf). It is advisable to make informed decisions and choices when selecting the motors. Incorporating safety margins to account for possible inaccuracies or variations and avoid operating the motors at their limiting boundaries. The main takeaways from the characteristics can be summarized as follows:
+  - The relation between speed and voltage is linear (not visible in the graph), the more voltage that is applied, the higher the rotational speed. The gain that maps voltage to speed is called the motor constant and for the 78:1 DC Motor the value is 180 RPM / 12 V = 0.25 RPM/V or 0.25 RPS/V.
+  - The relation between current and torque is also linear, the more current that is flowing throught the coils, the more torque is applied.
+  - At zero torque we can reach a maximum speed of 180 RPM at 12V. The maximum speed can only be reached when the motor is not under load.
+  - At maximum torque the motor is not able to rotate / accelerate anymore, all energy is used to apply the torque.
+- Doubling the gear ratio of the motor will approximately double the torque and halve the speed. It is recommended to use the datasheets to find the right motors for the application though.
+- During the design and evaluation process, using the static motor characteristics is crucial for the appropriate motor selection.
 
 ## Encoder and Relative Positioning
 
-- A magnetic encoder is a sensor device that utilizes magnets and sensors to measure the angle. It typically consists of a magnetically encoded disk attached to the rotating part and a sensor that detects changes in the magnetic field, converting them into electrical signals (pulses). This signal provides information about the rotational position of the object.
+- The magnetic encoder is a sensor device that uses magnets to measure the angle of the motor. It consists of a magnetically encoded disk attached to the rotating part and a sensor that detects changes in the magnetic field, converting them into electrical signals (pulses). Counting these pulses provides information about the angle of the motor. Computing the time derivative of the angle nummericaly provides the angular velocity of the motor.
 - It's very important to understand that the used magnetic encoders provide relative position information. This means that the encoder only returns counts about changes in position relative to the point where it was initialized/started counting, and the initial position upon power-up is considered as the zero reference point. Therefore and only if absolute measruments are needed a homing procedure needs to be done after every startup uf the system. The accuracy of the measurements relies on the consistency of this referencing. Any absolute positioning requires additional sensors and additional code to perform the homing procedure.
-<!-- - The encoder resolution significantly impacts the performance of a PID controller for DC motors. A higher encoder resolution provides more detailed feedback about the motor's position, enabling the PID controller to make finer adjustments and achieve greater precision in controlling the motor's speed and position. This increased resolution allows the PID controller to respond more accurately to deviations from the desired setpoint, resulting in smoother and more controlled motor movements. Conversely, a lower encoder resolution may limit the controller's ability to detect small changes, potentially leading to less accurate control and decreased overall performance. -->
 
 ## Practical Tips
 
-- It's crucial to note that any closed-loop control system can only work properly when the encoder readings align with the motor's rotation direction. To ensure proper operation, establish the positive direction first, then connect the components to ensure both the rotation direction and encoder readings are positive. To alter the motor's movement direction, adjust the power supply connection to the M1 and M2 outputs accordingly, and do the same for the encoder using the A and B outputs. 
+- It's important to note that any closed-loop controled motors can only work properly when the encoder readings align with the motor's rotation direction. To ensure proper operation, establish the positive direction first, then connect the components to ensure both the rotation direction and encoder readings are positive. To alter the motor's movement direction, adjust the power supply connection to the M1 and M2 outputs accordingly. To change the positive measurement direction do the same for the encoder ans swap the A and B cables. 
 
 ## DC Motor Driver
 
-The ``DCMotor`` class is a versatile tool designed for controlling the velocity and/or rotation of a DC motor with precision. It incorporates essential components like an EncoderCounter, FastPWM, Motion control, PID controller, and an IIR Filter to ensure accurate control. This class provides user-friendly methods for adjusting velocity, rotation, control gains, and obtaining the current state of the motor, offering a comprehensive set of functionalities for effective motor control for the Pololu Metal Gearmotor family.
+The ``DCMotor`` class is a versatile tool designed for controlling the velocity and/or rotation of a DC motor. It incorporates essential components like an EncoderCounter, FastPWM, Motion control, PID controller, and an IIR Filter to ensure accurate control. This class provides user-friendly methods for adjusting velocity, rotation, control gains, and obtaining the current state of the motor, offering a comprehensive set of functionalities for motor control.
 
-To start working with the DC motor, it is necessary to plug it correctly and create an object in the ``main`` file to assign DC motor output and encoder pins.
+To start working with the DC motor, it is necessary to plug it correctly and create an object in the ***main.cpp*** file and assign the correct pins.
 
 ### Connection to the PES-Board
----------------------------
-The DC motors have assigned pins on the PES board, and since they are equipped with encoders, the pins assigned to them are defined as follows:
+
+DC motors have assigned pins on the PES board. Seen from the motor, **PWM** is the input and **ENC** (Encoder) is the output of the system:
 
 ```
 // PES-Board Pin Names
@@ -87,204 +92,204 @@ PB_M3_ENC_B
 PB_ENABLE_DCMOTORS
 ```
 
-Pins M1 and M2 are the output of the H-Bridge, so voltage + and -. VCC and GND pins provide power to the encoder, while pins A and B are utilized to receive pulse signals from the encoder.
-
 [PES Board pinmap](../datasheets/pes_board_peripherals.pdf)
 
+### Hardware Pins on the Motor
+
+Pins M1 and M2 represent the output of the H-Bridge, so voltage plus (+) and minus (-). VCC and GND pins provide power to the encoder, while pins A and B are the encoder signals.
+
 ### Enabling the Power Electronics
-----------------------------------
-The Nucleo F446RE microcontroller can control up to 3 DC motors using external power electronics (H-Bridge on PES-Board). Configuring the microcontroller involves setting up PWM pins, essential for adjusting the rotational speed of the motors in the external circuit.
+
+The PES board can control up to 3 DC motors. Configuring the driver involves setting up the PWM pins, essential for adjusting the voltage that gets applied.
 <details Closed>
 <summary><b>H-bridge and PWM</b></summary>
 
-><center><img src="../images/hbridge_switches.png" alt="H-bridge" width="400"/></center>
+><p align="center">
+>    <img src="../images/hbridge_switches.png" alt="H-bridge Example" width="460" /> </br>
+>    <i>H-bridge Example</i>
+></p>
+> An H-bridge is a configuration of four switches that enables precise voltage control. These switches, typically transistors or MOSFETs are arranged in a shape of an "H" determine the voltage and therefor the current flow through the motor. By selectively activating different pairs of the switches, the H-bridge can apply positive and negativ voltages to the motor, allowing it to rotate in both directions. The H-bridge is controlled by the PWM signal, which is generated by the microcontroller and applied to the H-bridge.
 ><br>
-> An H-bridge is a configuration of four switches that enables precise voltage control. These switches, typically transistors or MOSFETs arranged in the shape of an "H" determine the voltage and therefor the current flow through the motor. By selectively activating different pairs of switches, the H-bridge can drive the motor forward, backward, or apply braking.
 ><br>
-><br>
-><center><img src="../images/pwm.png" alt="PWM" width="600"/></center>
-><br>
->Pulse Width Modulation (PWM) in DC motor control involves varying the duty cycle of a rapidly switching signal to regulate the average voltage reaching the motor. By adjusting the duty cycle of the PWM, the average voltage is adjusted accordingly. This dynamic control is achieved by applying PWM to the H-bridge, allowing bidirectional current flow through the motor for forward, reverse, and braking actions.
+><p align="center">
+>    <img src="../images/pwm.png" alt="PWM with altering Duty Cycle" width="600" /> </br>
+>    <i>PWM with altering Duty Cycle</i>
+></p>
+>Pulse Width Modulation (PWM) in DC motor control means varying the duty cycle of a rapidly switching signal to regulate the average voltage applied to the motor. By adjusting the duty cycle of the PWM, the average voltage is adjusted accordingly.
 ><br>
 ><br>
 
-> - Further information about H-bridges can be found: [HERE][4]
-> - Further information about PWM and DC motors can be found: [HERE][5]
+> - Further information about H-bridges can be found [here][4].
+> - Further information about PWM and DC motors can be found [here][5].
 </details>
 
 <br>
-To power the DC motors, connect a 12V external power source, formed by combining two 6V battery packs, to the back of the PES board. If using a 6V power supply, connect one set of pins and bridge the remaining two. Turn on the PES board using the ON/OFF slider. After turning on the power, enable the external power electronics (H-bridge) by creating a DigitalOut object and setting the digital out to 1 (or true). This object needs to be created alongside other DC motor objects.
+To power the DC motors, connect the two battery packs to the back of the PES board. Each battery back delivers approx. 6V, resulting in 12V total (parallel). If your are using only one battery pack you have to bridge the remaining pins on the back of the PES board. Turn on the PES board by using the ON/OFF switch. After turning on the power, enable the external power electronics (H-bridge) by creating a ``DigitalOut`` object and set the digital out to 1 (or true). This object needs to be created alongside other necessary variables and objects.
+
+<br>
 
 ```
-DigitalOut enable_motors(PB_ENABLE_DCMOTORS); // create DigitalOut object to enable dc motors
+// create object to enable power electronics for the dc motors
+DigitalOut enable_motors(PB_ENABLE_DCMOTORS);
 ```
 
-To complete the motor activation process, set the value of the object to 1, enabling the use and control of the motors by utilizing battery power. Place this statement after the trigger statement to ensure it is executed in the foreground and not running in the background without purpose.
+To complete the motor activation process, set the value of the object to 1, enabling the power electronics.
 
 ```
 // enable hardwaredriver dc motors: 0 -> disabled, 1 -> enabled
-enable_motors = 1;
+enable_motors = 1; // setting this once would actually be enough
 ```
 
-### Create and command DC motor objects
----------------------------------------
-The provided examples show three different used cases of a DC motor and how to use the ``DCMotor`` class. We assume that we have three DC motors and encoders that are plugged into pins M1 - M3 on the PES-Board. You can also test each used case separately when only one DC motor is available.
-- [Motor M1](#motor-m1) is used Open-Loop
-- [Motor M2](#motor-m2) is used Closed-Loop Velocity Control (rotations per second)
-- [Motor M3](#motor-m3) is used Closed-Loop Position Control (rotations)
+### Create DC Motor Object and command the DC motor
+
+The provided examples show three different used cases of a DC motor and how to use the ``DCMotor`` class. We assume that we have three DC motors and encoders that are plugged into pins M1 - M3 on the PES board. You can also test each used case separately when only one DC motor is available.
+- [Motor M1](#motor-m1-open-loop) is used Open-Loop
+- [Motor M2](#motor-m2-closed-loop-velocity-control) is used Closed-Loop Velocity Control (Rotations per Second)
+- [Motor M3](#motor-m3-closed-loop-position-control) is used Closed-Loop Position Control (Rotations)
 
 #### Motor M1 Open-Loop
 
-To use Motor M1 in an open loop configuration, start by adding the PWM driver to the ``main`` file. Next, create an object by passing the pin names as arguments; these should only be PWM pins since Motor M1 is used in open loop. Additionally, define a DigitalOut object to enable the DC motor inside ``main`` function.
+To use Motor M1 in an open loop configuration (no feedback, therefor no encoder needed), start by adding the ``FastPWM.h`` driver to the ***main.cpp*** file. Next, create an object by passing the pin names as arguments. 
 
 ```
 #include "pm2_drivers/FastPWM/FastPWM.h"
 ```
-```
-DigitalOut enable_motors(PB_ENABLE_DCMOTORS); // create DigitalOut object to enable dc motors
-```
 
-Then a FastPWM object needs to be created, which is used to command the voltage applied to the DC motor:
+Then a ``FastPWM`` object needs to be created, which is used to command the voltage applied to the DC motor:
 
 ```
-// Motor m1
+// motor M1
 FastPWM pwm_M1(PB_PWM_M1); // create FastPWM object to command motor M1
 ```
 
-Motor M1 is used open-loop, meaning we just apply a certain voltage to the motor. The relation between the applied voltage and the speed is linear and the gain that maps voltage to speed is called the motor constant. The mapping is linear from (0...1.0) -> (-12V...12V):
-- PWM to 0.0f then -12V is applied to the motor (assuming +/-12V are available)
-- PWM to 0.5f then 0V is applied to the motor
-- PWM to 1.0f then 12V is applied to the motor (assuming +/-12V are available)
+Motor M1 is used open-loop, meaning we just apply a certain voltage to the motor. The relation between the applied voltage and the speed is linear and the gain that maps voltage to speed is called the motor constant. The mapping is (0.0f...1.0f) $\rightarrow$ (-12V...12V):
+- PWM input 0.0f $\rightarrow$ -12V is applied to the motor
+- PWM input 0.5f $\rightarrow$ 0V
+- PWM input 1.0f $\rightarrow$ 12V
 
-A positive voltage will cause the motor to rotate in one direction and a negative voltage will cause the motor to rotate in the opposite direction. You can alter the direction by changing the cables connected to the motor.
+A positive voltage will cause the motor to rotate in one direction and a negative voltage will cause the motor to rotate in the opposite direction. You can alter the rotating direction by changing the cables connected to the motor (connections to M1 and M2).
 
 ```
-pwm_M1.write(0.75f); // apply 6V to the motor (assuming +/-12V are available)
+pwm_M1.write(0.75f); // apply 6V to the motor
 ```
 
 #### Motor M2 Closed-Loop Velocity Control
 
-Motor M2 operates in a closed loop to control the velocity. To utilize it, it's necessary to include the appropriate driver in our ``main`` file. Additionally, define a DigitalOut object to enable the DC motor. 
+Motor M2 operates in a closed loop to control the velocity. To be able to use this functionallity it is necessary to include the ``DCMotor.h`` driver in the ***main.cpp*** file.
 
 ```
 #include "pm2_drivers/DCMotor.h"
-#include "pm2_drivers/EncoderCounter.h"
-```
-```
-DigitalOut enable_motors(PB_ENABLE_DCMOTORS); // create DigitalOut object to enable dc motors
 ```
 
-When declaring a DC motor object for closed-loop control, it is essential to specify the following arguments related to motor parameters, including gear ratio, motor constant, and the maximum available voltage based on the number of battery packs. The following code illustrates the declaration of all necessary parameters to command this motor:
+When declaring a ``DCMotor`` object for closed-loop control, it is necessary to specify the following arguments related to the motor parameters. Including gear ratio, motor constant, and the maximum available voltage based on the number of battery packs you are using.
+
+The following code illustrates the declaration of all necessary parameters to set up a  ``DCMotor`` object:
 
 ```
-const float voltage_max = 12.0f; // maximum voltage of battery packs, adjust this to 
-                                 // 6.0f V if you only use one battery pack
+const float voltage_max = 12.0f; // maximum voltage of battery packs, adjust this to
+                                    // 6.0f V if you only use one battery pack
 
 // motor M2
-const float gear_ratio_M2 = 78.125f;
-const float kn_M2 = 180.0f / 12.0f;
+const float gear_ratio_M2 = 78.125f; // gear ratio
+const float kn_M2 = 180.0f / 12.0f;  // motor constant
+// it is assumed that only one motor is available, there fore
+// we use the pins from M1, so you can leave it connected to M1
 DCMotor motor_M2(PB_PWM_M1, PB_ENC_A_M1, PB_ENC_B_M1, gear_ratio_M2, kn_M2, voltage_max);
+motor_M2.enableMotionPlanner(true);
 ```
 
-To receive feedback from the motor, include a command inside the while loop that retrieves motor speed values. This allows us to verify the correctness of our connection, ensuring that the motor's rotation direction aligns with our expectations and corresponds to the displayed speed values.
+To receive the measured velocity/speed, include the following command inside the ``while()`` loop that prints motor speed values to the serial terminal. This allows us to verify the correctness of the connection, ensuring that the motor's rotation direction aligns with our expectations and corresponds to the displayed speed values.
+
 ```
 printf("Motor velocity: %f \n", motor_M2.getVelocity());
 ```
-Crucially, the default motor driver does not employ a motion planner, meaning the declared speed will be reached as quickly as possible. To test this, you can place the following command inside a while loop.
 
-**Note:** 
-- The maximum velocity is calculated and set in the driver based on the input arguments.
+**Note:**
+- If the motor start spinning immediatly after enabling the hardware with maximum speed, the motor is connected incorrectly and the cables for M1 and M2 from the PES board to the motor or the cables from the encoder A and B need to be swapped.
+- The maximum physically possible velocity is calculated and set in the driver based on the input arguments.
+  
+The default motor driver does not activate the motion planner, meaning the speed setpoint will be reached as quickly as possible. To test this, you can place the following command inside the ``while()`` loop.
 
 ```
-motor_M2.setVelocity(3.0f); // set setpoint to 3 rotation per second
+motor_M2.setVelocity(motor_M3.getMaxVelocity() * 0.5f); // set speed setpoint to half physical possible velocity
 ```
 
-Nevertheless, the driver is designed to facilitate smooth movements, incorporating features like gradual velocity increasing. The process adheres to the outlined diagram, wherein the motion planner defines trajectories. Subsequently, feedback from the motor (leveraging encoders) is obtained, and the speed controller governs the motor's movement.
+Nevertheless, the driver is designed to be able to command the motor with smooth movements using a motion planner. This motion planner or trajectory generator creates acceleration and speed limited trajectories.
 
-<center><img src="../images/dc_motor_vel_cntrl.png" alt="DC Motor Velocity Control" width="600"/></center>
-<center> <i>DC Motor Velocity Control Block Diagram</i> </center>
+<p align="center">
+    <img src="../images/dc_motor_vel_cntrl.png" alt="DC Motor Velocity Control Block Diagram" width="760" /> </br>
+    <i>DC Motor Velocity Control Block Diagram</i>
+</p>
 
 To be able to use the motion planner, the module needs to be activated with the following command, that is placed below the dc motor declaration:
 
 ```
-motor_M2.setEnableMotionPlanner(true);
-```
-
-If there is no command to set the speed inside the while loop, add one and run the program.
-
-```
-motor_M2.setVelocity(motor_M2.getMaxVelocity()); // set setpoint to maximum velocity
+// enable the motion planner for smooth movement
+motor_M2.enableMotionPlanner(true);
 ```
 
 Below are graphs of the measured velocity and acceleration versus time without and with the motion planner active. The graph on the left shows step responses without the motion planner active. The velocity overshoots the setpoint and the acceleration of the motor is larger and more abrupt. The graph on the right shows step responses with the motion planner active. The speed value reaches setpoint without any overshoot and the acceleration is smaller and bounded leading to smooth movements of the drive.
 
-<center><img src="../images/acc_vel_graphs.png" alt="DC Motor acceleration and velocity with and without planner" width="900"/></center>
-<center> <i>DC Motor velocity and acceleration with and without motion planner</i> </center>
+<p align="center">
+    <img src="../images/acc_vel_graphs.png" alt="DC Motor Velocity and Acceleration with and without Motion Planner" width="1100" /> </br>
+    <i>DC Motor Velocity and Acceleration with and without Motion Planner</i>
+</p>
 
-Adjustments to the maximum acceleration can be done by using the following command (which should be placed after declaring the motor):
+Adjustments to the maximum acceleration can be done by using the following command (which should be placed after declaring the ``DCMotor`` object):
 
 ```
-motor_M2.setMaxAcceleration(motor_M2.getMaxAcceleration() * 0.5f); // half of default acceleration
+// limit max. acceleration to half of the default acceleration
+motor_M2.setMaxAcceleration(motor_M2.getMaxAcceleration() * 0.5f);
 ```
+
+**Important Note:**
+
+You can swap seamlessly between speed and position control by applying the appropriate commands to the motor. The motor driver will automatically switch between the two control modes.
 
 #### Motor M3 Closed-Loop Position Control
 
-To utilize Motor M3 in closed loop for position control, it is crucial to include the appropriate driver in the main file and create an object with the pin's name passed as an argument. These include the PWM pins, as well as the A and B pins associated with the encoder. Additionally, a DigitalOut object should be defined to enable the DC motor.
+To use Motor M3 in closed loop for position control, we insert the following code snipped:
 
 ```
-#include "pm2_drivers/DCMotor.h"
-#include "pm2_drivers/EncoderCounter.h"        
-```
-```
-DigitalOut enable_motors(PB_ENABLE_DCMOTORS); // create DigitalOut object to enable dc motors
-```
-
-When defining a DC motor object intended for closed-loop control, certain parameters related to the motor characteristics (such as gear ratio and motor constant) must be specified. Additionally, the maximum available voltage needs to be defined based on the number of battery packs in use. The code snippet below illustrates how to declare these essential parameters for commanding the motor:
-
-```
-const float voltage_max = 12.0f; // maximum voltage of battery packs, adjust this to 
-                                 // 6.0f V if you only use one battery pack
-
 // motor M3
-const float gear_ratio_M3 = 78.125f;
-const float kn_M3 = 180.0f / 12.0f;
+const float gear_ratio_M3 = 78.125f; // gear ratio
+const float kn_M3 = 180.0f / 12.0f;  // motor constant
+// it is assumed that only one motor is available, there fore
+// we use the pins from M1, so you can leave it connected to M1
 DCMotor motor_M3(PB_PWM_M1, PB_ENC_A_M1, PB_ENC_B_M1, gear_ratio_M3, kn_M3, voltage_max);
+// enable the motion planner for smooth movement
+motor_M3.enableMotionPlanner(true);
+// limit max. velocity to half physical possible velocity
+motor_M3.setMaxVelocity(motor_M3.getMaxPhysicalVelocity() * 0.5f);
 ```
-Update the printing command to the following:
+
+Update the printing command to print the number of rotations:
+
 ```
 printf("Motor position: %f \n", motor_M3.getRotation());
 ```
-Then include the command that will rotate the motor to the desired position:
-**Note:** 
-- The argument passed represents the value in units of rotations.
+
+Then include the command that will rotate the motor 3 times:
 
 ```
-motor_M3.setRotation(10.0f);
+motor_M3.setRotation(3.0f);
 ```
 
-Nevertheless, the driver is engineered to facilitate smooth movements, including gradual velocity change. The process adheres to the illustrated diagram, wherein the motion planner establishes trajectories for the position setpoint. Subsequently, it receives position feedback from the motor (utilizing encoders for this purpose). The discrepancy is then forwarded, along with velocity feedback, to the speed controller, governing the motor's movement.
+<p align="center">
+    <img src="../images/dc_motor_control_scheme.PNG" alt="DC Motor Position Control Block Diagram" width="960" /> </br>
+    <i>DC Motor Position Control Block Diagram</i>
+</p>
 
-To use the motion planner, the motion planner module needs to be activated with the following command, that is placed below motor declaration:
+Below are graphs of position, velocity and acceleration against time. On the left are the graphs when the motion planner is not active and on the right when the motion planner is active.
 
-```
-motor_M3.setEnableMotionPlanner(true);
-```
+<p align="center">
+    <img src="../images/pos_acc_vel_graphs.png" alt="DC Motor Position, Velocity and Acceleration with and without Motion Planner" width="1100" /> </br>
+    <i>DC Motor Position, Velocity and Acceleration with and without Motion Planner</i>
+</p>
 
-Adjustments to the maximum acceleration or maximum speed values can be made by using the following commands, which should be placed after declaring the motor.
+In the following graph a smooth positioning step of a DC motor is shown in more detail. In the first graph (upper left corner), the blue line represents the position setpoint, while the red line represents the actual position. Notably, the red line exhibits smooth transitions at the beginning and end, indicative of uniform acceleration and deceleration. The speed graph illustrates the motor speed increase to its maximum speed, maintaining it constantly before decelerating constantly. After this, the process repeats in the opposite direction. Given the direct proportionality between speed and voltage, the voltage graph mirrors the speed graph's curve. The acceleration graph showcases an initial acceleration phase, followed by quantization noise around zero when the shaft moves at a constant speed. It is important to note that the motor was not under load.
 
-```
-motor_M3.setMaxVelocity(motor_M3.getMaxVelocity() * 0.5f); // half of maximum velocity
-motor_M3.setMaxAcceleration(motor_M3.getMaxAcceleration() * 0.5f); // half of default acceleration
-```
-
-<center><img src="../images/dc_motor_control_scheme.PNG" alt="DC Motor Control Scheme" width="800"/></center>
-<center> <i>DC Motor Control Block Diagram</i> </center>
-
-In the provided graph a smooth positioning step of the DC motor is illustrated. In the first graph (upper left corner), the blue line represents the position setpoint, while the red line depicts the actual position. Notably, the red line exhibits smooth transitions at the beginning and end, indicative of uniform acceleration and deceleration. The speed graph illustrates the motor's acceleration to its maximum speed, maintaining it consistently before decelerating uniformly. This process repeats in the opposite direction. Given the direct proportionality between speed and voltage, the voltage graph mirrors the speed graph's curve. The acceleration graph showcases an initial acceleration phase, followed by quantization noise around zero when the shaft moves at a constant speed.
-
-<center><img src="../images/dc_motor_smooth_positioning.png" alt="DC Motor Smooth Positioning" width="900"/></center>
-<center> <i>Smooth Positioning of 78:1 DC Motor</i> </center>
-
-Below are graphs of position, velocity and acceleration against time. On the right are the graphs when the motion planner is not used and on the left when the planner is active.
-<center><img src="../images/pos_acc_vel_graphs.png" alt="DC Motor Positioning" width="900"/></center>
-<center> <i> DC Motor position, velocity and acceleration with and without motion planner</i> </center>
+<p align="center">
+    <img src="../images/dc_motor_smooth_positioning.png" alt="DC Motor Smooth Positioning" width="960" /> </br>
+    <i>Smooth Positioning of 78:1 DC Motor</i>
+</p>

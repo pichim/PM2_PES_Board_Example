@@ -49,14 +49,9 @@ position2 = a2.*pulse2 + b2;
 
 % pulse to position plot creation
 figure(1)
-grid on
-grid minor
-hold on
-plot(pulse1, position1, '-*r');
-plot(pulse2, position2, '-*b');
-
+plot(pulse1, position1, '-*r'), grid on, hold on
+plot(pulse2, position2, '-*b'), hold off
 ylim([0, 1])
-title('Pulse to position plot')
-xlabel('Pulse width [-]')
-ylabel('Position [-]')
-legend('Servo1','Servo2')
+xlabel('Position before Calibration')
+ylabel('Position after Calibration')
+legend('Servo1', 'Servo2', 'location', 'best')

@@ -1,8 +1,12 @@
 #include "mbed.h"
 
+// pes board pin map
 #include "pm2_drivers/PESBoardPinMap.h"
+
+// drivers
 #include "pm2_drivers/DebounceIn.h"
-#include "pm2_drivers/Servo.h"
+#include "pm2_drivers/FastPWM/FastPWM.h"
+#include "pm2_drivers/DCMotor.h"
 
 bool do_execute_main_task = false; // this variable will be toggled via the user button (blue button) and
                                    // decides whether to execute the main task or not
@@ -36,32 +40,38 @@ int main()
     // a led has an anode (+) and a cathode (-), the cathode needs to be connected to ground via a resistor
     DigitalOut led1(PB_9);
 
-    // servo
-    Servo servo_D0(PB_D0);
-    Servo servo_D1(PB_D1);
+    // create object to enable power electronics for the dc motors
+    DigitalOut enable_motors(PB_ENABLE_DCMOTORS);
 
-    // minimal pulse width and maximal pulse width obtained from the servo calibration process
-    // futuba S3001
-    float servo_D0_ang_min = 0.0150f;
-    float servo_D0_ang_max = 0.1150f;
-    // reely S0090
-    float servo_D1_ang_min = 0.0325f;
-    float servo_D1_ang_max = 0.1175f;
+    // // motor M1
+    // FastPWM pwm_M1(PB_PWM_M1); // create FastPWM object to command motor M1
 
-    // servo.setNormalisedPulseWidth: before calibration (0,1) -> (min pwm, max pwm)
-    // servo.setNormalisedPulseWidth: after calibration (0,1) -> (servo_D0_ang_min, servo_D0_ang_max)
-    servo_D0.calibratePulseMinMax(servo_D0_ang_min, servo_D0_ang_max);
-    servo_D1.calibratePulseMinMax(servo_D1_ang_min, servo_D1_ang_max);
+    const float voltage_max = 12.0f; // maximum voltage of battery packs, adjust this to
+                                     // 6.0f V if you only use one battery pack
 
-    // default acceleration of the servo motion profile is 1.0e6f
-    servo_D0.setMaxAcceleration(3.0f);
-    servo_D1.setMaxAcceleration(3.0f);
+    // // motor M2
+    // const float gear_ratio_M2 = 78.125f; // gear ratio
+    // const float kn_M2 = 180.0f / 12.0f;  // motor constant
+    // // it is assumed that only one motor is available, there fore
+    // // we use the pins from M1, so you can leave it connected to M1
+    // DCMotor motor_M2(PB_PWM_M1, PB_ENC_A_M1, PB_ENC_B_M1, gear_ratio_M2, kn_M2, voltage_max);
+    // // limit max. velocity to half physical possible velocity
+    // motor_M2.setMaxVelocity(motor_M2.getMaxPhysicalVelocity() * 0.5f);
+    // // enable the motion planner for smooth movements
+    // motor_M2.enableMotionPlanner(true);
+    // // limit max. acceleration to half of the default acceleration
+    // motor_M2.setMaxAcceleration(motor_M2.getMaxAcceleration() * 0.5f);
 
-    // variables to move the servo, this is just an example
-    float servo_input = 0.0f;
-    int servo_counter = 0; // define servo counter, this is an additional variable
-                           // used to command the servo
-    const int loops_per_seconds = static_cast<int>(ceilf(1.0f / (0.001f * static_cast<float>(main_task_period_ms))));
+    // motor M3
+    const float gear_ratio_M3 = 78.125f; // gear ratio
+    const float kn_M3 = 180.0f / 12.0f;  // motor constant
+    // it is assumed that only one motor is available, there fore
+    // we use the pins from M1, so you can leave it connected to M1
+    DCMotor motor_M3(PB_PWM_M1, PB_ENC_A_M1, PB_ENC_B_M1, gear_ratio_M3, kn_M3, voltage_max);
+    // limit max. velocity to half physical possible velocity
+    motor_M3.setMaxVelocity(motor_M3.getMaxPhysicalVelocity() * 0.5f);
+    // enable the motion planner for smooth movement
+    motor_M3.enableMotionPlanner(true);
 
     // start timer
     main_task_timer.start();
@@ -75,39 +85,24 @@ int main()
             // visual feedback that the main task is executed, setting this once would actually be enough
             led1 = 1;
 
-            // enable the servos
-            if (!servo_D0.isEnabled())
-                servo_D0.enable();
-            if (!servo_D1.isEnabled())
-                servo_D1.enable();
+            // enable hardwaredriver dc motors: 0 -> disabled, 1 -> enabled
+            enable_motors = 1; // setting this once would actually be enough
 
-            // command the servos
-            servo_D0.setNormalisedPulseWidth(servo_input);
-            servo_D1.setNormalisedPulseWidth(servo_input);
-
-            // calculate inputs for the servos for the next cycle
-            if ((servo_input < 1.0f) &&                     // constrain servo_input to be < 1.0f
-                (servo_counter % loops_per_seconds == 0) && // true if servo_counter is a multiple of loops_per_second
-                (servo_counter != 0))                       // avoid servo_counter = 0
-                servo_input += 0.1f;
-            servo_counter++;
+            // pwm_M1.write(0.75f); // apply 6V to the motor
+            // motor_M2.setVelocity(motor_M2.getMaxVelocity());
+            motor_M3.setRotation(3.0f);
         } else {
             // the following code block gets executed only once
             if (do_reset_all_once) {
                 do_reset_all_once = false;
 
                 // reset variables and objects
-                servo_D0.disable();
-                servo_D1.disable();
-                servo_input = 0.0f;
+                led1 = 0;
             }
         }
 
         // toggling the user led
         user_led = !user_led;
-
-        // printing to the serial terminal
-        printf("Pulse width: %f \n", servo_input);
 
         // read timer and make the main thread sleep for the remaining time span (non blocking)
         int main_task_elapsed_time_ms = std::chrono::duration_cast<std::chrono::milliseconds>(main_task_timer.elapsed_time()).count();

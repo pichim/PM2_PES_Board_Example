@@ -1,8 +1,11 @@
 # Workshop 1
 
-## Scope of Workshop 1
+<!-- Links -->
+[1]: https://os.mbed.com/platforms/ST-Nucleo-F446RE/
 
-The first workshop aims to introduce the Nucleo-F446RE microcontroller. We will familiarize ourselfs with the Mbed Studio development environment, the chosen platform for coding and software/firmware development. The workshop will start by delving into the construction of the **main.cpp** file, its structure, and the implementation of essential commands. Subsequently, participants will explore hardware utilization, specifically the IR Sensor, and its calibration, a process facilitated by the use of Matlab.
+The first workshop aims to introduce the Nucleo-F446RE microcontroller. We will familiarize ourselfs with the Mbed Studio development environment, in IDE for coding and software/firmware development. The workshop will start by analysing a given ***main.cpp*** file, it's structure, and the implementation of basic commands.
+
+Participants will explore hardware utilization, specifically the IR Sensor and a calibration process. To optimize the calibration parameters we will use Matlab.
 
 ## Hardware
 
@@ -15,55 +18,51 @@ The first workshop aims to introduce the Nucleo-F446RE microcontroller. We will 
 >Part 2:
 > - NUCLEO-F446RE board
 > - Mini USB cable
-> - IR sensor (check which one you have in your kid, the model name is on the side, it will determine the maximum range of suported measurements)
+> - IR sensor (check which one you have in your kid, the model name is on the side, it will determine the maximum range of the suported measurements)
 > - Additional wires to connect the sensor to the NUCLEO board
 > - Paper tape
 > - Length measuring tape
 
-## Assignment
+### Assignment
 
-We assume that you already have all necessary accounts and software to conduct the workshop. If not, go to: [course setup](../markdown/general_info.md), and follow the instructions there.
+We assume that you already have all necessary accounts set-up and software installed to conduct the workshop. If not, go to: [Course Setup](../markdown/general_info.md), and follow the instructions there.
 
 Furthermore, ensure that you are familiar with the general structure of the board. If not, refer to: [Nucleo F446RE](../../README.md#nucleo-f446re)
 
-### Part 1
-------------------
-The first task will be to run a test program using an additional diode.
+## Part 1
 
-1. Connect the LED to the pin PB_9 and ground to the corresponding pin (see [Nucleo Board pinmap][1])
-2. After connecting the additional LED, connect the board to the computer using the mini USB cable. Immediately after connecting, a console window should appear in Mbed studio.
-3. Make sure you see the active program and the connection to the board in the upper left corner of the screen. If so, you can flash the compiled programm to the microcontroller using the ``Play`` button.
-4. Monitor the progress in the bottom left corner of the screen, where windows will display information about the uploading process. The LD1 LED will blink with green and red lights during uploading and stay continuously lit once the process is complete.
-5. Now click the **USER** button while watching the LED.
-6. Now click the **USER** button once again, what happend with LED diode?
-7. Unplug the Nucleo board.
+The first task will be to run a test program using an additional LED.
 
-After finishing the task try to read through the code with the comments. Observe how the code structure looks like and how individual objects are defined.
+1. Connect the LED to the pin **PB_9** and ground to the corresponding pin, see [Nucleo Board Pinmap][1]
+2. After connecting the additional LED, connect the board to the computer or laptop using the mini USB cable. Immediately after connecting, a console window should appear in Mbed Studio.
+3. Make sure you see the active program and the connection to the board in the upper left corner of the screen. If so, you can flash the compiled programm to the microcontroller using the **Play** button.
+4. Monitor the progress in the bottom left corner of the screen, where the OS will display information about the uploading process. The big LED on the NUCLEO board will blink with green and red during the flashing process and stay continuously lit once the process is complete.
+5. The small LED should be blinking fast now, indicating how many times the program runs per second.
+6. Now click the blue **USER** button while watching the additional LED.
+7. Now click the blue **USER** button once again, what happends with the additional LED diode?
+8. Unplug the Nucleo board.
+
+After finishing the task read through the code, read the comments and try to understand it. Discuss the basic program in the group. 
 
 **If you have any questions, just ask them : - ), always!**
 
-### Part 2
-------------------
-The second task will be carried out using an IR distance sensor, and the main goal will be to calibrate the sensor so that it can be used to measure distances in centimeters.
+## Part 2
 
-1. Read the IR sensor manual, the calibration process is described there step by step. There you can also find technical infromation about sensor and instructions for connecting to the board. Perform the calibration according to the instruction:
+The second task will be carried out using an IR distance sensor. This task will be to calibrate the sensor so that it can be used to measure distances in centimeters. Further we want to understand the sensors possible used cased, corner cases and limitations, basicly to understand the sensor as a system and what to look out for for us an engineers.
 
-> [IR sensor tutorial](../markdown/ir_sensor.md)
+1. Read the IR sensor manual. There you can find technical infromation about the sensor and instructions for the connection to the Nucleo board. Perform the calibration according to the hardware tutorial:
+   
+    > [IR Sensor Tutorial](../markdown/ir_sensor.md)
+
 ## Summary
 
-In this workshop, participants were introduced to the Nucleo-F446RE microcontroller, acquiring familiarity with the Mbed Studio environment for coding. The workshop included the understanding of the ``main`` file, comprehension of its structure, defining and working with objects and the implementation of essential commands. Additionally, exploration of hardware utilization, particularly the IR sensor, and calibration using Matlab were conducted. This foundational workshop aimed to put first steps in using the microcontroler, laying the groundwork for further exploration in robotics and mechatronics.
-
-<!-- Questions for own consideration:  JUST CAN'T THING ABOUT ANYTHING RELATED TO THIS EXERCISE-->
-
+In this workshop, participants were introduced to the Nucleo-F446RE board, acquiring familiarity with the Mbed Studio IDE and basic usage of objects in C++. The workshop included understanding of the ***main.cpp*** file, comprehension of its structure, defining and working with objects and the implementation of essential commands. Additionally, exploration of hardware utilization, particularly an IR sensor, and the corresponding calibration using Matlab were conducted. This first workshop aimed to put basic steps in using the system, laying the groundwork for further exploration for the development of robotics- and mechatronics-systems.
 
 ## Solution
 
-[Workshop 1](../solutions/main_ws1.txt)
+- [Workshop 1](../solutions/main_ws1.cpp)
 
-<center><img src="../images/ir_sensor_eval.png" alt="IR sensor evaluation" width="600" /></center>
-<center> <i>IR sensor evaluation graph</i> </center>
-
-
-<!-- Links -->
-[1]: https://os.mbed.com/platforms/ST-Nucleo-F446RE/
-
+<p align="center">
+    <img src="../images/ir_sensor_eval.png" alt="IR Sensor Evaluation" width="950" /> </br>
+    <i>IR Sensor Evaluation</i>
+</p>

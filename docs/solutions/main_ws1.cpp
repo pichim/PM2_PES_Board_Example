@@ -1,10 +1,10 @@
 #include "mbed.h"
 
+// pes board pin map
 #include "pm2_drivers/PESBoardPinMap.h"
+
+// drivers
 #include "pm2_drivers/DebounceIn.h"
-#include "pm2_drivers/FastPWM/FastPWM.h"
-#include "pm2_drivers/EncoderCounter.h"
-#include "pm2_drivers/DCMotor.h"
 
 bool do_execute_main_task = false; // this variable will be toggled via the user button (blue button) and
                                    // decides whether to execute the main task or not
@@ -16,6 +16,9 @@ DebounceIn user_button(USER_BUTTON); // create DebounceIn object to evaluate the
                                      // falling and rising edge
 void toggle_do_execute_main_fcn();   // custom function which is getting executed when user
                                      // button gets pressed, definition below
+
+// function declaration, definition at the end
+float ir_sensor_compensation(float ir_distance_mV);
 
 // main runs as an own thread
 int main()
@@ -38,27 +41,11 @@ int main()
     // a led has an anode (+) and a cathode (-), the cathode needs to be connected to ground via a resistor
     DigitalOut led1(PB_9);
 
-    DigitalOut enable_motors(PB_ENABLE_DCMOTORS); // create DigitalOut object to enable dc motors
-
-    // motor M1
-    // FastPWM pwm_M1(PB_PWM_M1); // create FastPWM object to command motor M1
-
-    const float voltage_max = 12.0f; // maximum voltage of battery packs, adjust this to
-                                     // 6.0f V if you only use one battery pack
-
-    // motor M2
-    // const float gear_ratio_M2 = 78.125f;
-    // const float kn_M2 = 180.0f / 12.0f;
-    // DCMotor motor_M2(PB_PWM_M1, PB_ENC_A_M1, PB_ENC_B_M1, gear_ratio_M2, kn_M2, voltage_max);
-    // motor_M2.setEnableMotionPlanner(true);
-    // motor_M2.setMaxVelocity(motor_M2.getMaxVelocity() * 0.5f);
-
-    // motor M3
-    const float gear_ratio_M3 = 78.125f;
-    const float kn_M3 = 180.0f / 12.0f;
-    DCMotor motor_M3(PB_PWM_M1, PB_ENC_A_M1, PB_ENC_B_M1, gear_ratio_M3, kn_M3, voltage_max);
-    motor_M3.setEnableMotionPlanner(true);
-    motor_M3.setMaxVelocity(motor_M3.getMaxVelocity() * 0.5f);
+    // ir distance sensor
+    float ir_distance_mV = 0.0f; // define a variable to store measurement (in mV)
+    float ir_distance_cm = 0.0f;
+    AnalogIn ir_analog_in(PC_2); // create AnalogIn object to read in the infrared distance sensor
+                                 // 0...3.3V are mapped to 0...1
 
     // start timer
     main_task_timer.start();
@@ -72,12 +59,9 @@ int main()
             // visual feedback that the main task is executed, setting this once would actually be enough
             led1 = 1;
 
-            // enable hardwaredriver dc motors: 0 -> disabled, 1 -> enabled
-            enable_motors = 1; // setting this once would actually be enough
-
-            // pwm_M1.write(1.0f);
-            // motor_M2.setVelocity(motor_M2.getMaxVelocity());
-            motor_M3.setRotation(3.0f);
+            // read analog input
+            ir_distance_mV = 1.0e3f * ir_analog_in.read() * 3.3f;
+            ir_distance_cm = ir_sensor_compensation(ir_distance_mV);
         } else {
             // the following code block gets executed only once
             if (do_reset_all_once) {
@@ -85,11 +69,16 @@ int main()
 
                 // reset variables and objects
                 led1 = 0;
+                ir_distance_mV = 0.0f;
+                ir_distance_cm = 0.0f;
             }
         }
 
         // toggling the user led
         user_led = !user_led;
+
+        // print to the serial terminal
+        printf("IR distance mV: %f IR distance cm: %f \n", ir_distance_mV, ir_distance_cm);
 
         // read timer and make the main thread sleep for the remaining time span (non blocking)
         int main_task_elapsed_time_ms = std::chrono::duration_cast<std::chrono::milliseconds>(main_task_timer.elapsed_time()).count();
@@ -104,4 +93,17 @@ void toggle_do_execute_main_fcn()
     // set do_reset_all_once to true if do_execute_main_task changed from false to true
     if (do_execute_main_task)
         do_reset_all_once = true;
+}
+
+float ir_sensor_compensation(float ir_distance_mV)
+{
+    // insert values that you got from the MATLAB file
+    static const float a = 2.574e+04f;
+    static const float b = -29.37f;
+
+    // avoid division by zero by adding a small value to the denominator
+    if (ir_distance_mV + b == 0.0f)
+        ir_distance_mV -= 0.001f;
+
+    return a / (ir_distance_mV + b);
 }

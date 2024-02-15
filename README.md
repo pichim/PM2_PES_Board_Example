@@ -1,10 +1,28 @@
+<!-- 
+    Styling Rules:
+    - When ever possible *.md [Links] should be used, and not just bold text
+    - In a *.md [Link] all words start with a capital letter, e.g.: [Course setup]
+    - A button or a pin or something similar is highlited bold: **USER BUTTON**, **PB_9**
+    - Source code files are highlited bold and cursive: ***main.cpp***
+    - Functions, objects and variables when not in a code snippet are formatted like this:
+      - ``main()`` function
+      - ``servo.enable()`` function
+      - ``while()`` loop
+      - ``if()`` statement
+      - ``mechanical_button`` object
+      - ``enable_motors`` variable
+      - ``DCMotor.h`` driver
+    Authors:
+    - Maciej Szarek (szar)
+    - Peter Michael (pichim/pmic)
+ -->
 
-# PM2 PES-Board Documentation
+# PM2 PES-Board, Hardware and Driver Documentation
 
-| Wüthrich Michael | Szarek Maciej | Peter Michael |
-|-|-|-|
-| wuem@zhaw.ch | szar@zhaw.ch | pmic@zhaw.ch |
-| TE 301 | TE 302 | TE 307 |
+| Szarek Maciej | Peter Michael |
+|-|-|
+| szar@zhaw.ch | pmic@zhaw.ch |
+| TE 302 | TE 307 |
 
 # Table of Contents
 1. [Course setup](#course-setup)

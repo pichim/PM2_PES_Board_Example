@@ -1,6 +1,9 @@
 #include "mbed.h"
 
+// pes board pin map
 #include "pm2_drivers/PESBoardPinMap.h"
+
+// drivers
 #include "pm2_drivers/DebounceIn.h"
 #include "pm2_drivers/Servo.h"
 #include "pm2_drivers/UltrasonicSensor.h"
@@ -54,7 +57,9 @@ int main()
     // ultra sonic sensor
     UltrasonicSensor us_sensor(PB_D3);
     float us_distance_cm = 0.0f;
-    float us_distance_min = 7.0f;
+
+    // min and max ultra sonic sensor reading
+    float us_distance_min = 4.0f;
     float us_distance_max = 50.0f;
 
     // servo
@@ -76,9 +81,6 @@ int main()
 
     // variables to move the servo, this is just an example
     float servo_input = 0.0f;
-    int servo_counter = 0; // define servo counter, this is an additional variable
-                           // used to command the servo
-    const int loops_per_seconds = static_cast<int>(ceilf(1.0f / (0.001f * static_cast<float>(main_task_period_ms))));
 
     // start timer
     main_task_timer.start();
@@ -92,15 +94,16 @@ int main()
             // visual feedback that the main task is executed, setting this once would actually be enough
             led1 = 1;
 
-            // read us sensor distance
-            us_distance_cm = us_sensor.read();
-            if (us_distance_cm < 0.0f) {
-                us_distance_cm = 0.0f;
+            // read us sensor distance, only valid measurements will update us_distance_cm
+            const float us_distance_cm_candidate = us_sensor.read();
+            if (us_distance_cm_candidate > 0.0f) {
+                us_distance_cm = us_distance_cm_candidate;
             }
 
             // state machine
             switch (robot_state) {
                 case RobotState::INITIAL:
+                    printf("INITIAL\n");
                     // enable the servo
                     if (!servo_D0.isEnabled())
                         servo_D0.enable();
@@ -109,14 +112,18 @@ int main()
                     break;
 
                 case RobotState::EXECUTION:
-                    // function to map the distance to the servo movement
-                    float servo_input = (1 / (us_distance_max - us_distance_min)) * us_distance_cm - (us_distance_min / (us_distance_max - us_distance_min));
+                    printf("EXECUTION\n");
+                    // function to map the distance to the servo movement (us_distance_min, us_distance_max) -> (0.0f, 1.0f)
+                    servo_input = (us_distance_cm - us_distance_min) / (us_distance_max - us_distance_min);
+                    // values smaller than 0.0f or bigger than 1.0f ar constrained to the range (0.0f, 1.0f) in setNormalisedPulseWidth
                     servo_D0.setNormalisedPulseWidth(servo_input);
 
-                    // if the measurement is outside the min and max range go to SLEEP
+                    // if the measurement is outside the min or max limit go to SLEEP
                     if ((us_distance_cm < us_distance_min) || (us_distance_cm > us_distance_max)) {
                         robot_state = RobotState::SLEEP;
                     }
+
+                    // if the mechanical button is pressed go to EMERGENCY
                     if (mechanical_button.read()) {
                         robot_state = RobotState::EMERGENCY;
                     }
@@ -124,10 +131,13 @@ int main()
                     break;
 
                 case RobotState::SLEEP:
-                    // if the measurement is within the min and max range go to EXECUTION
+                    printf("SLEEP\n");
+                    // if the measurement is within the min and max limits go to EXECUTION
                     if ((us_distance_cm > us_distance_min) && (us_distance_cm < us_distance_max)) {
                         robot_state = RobotState::EXECUTION;
                     }
+
+                    // if the mechanical button is pressed go to EMERGENCY
                     if (mechanical_button.read()) {
                         robot_state = RobotState::EMERGENCY;
                     }
@@ -135,9 +145,9 @@ int main()
                     break;
 
                 case RobotState::EMERGENCY:
-                    // The transition to the emergency state actually causes
-                    // the execution of the commands contained in the else statement,
-                    // that is, it disables the servo and resets the values read from the sensors.
+                    printf("EMERGENCY\n");
+                    // the transition to the emergency state causes the execution of the commands contained
+                    // in the outer else statement scope, and since do_reset_all_once is true the system undergoes a reset
                     toggle_do_execute_main_fcn();
 
                     break;
@@ -161,7 +171,7 @@ int main()
         // toggling the user led
         user_led = !user_led;
 
-        // printing to the serial terminal
+        // print to the serial terminal
         printf("US distance cm: %f \n", us_distance_cm);
 
         // read timer and make the main thread sleep for the remaining time span (non blocking)
