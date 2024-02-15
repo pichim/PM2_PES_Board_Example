@@ -131,9 +131,13 @@ clc, clear variables
 % data = readmatrix('putty_35.log'); % 78:1, pos, p-i-d-f, p, ff, motion planner enabled
 % data = readmatrix('putty_36.log'); % 78:1, pos, p-i-d-f, p, ff, motion planner enabled
 
-data = readmatrix('putty_37.log'); % 78:1, pos, p-i-d-f, p, ff, motion planner enabled
+% data = readmatrix('putty_37.log'); % 78:1, pos, p-i-d-f, p, ff, motion planner enabled
 % data = readmatrix('putty_38.log'); % 31:1, pos, p-i-d-f, p, ff, motion planner enabled
 % data = readmatrix('putty_39.log'); % 488:1, pos, p-i-d-f, p, ff, motion planner enabled
+
+% data = readmatrix('putty_40.log'); % 31:1
+% data = readmatrix('putty_41.log'); % 488:1
+data = readmatrix('putty_42.log'); % 78:1
 
 time = data(:,1) * 1e-3;
 time = time - time(1);
@@ -163,8 +167,8 @@ ax(4) = subplot(224);
 plot(time - 1, data(:,7)), grid on
 ylabel('Voltage (V)'), xlabel('Time (sec)')
 linkaxes(ax, 'x'), clear ax
-% xlim([0 time(end)])
-xlim([0.0 12.0])
+xlim([0 time(end)])
+% xlim([0.0 12.0])
 
 figure(3)
 plot(time, data(:,8)), grid on
@@ -264,7 +268,9 @@ clc, clear variables
 Ts = 5e-4;
 
 % load gpa_data_09.mat % 78:1
-load gpa_data_10.mat % 78:1
+% load gpa_data_10.mat % 78:1
+load gpa_data_11.mat % 78:1
+% load gpa_data_12.mat % 78:1, no roll-off filter
 Kp = 4.2;
 Ki = 140.0;
 Kd = 0.0192;
@@ -272,7 +278,11 @@ Kd = 0.0192;
 tau_f = 1.0 / (2.0 * pi * 30.0);
 tau_ro = 1.0 / (2.0 * pi * 0.5 / (2.0 * Ts));
 
-Cm = pid(Kp, Ki, Kd, tau_f, Ts, 'IFormula', 'BackwardEuler', 'DFormula', 'Trapezoidal') * c2d(tf(1, [tau_ro 1]), Ts, 'tustin')
+Cm = pid(Kp, Ki, Kd, tau_f, Ts, 'IFormula', 'BackwardEuler', ...
+    'DFormula', 'Trapezoidal') * ...
+    c2d(tf(1, [tau_ro 1]), Ts, 'tustin')
+% Cm = pid(Kp, Ki, Kd, tau_f, Ts, 'IFormula', 'BackwardEuler', ...
+    % 'DFormula', 'Trapezoidal')
 
 
 w0 = 2.0 * pi * 15.0;
@@ -328,24 +338,28 @@ a1 = (2.0 * k0 - 8.0) / k2;
 a2 = (k0 - k1 + 4.0) / k2;
 Gfmn = tf([b0 b1 b2], [1 a1 a2], Ts);
 
-Cmn = pid(Kp, Ki, Kd, tau_f, Ts, 'IFormula', 'BackwardEuler', 'DFormula', 'Trapezoidal') * c2d(tf(1, [tau_ro 1]), Ts, 'tustin')
+Cmn = pid(Kp, Ki, Kd, tau_f, Ts, 'IFormula', 'BackwardEuler', ...
+    'DFormula', 'Trapezoidal') * ...
+    c2d(tf(1, [tau_ro 1]), Ts, 'tustin')
+% Cmn = pid(Kp, Ki, Kd, tau_f, Ts, 'IFormula', 'BackwardEuler', ...
+    % 'DFormula', 'Trapezoidal')
 Sn = feedback(1, Cmn*P/Gfm*Gfmn);
 Tn = 1 - Sn;
 
-% figure(4)
-% ax(1) = subplot(311);
-% semilogx(freq, spec(:,1), 'b.-'), grid on
-% title('Signal Spectras')
-% ax(2) = subplot(312);
-% semilogx(freq, spec(:,2), '.-', 'color', [0 0.5 0]), grid on
-% ax(3) = subplot(313);
-% semilogx(freq, spec(:,3), 'r.-'), grid on
-% linkaxes(ax, 'x'), clear ax
-% xlim([min(freq) 1/2/Ts])
+figure(4)
+ax(1) = subplot(311);
+semilogx(freq, spec(:,1), 'b.-'), grid on
+title('Signal Spectras')
+ax(2) = subplot(312);
+semilogx(freq, spec(:,2), '.-', 'color', [0 0.5 0]), grid on
+ax(3) = subplot(313);
+semilogx(freq, spec(:,3), 'r.-'), grid on
+linkaxes(ax, 'x'), clear ax
+xlim([min(freq) 1/2/Ts])
 
 opt = bodeoptions('cstprefs');
 
-figure(55)
+figure(5)
 subplot(121)
 bode(P, 'b.-', 2*pi*P.Frequency), grid on
 title('Plant')
@@ -354,7 +368,7 @@ opt.YLim = {[1e-5 3], [-180 180]};
 bodemag(S, 'b.-', T, 'g.-', Sn, 'r.-', Tn, 'c.-', 2*pi*P.Frequency, opt), grid on
 title('S, T')
 
-figure(66)
+figure(6)
 bode(C, 'b.-', Cm, 'g.-', Cmn, 'r.-', 2*pi*P.Frequency), grid on
 title('Controller')
 
@@ -368,7 +382,7 @@ Gv = c2d(tf(1, [1 -z(2)]), Ts, 'tustin');
 Gv = Gv / dcgain(Gv);
 [~   , step_resp_v] = get_step_resp_from_frd(Gstep * Gv, Ts);
 
-figure(77)
+figure(7)
 subplot(121)
 bode(Gstep), grid on
 subplot(122)

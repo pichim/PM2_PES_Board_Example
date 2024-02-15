@@ -14,7 +14,7 @@ bool do_reset_all_once = false;    // this variable is used to reset certain var
 // objects for user button (blue button) handling on nucleo board
 DebounceIn user_button(USER_BUTTON); // create DebounceIn object to evaluate the user button
                                      // falling and rising edge
-void toggle_do_execute_main_fcn();      // custom function which is getting executed when user
+void toggle_do_execute_main_fcn();   // custom function which is getting executed when user
                                      // button gets pressed, definition below
 
 // main runs as an own thread

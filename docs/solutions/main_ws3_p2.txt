@@ -14,15 +14,14 @@ bool do_reset_all_once = false;    // this variable is used to reset certain var
 // objects for user button (blue button) handling on nucleo board
 DebounceIn user_button(USER_BUTTON); // create DebounceIn object to evaluate the user button
                                      // falling and rising edge
-void toggle_do_execute_main_fcn();      // custom function which is getting executed when user
+void toggle_do_execute_main_fcn();   // custom function which is getting executed when user
                                      // button gets pressed, definition below
 
 // main runs as an own thread
 int main()
 {
     // set up states for state machine
-    enum RobotState
-    {
+    enum RobotState {
         INITIAL,
         SLEEP,
         FORWARD,
@@ -89,47 +88,47 @@ int main()
 
             // state machine
             switch (robot_state) {
-                case RobotState::INITIAL: {
+                case RobotState::INITIAL:
                     // enable hardwaredriver dc motors: 0 -> disabled, 1 -> enabled
                     enable_motors = 1;
                     robot_state = RobotState::SLEEP;
 
                     break;
-		        }
-                case RobotState::SLEEP: {
-		            // this state is to wait for the signal from user, so to run the process 
+
+                case RobotState::SLEEP:
+                    // this state is to wait for the signal from user, so to run the process 
                     // that is triggered by clicking mechanical button
                     if (mechanical_button.read()) {
                         robot_state = RobotState::FORWARD;
                     }
 
                     break;
-		        }
-                case RobotState::FORWARD: {
-		            // in this state press is moving forward until it reach 10 rotations, 
+
+                case RobotState::FORWARD:
+                    // in this state press is moving forward until it reach 10 rotations, 
                     // after that it is switching to backward mode
-		            // if the distance from the sensor is less then set minimum,
+                    // if the distance from the sensor is less then set minimum,
                     // it switches to emergency state
                     motor_M3.setRotation(10.0f);
                     if (motor_M3.getRotation() > 9.95f) {
                         robot_state = RobotState::BACKWARD;
                     }
-		            if (us_distance_cm < 7.0f) {
+                    if (us_distance_cm < 7.0f) {
                         robot_state = RobotState::EMERGENCY;
                     }
 
                     break;
-		        }
-                case RobotState::BACKWARD: {
-	 	            // in this state machine is moving backward to initial position
+
+                case RobotState::BACKWARD:
+                    // in this state machine is moving backward to initial position
                     // and after that it is switching to sleep state
                     motor_M3.setRotation(0.0f);
                     robot_state = RobotState::SLEEP;
 
                     break;
-		        }
-                case RobotState::EMERGENCY: {
-		            // in emergency state machine is going to initial position
+
+                case RobotState::EMERGENCY:
+                    // in emergency state machine is going to initial position
                     // as fast as possible and turning off after reaching that position
                     motor_M3.setEnableMotionPlanner(false);
                     motor_M3.setRotation(0.0f);
@@ -138,7 +137,7 @@ int main()
                     }
 
                     break;
-		        }
+
                 default:
 
                     break;

@@ -12,7 +12,7 @@ bool do_reset_all_once = false;    // this variable is used to reset certain var
 // objects for user button (blue button) handling on nucleo board
 DebounceIn user_button(USER_BUTTON); // create DebounceIn object to evaluate the user button
                                      // falling and rising edge
-void toggle_do_execute_main_fcn();      // custom function which is getting executed when user
+void toggle_do_execute_main_fcn();   // custom function which is getting executed when user
                                      // button gets pressed, definition below
 
 // main runs as an own thread
@@ -52,6 +52,10 @@ int main()
     // servo.setNormalisedPulseWidth: after calibration (0,1) -> (servo_D0_ang_min, servo_D0_ang_max)
     servo_D0.calibratePulseMinMax(servo_D0_ang_min, servo_D0_ang_max);
     servo_D1.calibratePulseMinMax(servo_D1_ang_min, servo_D1_ang_max);
+
+    // default acceleration of the servo motion profile is 1.0e6f
+    servo_D0.setMaxAcceleration(3.0f);
+    servo_D1.setMaxAcceleration(3.0f);
 
     // variables to move the servo, this is just an example
     float servo_input = 0.0f;

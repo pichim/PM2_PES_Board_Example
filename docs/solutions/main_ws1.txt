@@ -38,10 +38,11 @@ int main()
     // a led has an anode (+) and a cathode (-), the cathode needs to be connected to ground via a resistor
     DigitalOut led1(PB_9);
 
-    // Sharp GP2Y0A41SK0F, 4-40 cm IR Sensor
+        // ir distance sensor
     float ir_distance_mV = 0.0f; // define a variable to store measurement (in mV)
     float ir_distance_cm = 0.0f;
-    AnalogIn ir_analog_in(PC_2); // create AnalogIn object to read in the infrared distance sensor, 0...3.3V are mapped to 0...1
+    AnalogIn ir_analog_in(PC_2); // create AnalogIn object to read in the infrared distance sensor
+                                 // 0...3.3V are mapped to 0...1
 
     // start timer
     main_task_timer.start();
@@ -93,7 +94,6 @@ void toggle_do_execute_main_fcn()
 
 float ir_sensor_compensation(float ir_distance_mV)
 {
-
     // insert values that you got from the MATLAB file
     static const float a = 2.574e+04f;
     static const float b = -29.37f;

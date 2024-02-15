@@ -94,21 +94,21 @@ int main()
 
             // read us sensor distance
             us_distance_cm = us_sensor.read();
-	    if (us_distance_cm < 0.0f) {
+            if (us_distance_cm < 0.0f) {
                 us_distance_cm = 0.0f;
             }
 
             // state machine
             switch (robot_state) {
-                case RobotState::INITIAL: {
+                case RobotState::INITIAL:
                     // enable the servo
                     if (!servo_D0.isEnabled())
                         servo_D0.enable();
                     robot_state = RobotState::EXECUTION;
 
                     break;
-		}
-                case RobotState::EXECUTION: {
+
+                case RobotState::EXECUTION:
                     // function to map the distance to the servo movement
                     float servo_input = (1 / (us_distance_max - us_distance_min)) * us_distance_cm - (us_distance_min / (us_distance_max - us_distance_min));
                     servo_D0.setNormalisedPulseWidth(servo_input);
@@ -122,8 +122,8 @@ int main()
                     }
 
                     break;
-		}
-                case RobotState::SLEEP: {
+
+                case RobotState::SLEEP:
                     // if the measurement is within the min and max range go to EXECUTION
                     if ((us_distance_cm > us_distance_min) && (us_distance_cm < us_distance_max)) {
                         robot_state = RobotState::EXECUTION;
@@ -133,15 +133,15 @@ int main()
                     }
 
                     break;
-		}
-                case RobotState::EMERGENCY: {
+
+                case RobotState::EMERGENCY:
                     // The transition to the emergency state actually causes
                     // the execution of the commands contained in the else statement,
                     // that is, it disables the servo and resets the values read from the sensors.
                     toggle_do_execute_main_fcn();
 
                     break;
-		}
+
                 default:
 
                     break; // do nothing
