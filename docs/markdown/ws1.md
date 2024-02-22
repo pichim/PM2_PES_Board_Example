@@ -1,7 +1,7 @@
-# Workshop 1
+<!-- link list -->
+[0]: https://os.mbed.com/platforms/ST-Nucleo-F446RE/
 
-<!-- Links -->
-[1]: https://os.mbed.com/platforms/ST-Nucleo-F446RE/
+# Workshop 1
 
 The first workshop aims to introduce the Nucleo-F446RE microcontroller. We will familiarize ourselfs with the Mbed Studio development environment, in IDE for coding and software/firmware development. The workshop will start by analysing a given ***main.cpp*** file, it's structure, and the implementation of basic commands.
 
@@ -33,14 +33,13 @@ Furthermore, ensure that you are familiar with the general structure of the boar
 
 The first task will be to run a test program using an additional LED.
 
-1. Connect the LED to the pin **PB_9** and ground to the corresponding pin, see [Nucleo Board Pinmap][1]
+1. Connect the LED to the pin **PB_9** and ground to the corresponding pin, see [Nucleo Board Pinmap][0]
 2. After connecting the additional LED, connect the board to the computer or laptop using the mini USB cable. Immediately after connecting, a console window should appear in Mbed Studio.
 3. Make sure you see the active program and the connection to the board in the upper left corner of the screen. If so, you can flash the compiled programm to the microcontroller using the **Play** button.
 4. Monitor the progress in the bottom left corner of the screen, where the OS will display information about the uploading process. The big LED on the NUCLEO board will blink with green and red during the flashing process and stay continuously lit once the process is complete.
 5. The small LED should be blinking fast now, indicating how many times the program runs per second.
 6. Now click the blue **USER** button while watching the additional LED.
 7. Now click the blue **USER** button once again, what happends with the additional LED diode?
-8. Unplug the Nucleo board.
 
 After finishing the task read through the code, read the comments and try to understand it. Discuss the basic program in the group. 
 
@@ -63,6 +62,6 @@ In this workshop, participants were introduced to the Nucleo-F446RE board, acqui
 - [Workshop 1](../solutions/main_ws1.cpp)
 
 <p align="center">
-    <img src="../images/ir_sensor_eval.png" alt="IR Sensor Evaluation" width="950" /> </br>
+    <img src="../images/ir_sensor_eval.png" alt="IR Sensor Evaluation" width="950"/> </br>
     <i>IR Sensor Evaluation</i>
 </p>

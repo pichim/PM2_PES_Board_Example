@@ -66,10 +66,15 @@ int main()
                                      // 6.0f V if you only use one battery pack
 
     // motor M3
-    const float gear_ratio_M3 = 78.125f;
-    const float kn_M3 = 180.0f / 12.0f;
+    const float gear_ratio_M3 = 78.125f; // gear ratio
+    const float kn_M3 = 180.0f / 12.0f;  // motor constant
+    // it is assumed that only one motor is available, there fore
+    // we use the pins from M1, so you can leave it connected to M1
     DCMotor motor_M3(PB_PWM_M1, PB_ENC_A_M1, PB_ENC_B_M1, gear_ratio_M3, kn_M3, voltage_max);
+    // enable the motion planner for smooth movement
     motor_M3.enableMotionPlanner(true);
+    // limit max. acceleration to half of the default acceleration
+    motor_M3.setMaxAcceleration(motor_M3.getMaxAcceleration() * 0.5f);
 
     // start timer
     main_task_timer.start();
@@ -83,24 +88,25 @@ int main()
             // visual feedback that the main task is executed, setting this once would actually be enough
             led1 = 1;
 
-            // read us sensor distance
-            us_distance_cm = us_sensor.read();
-            if (us_distance_cm < 0.0f) {
-                us_distance_cm = 0.0f;
+            // read us sensor distance, only valid measurements will update us_distance_cm
+            const float us_distance_cm_candidate = us_sensor.read();
+            if (us_distance_cm_candidate > 0.0f) {
+                us_distance_cm = us_distance_cm_candidate;
             }
 
             // state machine
             switch (robot_state) {
                 case RobotState::INITIAL:
                     // enable hardwaredriver dc motors: 0 -> disabled, 1 -> enabled
-                    enable_motors = 1;
+                    enable_motors = 1; // setting this once would actually be enough
                     robot_state = RobotState::SLEEP;
 
                     break;
 
                 case RobotState::SLEEP:
-                    // this state is to wait for the signal from user, so to run the process 
+                    // wait for the signal from the user, so to run the process 
                     // that is triggered by clicking mechanical button
+                    // then go the the FORWARD state
                     if (mechanical_button.read()) {
                         robot_state = RobotState::FORWARD;
                     }
@@ -108,34 +114,39 @@ int main()
                     break;
 
                 case RobotState::FORWARD:
-                    // in this state press is moving forward until it reach 10 rotations, 
-                    // after that it is switching to backward mode
-                    // if the distance from the sensor is less then set minimum,
-                    // it switches to emergency state
-                    motor_M3.setRotation(2.9f);
-                    if (motor_M3.getRotation() > 2.85f) {
-                        robot_state = RobotState::BACKWARD;
-                    }
+                    // press is moving forward until it reaches 2.9f rotations, 
+                    // when reaching the value go to BACKWARD
+                    motor_M3.setRotation(2.9f); // setting this once would actually be enough
+                    // if the distance from the sensor is less than 4.5f cm,
+                    // we transition to the EMERGENCY state
                     if (us_distance_cm < 4.5f) {
                         robot_state = RobotState::EMERGENCY;
+                    }
+                    // switching condition is sligthly smaller for robustness
+                    if (motor_M3.getRotation() > 2.89f) {
+                        robot_state = RobotState::BACKWARD;
                     }
 
                     break;
 
                 case RobotState::BACKWARD:
-                    // in this state machine is moving backward to initial position
-                    // and after that it is switching to sleep state
+                    // move backwards to the initial position
+                    // and go to the SLEEP state if reached
                     motor_M3.setRotation(0.0f);
-                    robot_state = RobotState::SLEEP;
+                    // switching condition is sligthly bigger for robustness
+                    if (motor_M3.getRotation() < 0.01f) {
+                        robot_state = RobotState::SLEEP;
+                    }
 
                     break;
 
                 case RobotState::EMERGENCY:
-                    // in emergency state machine is going to initial position
-                    // as fast as possible and turning off after reaching that position
+                    // disable the motion planer and
+                    // move to the initial position asap
+                    // then reset the system
                     motor_M3.enableMotionPlanner(false);
                     motor_M3.setRotation(0.0f);
-                    if (motor_M3.getRotation() < 0.05f) {
+                    if (motor_M3.getRotation() < 0.01f) {
                         toggle_do_execute_main_fcn();
                     }
 
@@ -154,6 +165,7 @@ int main()
                 led1 = 0;
                 enable_motors = 0;
                 us_distance_cm = 0.0f;
+                motor_M3.enableMotionPlanner(true);
             }
         }
 
@@ -161,7 +173,7 @@ int main()
         user_led = !user_led;
 
         // print to the serial terminal
-        printf("%f, %f \n", us_distance_cm, motor_M3.getRotation());
+        printf("US Sensor in cm: %f, DC Motor Rotations: %f\n", us_distance_cm, motor_M3.getRotation());
 
         // read timer and make the main thread sleep for the remaining time span (non blocking)
         int main_task_elapsed_time_ms = std::chrono::duration_cast<std::chrono::milliseconds>(main_task_timer.elapsed_time()).count();

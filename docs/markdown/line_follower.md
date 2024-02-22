@@ -1,9 +1,15 @@
+<!-- link list -->
+[0]: https://www.sparkfun.com/products/13582
+[1]: https://learn.sparkfun.com/tutorials/sparkfun-line-follower-array-hookup-guide
+[2]: https://learn.sparkfun.com/tutorials/serial-peripheral-interface-spi/all
+[3]: https://os.mbed.com/platforms/ST-Nucleo-F446RE/
+
 # Line Follower Array 
 
 The sensor incorporates eight diodes for line detection, with each diode's illumination indicating the presence of a line beneath it. The IR brightness control and indicator can be adjusted with the on-board potentiometer. The sensor's I2C interface allows for easy integration with the PES-board, and the sensor's low power consumption makes it suitable for battery-powered applications. The sensor's compact size and low weight make it an ideal choice for small robots.
 
 <p align="center">
-    <img src="../images/line_follower_sensor.png" alt="Line follower sensor" width="450" />
+    <img src="../images/line_follower_sensor.png" alt="Line follower sensor" width="450"/>
 </p>
 
 ## Technical Specifications
@@ -18,8 +24,8 @@ The sensor incorporates eight diodes for line detection, with each diode's illum
 
 ## Links
 
-[Sparkfun Line follower sensor array][1] <br>
-[Sparkfun Line follower hookup guide][2]
+[Sparkfun Line follower sensor array][0] <br>
+[Sparkfun Line follower hookup guide][1]
 
 ## Datasheets
 
@@ -62,13 +68,13 @@ DCMotor motor_M2(PB_PWM_M2, PB_ENC_A_M2, PB_ENC_B_M2, gear_ratio, kn, voltage_ma
 
 ### Connection to the PES-board
 ---------------------------
-As communication protocol I2C is used. I2C relies on a data pin and a clock pin (more information can be found [here][3]). To power the sensor, a voltage of 5V is required.
+As communication protocol I2C is used. I2C relies on a data pin and a clock pin (more information can be found [here][2]). To power the sensor, a voltage of 5V is required.
 
 In the described robot, the following pins are utilized:
 - Data **PB_9**
 - Clock **PB_8**
 
-[Nucleo Board pinmap][4]
+[Nucleo Board pinmap][3]
 
 ## **WARNING 2**
 
@@ -78,17 +84,17 @@ To plug the power source you will need to use:
 
 - 2 m/f jumper wires (black and red)
 <p align="center">
-    <img src="../images/mf_line_follower_array_connection.png" alt="Line follower sensor mf connection" width="750" />
+    <img src="../images/mf_line_follower_array_connection.png" alt="Line follower sensor mf connection" width="750"/>
 </p>
 
 - 2 f/f jumpre wires (black and red)
 <p align="center">
-    <img src="../images/ff_line_follower_array_connection.png" alt="Line follower sensor ff connection" width="750" />
+    <img src="../images/ff_line_follower_array_connection.png" alt="Line follower sensor ff connection" width="750"/>
 </p>
 
 <b> Take note of the pin descriptions on the sensor. Connect the red power cable to the pin labeled 5V and the black ground cable to the pin labeled GND.</b>
 <p align="center">
-    <img src="../images/line_follower_sensor_look.png" alt="Line follower sensor look from above" width="750" />
+    <img src="../images/line_follower_sensor_look.png" alt="Line follower sensor look from above" width="750"/>
 </p>
 
 ### Create line follower object
@@ -211,9 +217,3 @@ The `vel_cntrl_fcn` function calculates the linear velocity of the robot based o
 ## Solution
 
 [Line follower](../solutions/line_follower.txt)
-
-<!-- Links: -->
-[1]: https://www.sparkfun.com/products/13582
-[2]: https://learn.sparkfun.com/tutorials/sparkfun-line-follower-array-hookup-guide
-[3]: https://learn.sparkfun.com/tutorials/serial-peripheral-interface-spi/all
-[4]: https://os.mbed.com/platforms/ST-Nucleo-F446RE/

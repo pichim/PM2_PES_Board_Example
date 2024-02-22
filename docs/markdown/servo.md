@@ -1,9 +1,17 @@
+<!-- link list, last updated 07.12.2023 -->
+[0]: https://www.futaba.ch/?cat=21&tit=Servo%20SBus
+[1]: https://www.conrad.ch/de/p/reely-standard-servo-cys-s0090-analog-servo-getriebe-material-metall-stecksystem-jr-2203091.html?refresh=true#productHighlights
+[2]: https://theorycircuit.com/servo-motor-driver-circuit/
+[3]: https://os.mbed.com/platforms/ST-Nucleo-F446RE/
+
 # Analog Servos
 
 A servo is an electrical motor designed for precise control over angular or linear position. It typically consists of a motor connected to a sensor for angle or position feedback and a controller that adjusts the motor's movement to track the specified setpoint. Typically used in applications such as robotics, automation, and remote control, servos are available in various types, including analog, digital, and continuous rotation. This document focuses on analog servos, which are widely used in various applications due to their simplicity and cost-effectiveness.
 
-<center><img src="../images/servo_image.png" alt="servo example" width="350"/></center>
-<center> <i>Example of analog servo</i> </center>
+<p align="center">
+    <img src="../images/servo_image.png" alt="servo example" width="350"/> </br>
+    <i>Example of analog servo</i>
+</p>
 
 ## Technical Specifications
 
@@ -19,14 +27,8 @@ A servo is an electrical motor designed for precise control over angular or line
 
 ## Links
 
-[Futaba S3001][1]</br>
-[Reely S-0090][2]
-
-<!-- link list, last updated 07.12.2023 -->
-[1]: https://www.futaba.ch/?cat=21&tit=Servo%20SBus
-[2]: https://www.conrad.ch/de/p/reely-standard-servo-cys-s0090-analog-servo-getriebe-material-metall-stecksystem-jr-2203091.html?refresh=true#productHighlights
-[3]: https://theorycircuit.com/servo-motor-driver-circuit/
-[4]: https://os.mbed.com/platforms/ST-Nucleo-F446RE/
+[Futaba S3001][0]</br>
+[Reely S-0090][1]
 
 ## Datasheets
 
@@ -87,16 +89,20 @@ In order to properly control the servo, the basic step that should be performed 
 <summary><b>Why calibration?</b></summary>
 
 >Servos are commanded through PWM (Pulse Width Modulation) signals, enabling the adjustment of the servo motor rotation through varying duty cycle PWM pulses. Initially, the specific pulse width corresponding to a particular servo angle is unknown. Hence, a calibration process is necessary to determine the minimum pulse width for the minimun angle and the maximum pulse width associated with the maximum angle. Carefull, these is just an example and does not represent the real values for the servos we use nor the real maximum angle the servos can reach.
-><center><img src="../images/servo_figures.png" alt="drawing" width="800"/></center>
-><center> <i>Example pulse widht, PWM and servo angle</i> </center>
+><p align="center">
+>    <img src="../images/servo_figures.png" alt="drawing" width="800"/> </br>
+>    <i>Example pulse widht, PWM and servo angle</i>
+></p>
 >
 >The charts above illustrate a direct dependency between pulse width and servo angle. As the pulse width increases, the servo anlge changes proportianal. Keep in mind the minimum angle might not be at zero pulse width. This relationship is further demonstrated in the illustration below.
-><center><img src="../images/servo-motor-pwm-signal-rotation.png" alt="drawing" width="650"/></center>
-><center> <i>Example pulse widths and corresponding angles</i> </center>
+><p align="center">
+>    <img src="../images/servo-motor-pwm-signal-rotation.png" alt="drawing" width="650"/> </br>
+>    <i>Example pulse widths and corresponding angles</i>
+></p>
 >
 >In the second servo illustrations, the zero position corresponds to a pulse width of 1 ms, while the maximum angle is achieved at 2 ms. Hence, a calibration process is undertaken to determine these calibration values. These calibration values are specific to the example shown in the figure and do not hold for the servos we use. Also, our servo drivers runs at 50 Hz, therefor the servo period resp. pulse with is 20 ms.
 >
-> For more information see: [HERE][3]
+> For more information see: [HERE][2]
 </details>
 
 The calibration process involves sending progressively wider pulses to determine, the pulse width corresponding to the minimal angle and the pulse width corresponding to the maximum angle of the servo. Best practice is to start with a very small pulse width and gradually increase it until the servo starts moving. This process is repeated until the servo reaches its maximum angle and stops moving, even though the pulse width is further increased. The pulse width values corresponding to the minimum and maximum positions are used as calibration values. It may be necessary to use a slightly higher minimal value and a slightly lower maximum value to ensure that the servo is working as expected (safety margins).
@@ -220,8 +226,10 @@ servo_D0.setMaxAcceleration(0.**3f**);
 
 This function allows the adjustment of the maximum acceleration during the movement. If the argument is omitted, the function defaults to a very large number, resulting in the fastest possible movement. For a smooth motion, you can input any argument greater than zero.
 
-<center><img src="../images/servo_smooth.png" alt="Servo movement" width="650" /></center>
-<center> <i>Servo movement with maximum acceleration of 0.3f</i> </center>
+<p align="center">
+    <img src="../images/servo_smooth.png" alt="Servo movement" width="650"/> </br>
+    <center> <i>Servo movement with maximum Acceleration of 0.3f</i> </center>
+</p>
 
 |<center>Default settings</center>|<center>Acceleration limited</center>|
 |-|-|

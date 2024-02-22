@@ -1,7 +1,7 @@
-# Workshop 2
+<!-- link list -->
+[0]: https://os.mbed.com/platforms/ST-Nucleo-F446RE/
 
-<!-- Links -->
-[1]: https://os.mbed.com/platforms/ST-Nucleo-F446RE/
+# Workshop 2
 
 The objective of the second workshop is to get familiar with the PES board's hardware and functionality by incorporating additional sensors and actuators, specifically an ultrasonic distance sensor and a servo motor.
 
@@ -53,11 +53,11 @@ Before beginning the task you should make yourself familiar with [Structuring a 
 Below you can find a flow chart diagram showing the logic of the transitions for each state.
 
 <p align="center">
-    <img src="../images/ws2_flowchart.png" alt="WS2 flow chart" width="500" /> </br>
+    <img src="../images/ws2_flowchart.png" alt="WS2 flow chart" width="500"/> </br>
     <i>Flow chart</i>
 </p>
 
-1. Connect the mechanical button to the **PC_5** pin on the Nucleo board (see [Nucleo Board Pinmap][1]). And add the ultrasonic distance sensor driver ***UltrasonicSensor.h*** to the top of the ***main.cpp*** file:
+1. Connect the mechanical button to the **PC_5** pin on the Nucleo board (see [Nucleo Board Pinmap][0]). And add the ultrasonic distance sensor driver ***UltrasonicSensor.h*** to the top of the ***main.cpp*** file:
 
 ```
 #include "pm2_drivers/UltrasonicSensor.h"
@@ -234,8 +234,6 @@ printf("US sensor distance %f \n", us_distance_cm);
 
 15. Experiment by directing the sensor towards an object that is out of range. Press the mechanical button and observe the serial terminal to see the current state and the measured distance (if valid and within the specified range).
 
-16. After finishing the tasks unplug the Nucleo board from computer.
-
 ## Summary
 
 In the second workshop, the integration of a servo along with the PES board, servo calibration, and a mechanical button incorporation were performed. Additionally, the creation of a state machine using an ultrasonic sensor was explored. By establishing robot states and implementing transition conditions, a primitive mechatronic system capable of adjusting a servo based on ultrasonic sensor readings was achieved.
@@ -251,6 +249,6 @@ In the second workshop, the integration of a servo along with the PES board, ser
 - [Workshop 2, Part 2](../solutions/main_ws2_p2.cpp)
 
 <p align="center">
-    <img src="../images/pulse_position_eval.png" alt="Normalised Position before and after Calibration" width="710" /> </br>
+    <img src="../images/pulse_position_eval.png" alt="Normalised Position before and after Calibration" width="710"/> </br>
     <i>Normalised Position before and after Calibration</i>
 </p>

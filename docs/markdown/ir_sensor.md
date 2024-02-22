@@ -1,3 +1,10 @@
+<!-- link list, last updated 07.12.2023 -->
+[0]: https://www.pololu.com/product/1136
+[1]: https://www.pololu.com/product/136
+[2]: https://www.pololu.com/product/1137
+[3]: https://robocraze.com/blogs/post/ir-sensor-working
+[4]: https://os.mbed.com/platforms/ST-Nucleo-F446RE/
+
 # Analog distance sensor
 
 The analog distance sensor is equipped with an IR diode and uses triangulation to measure distances. Using infrared technology, it calculates distances by measuring angles (indirectly). This device emits infrared light, observes reflections, and provides real-time distance measurements. Valuable for tasks requiring distance determination, it serves as a cheap and simple solution for applications where you need to measure the distance.
@@ -7,15 +14,15 @@ The analog distance sensor is equipped with an IR diode and uses triangulation t
 
 >Very briefly infrared sensors work on the principle of reflected light waves. Infrared light reflected from objects or sent from an infrared remote or beacon. Infrared sensors can be used to measure distance or proximity. The reflected light is detected and then an estimate of the distance between the sensor and the object is calculated. The following is a simple representation of the principle of operation:
 ><p align="center">
->    <img src="../images/how-infrared-sensors-work.png" alt="how_IR_works" width="440" /> </br>
+>    <img src="../images/how-infrared-sensors-work.png" alt="how_IR_works" width="440"/> </br>
 >    <i> Working Principle </i>
 ></p>
 >
-> More detailed explanation can be found: [HERE][4]
+> More detailed explanation can be found: [HERE][3]
 </details>
 
 <p align="center">
-    <img src="../images/ir-distance-sensor.png" alt="IR_sensor" width="400" /> </br>
+    <img src="../images/ir-distance-sensor.png" alt="IR_sensor" width="400"/> </br>
     <i> Example of IR distance sensor </i>
 </p>
 
@@ -39,16 +46,9 @@ The analog distance sensor is equipped with an IR diode and uses triangulation t
 
 ## Links
 
-[Sharp GP2D120][1] <br>
-[Sharp GP2Y0A21YK0F][2] <br>
-[Sharp GP2Y0A02YK0F][3] <br>
-
-<!-- link list, last updated 07.12.2023 -->
-[1]: https://www.pololu.com/product/1136
-[2]: https://www.pololu.com/product/136
-[3]: https://www.pololu.com/product/1137
-[4]: https://robocraze.com/blogs/post/ir-sensor-working
-[5]: https://os.mbed.com/platforms/ST-Nucleo-F446RE/
+[Sharp GP2D120][0] <br>
+[Sharp GP2Y0A21YK0F][1] <br>
+[Sharp GP2Y0A02YK0F][2] <br>
 
 ## Datasheets
 
@@ -69,7 +69,7 @@ The ``AnalogIn`` class is a driver provided in the ``mbed-os`` libary. The drive
 
 It is necessary to power the sensors with 5.0V. The sensor has 3 wires: one for signal transmission, one for ground, and one for power. The transmission wire needs be to connected to the Nucleo pin that allows the reception of an analog signal, in our example this is the **PC_2** pin.
 
-[Nucleo Board pinmap][5]
+[Nucleo Board pinmap][4]
 
 If you are not sure how to connect the sensor, click the following hint.
 
@@ -77,7 +77,7 @@ If you are not sure how to connect the sensor, click the following hint.
 <summary>Parts of the Nucleo F446RE Pin Map</summary>
 <br>
 <p align="center">
-    <img src="../images/connection_pin_map.png" alt="Cennection pin map" width="700" /> </br>
+    <img src="../images/connection_pin_map.png" alt="Cennection pin map" width="700"/> </br>
     <i>Connection Pin map with marked wire's colors </i>
 </p>
 </details>
@@ -112,7 +112,7 @@ The sensor returns distances in normalised volts, which we then scale to millivo
 >Calibrating the IR distance sensor is essential to establish a precise relationship between the sensor's analog voltage readings and actual distances. In the technical documentation it is possible to find a dependency between voltage readings and distance such as the following:
 >
 ><p align="center">
->   <img src="../images/dist_measure_char.PNG" alt="Distance measuring characteristics" width="450" /> </br>
+>   <img src="../images/dist_measure_char.PNG" alt="Distance measuring characteristics" width="450"/> </br>
 >   <i>Distance measuring characteristics</i>
 ></p>
 >The above figure shows expected values that can serve as a reference for the measurements to be made. However, all sensors, especially those of lower quality (hobby grade), may be characterized by a slightly altered curve, so a calibration process should be carried out before using such sensors for an application where the distance needs to measured acccurately.
@@ -139,7 +139,7 @@ The first step of the procedure is the simultaneous measurement of the actual di
 - Tape the paper tape to the floor from the edge of the wall and use a tape measure to mark the measurement points on the tape (e.g. 0 to 15cm every 1cm, then 17.5 to 30cm every 2.5cm and 35 to 75cm every 5cm, appropriate measurements may vary depending on the sensor type)
 
 <p align="center">
-    <img src="../images/IR_task.png" alt="IR task" width="650" /> </br>
+    <img src="../images/IR_task.png" alt="IR task" width="650"/> </br>
     <i>Performing the exercise</i>
 </p>
 
@@ -238,7 +238,7 @@ printf("IR distance mV: %f IR distance cm: %f \n", ir_distance_mV, ir_distance_c
 
 Below are the graphs showing the results from the calibration process.
 <p align="center">
-    <img src="../images/ir_sensor_eval.png" alt="IR sensor evaluation" width="850" /> </br>
+    <img src="../images/ir_sensor_eval.png" alt="IR sensor evaluation" width="850"/> </br>
     <i>IR sensor evaluation graph</i>
 </p>
 

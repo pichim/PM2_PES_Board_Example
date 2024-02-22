@@ -24,7 +24,7 @@ GitHub is a web-based platform from Microsoft for version control using Git, fac
 * On the top right corner click **Fork**:
 
 <p align="center">
-    <img src="../images/fork.png" alt="Forking the Repository" width="600" /> </br>
+    <img src="../images/fork.png" alt="Forking the Repository" width="600"/> </br>
     <i>Forking the Repository</i>
 </p>
 
@@ -42,49 +42,50 @@ Arm Mbed is a comprehensive embedded systems development platform designed for e
 Arm Mbed Studio is an integrated development environment (IDE) designed for embedded systems. It offers a user-friendly interface with features such as a powerful code editor, compiler, and debugger, streamlining the process of coding for Arm-based microcontrollers. Mbed Studio supports Mbed OS and enables seamless development, compilation, and debugging of embedded applications in a single environment.
 
 <p align="center">
-    <img src="../images/mbed_studio.png" alt="Mbed Studio" width="1200" /> </br>
+    <img src="../images/mbed_studio.png" alt="Mbed Studio" width="1200"/> </br>
     <i>Mbed Studio</i>
 </p>
 
 ### MBed OS Version
 
-During the course we are working with MBed OS version 6. It is important to keep this in mind when you are looking for documentation or examples on the internet. There is also many of examples for older versions of MBed OS, especially MBed OS 2.
+During the course we are working with MBed OS version 6. It is important to keep this in mind when you are looking for documentation or examples on the internet. There are many examples from older versions of MBed OS, especially MBed OS 2 but we need MBed OS 6.
 
-### Importing your first project
+### Importing your first Project
 
 Importing a program from GitHub to Mbed Studio involves linking the local repository with Mbed Studio, enabling seamless collaboration and development on the chosen project:
 * Once MBed Studio is installed, the next step involves creating the program intended for use during the class. This program should be imported from the previously forked repository. Open the **File** menu and select **Import Program**
 
 <p align="center">
-    <img src="../images/importing_mbed.png" alt="Importing the Program" width="420" /> </br>
+    <img src="../images/importing_mbed.png" alt="Importing the Program" width="420"/> </br>
     <i>Importing the Program</i>
 </p>
 
 * Visit the GitHub page of your repository (e.g., https://github.com/YOUR_NICK/NAME_OF_FORKED_REPOSITORY) and copy the **HTTPS** URL, located below the box on your forked repository.
 
 <p align="center">
-    <img src="../images/https_link_github.png" alt="https link github" width="350" /> </br>
+    <img src="../images/https_link_github.png" alt="https link github" width="350"/> </br>
     <i>HTTPS link GitHub</i>
 </p>
 
-* Paste the full HTTPS URL of the relevant web page and (optionally) edit the program name. * If you are changing **Program name**, it is a good a practice to name programs with capital letters, so they can be distinguished from libaries (lowercase letters).
+* Paste the full HTTPS URL of the relevant web page and (optionally) edit the program name.
+* If you are changing the **Project name**, it is a good a practice to name projects with capital letters, so they can be distinguished from libaries (lowercase letters).
 
 <p align="center">
-    <img src="../images/importing_mbed_1.png" alt="Importing Program 1" width="320" /> </br>
+    <img src="../images/importing_mbed_1.png" alt="Importing Program 1" width="320"/> </br>
     <i>Importing Program 1</i>
 </p>
 
-* Then click **Add program**, by default this will be made as active program.
-* To complete the setup you need to choose the **Target** by typing the Nucleo Board that will be used: NUCLEO-F446RE.
+* Then click **Add program**, by default this will be the active program in MBed Studio.
+* To complete the setup you need to choose the **Target** by typing the Nucleo Board type that will be used: In our case **NUCLEO-F446RE**.
 
 <p align="center">
-    <img src="../images/importing_mbed_2.png" alt="Importing Program 2" width="320" /> </br>
+    <img src="../images/importing_mbed_2.png" alt="Importing Program 2" width="320"/> </br>
     <i>Importing Program 2</i>
 </p>
 
 ### Building
 
-Building a program in Mbed Studio involves the process of compiling and linking the source code to create an executable binary file (*.bin file) that can run on a specific microcontroller or embedded system. The build process ensures that the code is translated into machine code compatible with the target platform, and it may involve resolving dependencies, optimizing code, and generating the necessary files for deployment. Once the program is successfully built, the resulting binary file can be loaded onto the microcontroller board to execute the desired functionality. Building is a crucial step to convert human-readable code into a format understandable by the hardware.
+Building a program in Mbed Studio involves the process of compiling and linking the source code to create an executable binary file (*.bin file) that can run on the specific microcontroller. The build process ensures that the code is translated into machine code compatible with the target platform. Once the program is successfully built, the resulting binary file can be loaded onto the microcontroller board to execute the desired functionality.
 
 In Mbed Studio, there are three build profiles:
 
@@ -106,52 +107,52 @@ In Mbed Studio, there are three build profiles:
    - **Symbols:** Debugging symbols are excluded, reducing binary size.
    - **Compile Time:** Faster compile times compared to debug profiles.
 
-Choosing the appropriate build profile depends on the development stage and requirements. Debug profiles aid in effective debugging, Develop profiles offer a balanced compromise, while Release profiles optimize for size and performance in production environments. <br>
-The build process, which translates human-readable code into a format understandable by the hardware, can be performed without a connected board. After importing the program, specify build profile and initiate the build process by clicking the **HAMMER** button.
+Choosing the appropriate build profile depends on the development stage and requirements. Debug profiles aid in effective debugging, Develop profiles offer a balanced compromise, while Release profiles optimize for size and performance in production environments. We generally wokr with the **Develop Profile**.
+
+The build process can be performed without a connected board. After importing the program, specify build profile and initiate the build process by clicking the **HAMMER** button.
 
 <p align="center">
-    <img src="../images/building_mbed.png" alt="Building Program" width="320" /> </br>
+    <img src="../images/building_mbed.png" alt="Building Program" width="320"/> </br>
     <i>Building the Program</i>
 </p>
 
-After the building process in Mbed Studio, the compiled files, including *.bin file are typically stored in the **BUILD** directory within your project folder. 
+The compiled files, including the *.bin file are stored in the **BUILD** directory within your project folder. 
 
 ### Flashing
 
-Flashing a microcontroller board involves programming its non-volatile memory with the compiled binary of your program, enabling it to execute the code during startup. After building your program and connecting the board to your computer, click the **PLAY** button in Mbed Studio to initiate the flashing process. This transfers the compiled binary to the microcontroller's memory, making it ready to run the programmed code.
+Flashing the microcontroller involves programming its non-volatile memory with the compiled binary of your program, enabling it to execute the code during startup. After building your program and connecting the board to your computer, click the **PLAY** button in Mbed Studio to initiate the flashing process. This transfers the compiled binary to the microcontroller's memory, making it ready to run the programmed code.
 
 <p align="center">
-    <img src="../images/flash_mbed.png" alt="Flashing the Board" width="320" /> </br>
+    <img src="../images/flash_mbed.png" alt="Flashing the Board" width="320"/> </br>
     <i>Flashing the Board</i>
 </p>
 
-To accommodate code changes done during developing, you can simply click the **PLAY** button again, prompting Mbed Studio to update the translated file with new elements before transferring it to the board.
+To apply code changes, you can simply click the **PLAY** button, prompting Mbed Studio to build the code and flash it to the microcontroller.
 
-**NOTE:** Periodically deleting the build folder and re-building the program is recommended to avoid potential interference that may arise from adding new code.
+**NOTE:**
+
+Periodically deleting the build folder and re-building the program is recommended to avoid potential interference that may arise from adding new code.
 
 ## Navigating the Environment
 
 ### Connected Board
 
-Upon connecting the Nucleo Board to your computer, it functions as an additional drive in the file explorer. This drive represents the built-in mass storage feature facilitated by the Nucleo Board's on-board ST-Link programmer/debugger. Detected as a removable drive, it often adopts a name like "NODE_F446RE" based on the specific Nucleo model.
+Upon connecting the Nucleo Board to your computer, it is recognised as an additional drive. This drive represents the built-in mass storage feature facilitated by the Nucleo Board's on-board ST-Link programmer/debugger. Detected as a removable drive, it often adopts a name like "NODE_F446RE" (based on the specific Nucleo model).
 
-This drive serves as a convenient avenue for transferring the compiled binary (firmware) of your program to the Nucleo Board. You can easily drag and drop the compiled binary file onto this drive, and the ST-Link interface will subsequently flash the microcontroller's memory with the updated firmware. This process is integral to the flashing or programming step, ensuring your microcontroller is equipped with the latest code.
+This drive serves as a convenient avenue for transferring the compiled binary (firmware) of your program to the Nucleo Board. You can easily drag and drop the compiled binary file onto this drive, and the ST-Link interface will subsequently flash the microcontroller's memory with the updated firmware. This process is integral to the flashing or programming step, ensuring your microcontroller running the latest code.
 
 ### File Storage Location
 
 In Mbed Studio, the Mbed project folder is typically situated in the workspace directory where you created or imported the project. To locate the Mbed project folder and the .bin file:
 
 **1. Project Folder Location:**
-- Open the "This PC" folder.
-- Navigate to the "Windows (C:)" drive.
-- Go to the "Users" directory.
-- Find the directory corresponding to your profile where Mbed Studio is installed.
-- Look for the "Mbed Programs" directory within your profile directory.
-- Inside "Mbed Programs," you'll find folders containing your Mbed programs.
+
+Windows: ``C:\Users\UserName\Mbed Programs\Project``
 
 **2. Locating the .bin File:**
-- Inside your project folder, go to the "BUILD" directory.
-- Within the "BUILD" directory, locate the folder named after your target hardware (e.g., "NUCLEO_F446RE").
-- Open this specific folder, where you will find the .bin file bearing the project name and ".bin" extension.
 
-This .bin file serves as the compiled binary for flashing your microcontroller with the updated firmware. You can either drag and drop it onto the corresponding drive representing your microcontroller or utilize external tools for programming. When you drag and drop the file into the window that appears when the microcontroller is connected, the file disappears from view. However, it's actually uploaded to the microcontroller and should work as expected.
+Windows: ``"C:\Users\UserName\Mbed Programs\Project\BUILD\NUCLEO_TYPE\ARMC6\Project.bin"``
+
+#### Flashing the Microcontroller by Drag and Drop
+
+This ***Project.bin*** file is the compiled binary that can be flashed to the microcontroller. To flash the binary just drag and drop the file the the drive representing your microcontroller.

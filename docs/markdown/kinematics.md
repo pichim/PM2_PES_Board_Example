@@ -1,13 +1,13 @@
+<!-- link list, last updated 16.02.2024 -->
+[0]: https://en.wikipedia.org/wiki/Differential_wheeled_robot
+
 # Differential Robot Kinematics
 
 The kinematics of a differential drive robot describe the relationship between the robot's wheel speed and the translational and rotational velocity of the robot w.r.t. the robot's body frame. The kinematic model accounts for physical parameters such as wheel radius, wheelbase (distance between the wheels), and the differential drive configuration. The goal of this document is to provide a brief overview of the kinematic model and to provide a simple example of how to calculate the necessary wheel speed of a differential drive robot given the desired translational and rotational velocity of the robot.
 
 ## Links
 
-[Wikipedia: Differential Wheeled Robot][1]
-
-<!-- link list, last updated 16.02.2024 -->
-[1]: https://en.wikipedia.org/wiki/Differential_wheeled_robot
+[Wikipedia: Differential Wheeled Robot][0]
 
 ## Problem overiew
 
@@ -29,7 +29,7 @@ The kinematics of a differential drive robot describe the relationship between t
 ## Deriving the Kinematic Model
 
 <p align="center">
-    <img src="../images/kinematics.png" alt="Kinematics" width="700" />
+    <img src="../images/kinematics.png" alt="Kinematics" width="700"/>
 </p>
 
 The computational process should start by defining geometric relationships and begin with simple formulas that will allow us to create transformation matrices from the wheels to the center of the robot, that is, from the rotational wheel speed to the translational and rotational speeds of the robot.
