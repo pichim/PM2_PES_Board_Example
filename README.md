@@ -21,15 +21,15 @@
 [0]: https://os.mbed.com/platforms/ST-Nucleo-F446RE/
 [1]: https://www.st.com/en/microcontrollers-microprocessors/stm32f446re.html#documentation
 
-# PM2 PES-Board, Hardware and Driver Documentation
+# PM2 PES Board, Hardware and Driver Documentation
 
-| Szarek Maciej | Peter Michael |
-|-|-|
-| szar@zhaw.ch | pmic@zhaw.ch |
-| TE 302 | TE 307 |
+Michael Wüthrich | Szarek Maciej | Peter Michael |
+|-|-|-|
+| wuem@zhaw.ch | szar@zhaw.ch | pmic@zhaw.ch |
+| TE 301 | TE 302 | TE 307 |
 
 # Table of Contents
-1. [Course setup](#course-setup)
+1. [Course Setup](#course-setup)
     * [Accounts](docs/markdown/general_info.md#accounts)
     * [Software](docs/markdown/general_info.md#software)
     * [GitHub](docs/markdown/general_info.md#github)
@@ -58,7 +58,7 @@
     * [Workshop 3](docs/markdown/ws3.md)
 5. [Links](#links)
 
-## Course setup
+## Course Setup
 
 In order to be able to complete the course, one must first register on the following platforms and obtain the appropriate tools. All the information needed to start the course can be found in [General Info](docs/markdown/general_info.md).
 
@@ -100,11 +100,11 @@ The PES Board is a hardware board with additional sensors, devices and power ele
 - 9-axis IMU (accelerometer, gyroscope, magnetometer)
 
 ><b>Important Information Related to the PES Board</b>
->- <b>Using the PES-Board with power On and hardware running while connected to your computer/laptop happens at your own risk. There was a case where the students laptop was damaged in the past.</b>
->- <b>Under now circumstances leave the battery charger connected to the PES-Board when using the PES-Board or having it connected to your computer.</b>
+>- <b>Using the PES Board with power On and hardware running while connected to your computer/laptop happens at your own risk. There was a case where the students laptop was damaged in the past.</b>
+>- <b>Under now circumstances leave the battery charger connected to the PES Board when using the PES Board or having it connected to your computer.</b>
 >- <b>Motor encoder soldering can be wrong. Do not assume that if you plug in one motor and everything works you can then also use the same connections with different motor. You have to make sure that the physical rotation is according to your assumption and that a positive input leads to a positive change of increments.</b>
 >- <b>Depending on the PES Board version DCMotor M3 rotation direction might be inverted.</b>
->- <b>Depending on the PES BOARD version the Pin map might differ.</b>
+>- <b>Depending on the PES Board version the Pin map might differ.</b>
 
 The kit includes two sets of 6V battery packs, which can be connected in series to provide 12 volts. The battery packs need to be connected to the back of the PES Board. The picture below illustrates the proper battery connection required to get a total voltage of 12V.
 
@@ -120,8 +120,8 @@ The batteries enables the board to be powered independently of the connection to
 #### Pheripherals
 
 <p align="center">
-    <img src="docs/images/pes_board_peripherals.png" alt="PES Board" width="900"/> </br>
-    <i>PES Board</i>
+    <img src="docs/images/pes_board_peripherals.png" alt="PES Board Pheripherals" width="900"/> </br>
+    <i>PES Board pheripherals</i>
 </p>
 
 PDF: [pes_board_peripherals.pdf](docs/datasheets/pes_board_peripherals.pdf)
@@ -130,7 +130,7 @@ PDF: [pes_board_peripherals.pdf](docs/datasheets/pes_board_peripherals.pdf)
 
 PDF: [pes_board_pin_mapping.pdf](docs/datasheets/pes_board_pin_mapping.pdf)
 
-### Hardware Kid
+### Hardware Kit
 
 - 2x Battery pack 6v / 2300mAh with charger
 - 1x Servo – REELY S-0090
@@ -154,8 +154,8 @@ The following links contain the hardware tutorials. The documents contain specif
 ## Tips
 
 Tips that you might find useful can be found in the document [Tips](docs/markdown/tips.md). Here you can find information about: 
-- [Project development](docs/markdown/tips.md#project-development)
-- [Programming tips](docs/markdown/tips.md#programming-tips)
+- [Project Development](docs/markdown/tips.md#project-development)
+- [Programming Tips](docs/markdown/tips.md#programming-tips)
 - [Structuring a Robot Task](docs/markdown/tips.md#structuring-a-robot-task)
 
 ## Workshops

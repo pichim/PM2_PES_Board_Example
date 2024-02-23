@@ -45,11 +45,11 @@ The ``UltrasonicSensor`` class provides functionality to measure distances by em
 and measuring the time taken for the echo to return. It encapsulates the details of interfacing with the
 sensor hardware and offers a simple interface for obtaining distance measurements in centimeters.
 Maximum measurment distance is approximately 2 meters (measured 198.1 cm) with a mearuement period of 12000
-microseconds. If no new valid measurement is available, the read() function returns -1.0f.
+microseconds. If no new valid measurement is available, the ``read()`` function returns -1.0f.
 
-To start working with the sensor, it is necessary to plug it correclty and create an object in the ``main`` file and assign a digital output.
+To start working with the sensor, it is necessary to plug it correclty and create an object in the ***main.cpp*** file and assign a digital output.
 
-### Connection to the PES-Board
+### Connection to the PES Board
 
 The ultrasonic sensor was tested with a 5V power supply and a single pin that transmits the signal. There for, it can use the same ports as the servos. You can use the the following pins:
 
@@ -62,16 +62,16 @@ PB_D3
 
 [PES Board pinmap](../datasheets/pes_board_peripherals.pdf)
 
-To establish the connection, utilize the cable displayed in the following iamge, as it is compatible with the plug and socket on the sensor. Connect a regular jumper wire to the shown cable and use them for linking to the PES Board. The sensor's pins are labeled, but the plug design ensures a single correct connection: the bidirectional signal is transmitted through the yellow wire.
+To establish the connection, utilize the cable displayed in the following image, as it is compatible with the plug and socket on the sensor, and with pins on the PES Board. When connecting the sensor to the PES Board, remember that the yellow wire carries the bidirectional signal. So, make sure to align the blue plug with the PES Board accordingly to ensure a proper connection.
 
 <p align="center">
-    <img src="../images/Grove-Kabel.png" alt="Cables used to connect to the sensor" width="400"/> </br>
+    <img src="../images/groove_cable_reworked.png" alt="Cables used to connect to the sensor" width="400"/> </br>
     <i>Cable used to connect to the sensor</i>
 </p>
 
 ### Create UltrasonicSensor Object
 
-In the given example, the sensor is plugged into pin D3 on the PES-Board. Initially, it's essential to add the suitable driver to the ``main.cpp`` file and then create an object with the pin's name passed as an argument along with the variable definition that will handle the reading from sensor.
+In the given example, the sensor is plugged into pin **D3** on the PES Board. Initially, it's essential to add the suitable driver to the ***main.cpp*** file and then create an `` UltrasonicSensor`` object inside ``main()`` function with the pin's name passed as an argument along with the variable definition that will handle the reading from sensor.
 
 ```
 #include "pm2_drivers/UltrasonicSensor.h"
@@ -104,7 +104,7 @@ or simply
 us_distance_cm = us_sensor;
 ```
 
-If no new valid measurement is available, the read() function returns -1.0f. This needs to be handeled appropriately in the application, as an example:
+If no new valid measurement is available, the ``read()`` function returns -1.0f. This needs to be handeled appropriately in the application, as an example:
 
 ```
 // read us sensor distance, only valid measurements will update us_distance_cm

@@ -1,4 +1,4 @@
-# Course setup
+# Course Setup
 
 This site guides you through the essential steps to begin the course, starting from creating accounts on required platforms to downloading the relevant software used during the workshops and for your project.
 
@@ -50,7 +50,7 @@ Arm Mbed Studio is an integrated development environment (IDE) designed for embe
 
 During the course we are working with MBed OS version 6. It is important to keep this in mind when you are looking for documentation or examples on the internet. There are many examples from older versions of MBed OS, especially MBed OS 2 but we need MBed OS 6.
 
-### Importing your first Project
+### Importing Your First Project
 
 Importing a program from GitHub to Mbed Studio involves linking the local repository with Mbed Studio, enabling seamless collaboration and development on the chosen project:
 * Once MBed Studio is installed, the next step involves creating the program intended for use during the class. This program should be imported from the previously forked repository. Open the **File** menu and select **Import Program**
@@ -67,7 +67,7 @@ Importing a program from GitHub to Mbed Studio involves linking the local reposi
     <i>HTTPS link GitHub</i>
 </p>
 
-* Paste the full HTTPS URL of the relevant web page and (optionally) edit the program name.
+* Paste the full **HTTPS** URL of the relevant web page and (optionally) edit the program name.
 * If you are changing the **Project name**, it is a good a practice to name projects with capital letters, so they can be distinguished from libaries (lowercase letters).
 
 <p align="center">
@@ -83,9 +83,9 @@ Importing a program from GitHub to Mbed Studio involves linking the local reposi
     <i>Importing Program 2</i>
 </p>
 
-### Building
+### Building a Program
 
-Building a program in Mbed Studio involves the process of compiling and linking the source code to create an executable binary file (*.bin file) that can run on the specific microcontroller. The build process ensures that the code is translated into machine code compatible with the target platform. Once the program is successfully built, the resulting binary file can be loaded onto the microcontroller board to execute the desired functionality.
+Building a program in Mbed Studio involves the process of compiling and linking the source code to create an executable binary file (***.bin** file) that can run on the specific microcontroller. The build process ensures that the code is translated into machine code compatible with the target platform. Once the program is successfully built, the resulting binary file can be loaded onto the microcontroller board to execute the desired functionality.
 
 In Mbed Studio, there are three build profiles:
 
@@ -107,7 +107,7 @@ In Mbed Studio, there are three build profiles:
    - **Symbols:** Debugging symbols are excluded, reducing binary size.
    - **Compile Time:** Faster compile times compared to debug profiles.
 
-Choosing the appropriate build profile depends on the development stage and requirements. Debug profiles aid in effective debugging, Develop profiles offer a balanced compromise, while Release profiles optimize for size and performance in production environments. We generally wokr with the **Develop Profile**.
+Choosing the appropriate build profile depends on the development stage and requirements. Debug profiles aid in effective debugging, Develop profiles offer a balanced compromise, while Release profiles optimize for size and performance in production environments. We generally work with the **Develop Profile**.
 
 The build process can be performed without a connected board. After importing the program, specify build profile and initiate the build process by clicking the **HAMMER** button.
 
@@ -116,7 +116,7 @@ The build process can be performed without a connected board. After importing th
     <i>Building the Program</i>
 </p>
 
-The compiled files, including the *.bin file are stored in the **BUILD** directory within your project folder. 
+The compiled files, including the ***.bin** file are stored in the **BUILD** directory within your project folder. 
 
 ### Flashing
 
@@ -131,7 +131,7 @@ To apply code changes, you can simply click the **PLAY** button, prompting Mbed 
 
 **NOTE:**
 
-Periodically deleting the build folder and re-building the program is recommended to avoid potential interference that may arise from adding new code.
+- Periodically deleting the build folder and re-building the program is recommended to avoid potential interference that may arise from adding new code.
 
 ## Navigating the Environment
 
@@ -143,13 +143,13 @@ This drive serves as a convenient avenue for transferring the compiled binary (f
 
 ### File Storage Location
 
-In Mbed Studio, the Mbed project folder is typically situated in the workspace directory where you created or imported the project. To locate the Mbed project folder and the .bin file:
+In Mbed Studio, the Mbed project folder is typically situated in the workspace directory where you created or imported the project. To locate the Mbed project folder and the ***.bin** file:
 
-**1. Project Folder Location:**
+<b>1. Project Folder Location:</b>
 
 Windows: ``C:\Users\UserName\Mbed Programs\Project``
 
-**2. Locating the .bin File:**
+<b>2. Locating the *.bin File:</b>
 
 Windows: ``"C:\Users\UserName\Mbed Programs\Project\BUILD\NUCLEO_TYPE\ARMC6\Project.bin"``
 

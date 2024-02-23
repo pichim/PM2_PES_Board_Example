@@ -6,7 +6,7 @@
 
 # Analog Servos
 
-A servo is an electrical motor designed for precise control over angular or linear position. It typically consists of a motor connected to a sensor for angle or position feedback and a controller that adjusts the motor's movement to track the specified setpoint. Typically used in applications such as robotics, automation, and remote control, servos are available in various types, including analog, digital, and continuous rotation. This document focuses on analog servos, which are widely used in various applications due to their simplicity and cost-effectiveness.
+A servo is an electrical motor designed for precise control over angular or linear position. It typically consists of a motor connected to a sensor for angle or position feedback and a controller that adjusts the motor's movement to track the specified setpoint. Typically used in applications such as robotics, automation, and remote control, servos are available in various types, including digital, continuous rotation and analog that are described in this tutorial.
 
 <p align="center">
     <img src="../images/servo_image.png" alt="servo example" width="350"/> </br>
@@ -38,22 +38,22 @@ A servo is an electrical motor designed for precise control over angular or line
 
 The internally used sensor measures the angle of the servo's output shaft absolute. This means that the servo knows it's absolute position independently of the angle where the system was turned on. Even when power cycling the servo, it will always moves to the same position when commanded to do so. This is a very useful feature for applications where the servo is used to control a specific angle or position. There for these actuators do not need to be homed or initialized before use.
 
-## Practical Tips - Calibration
+## Practical Tips
 
 - Keep in mind that every servo requires calibration for proper operation. Calibration values can differ not only between different servo models but also among individual units of the same model.
 - The plug and pin arrangement provides two connection options, but one is incorrect and can result in servo failure. Pay close attention to matching the GND pin with the GND servo wire.
 - Operating servos beyond the minimum and maximum values may cause audible stuttering in the device. It's advisable to either disable via software when not used, or even better, to do a proper and precise calibration to avoid this issue.
 
-## Servo driver
+## Servo Driver
 
 The ``servo`` driver is designed for controlling servos, commanding the angle within a normalized range of 0.0f to 1.0f. Internally there is a motion planner running which can be used to perform smooth movements (acceleration constrained trajectories).
 
-### Connection to the PES-board
+### Connection to the PES Board
 ---------------------------
-For the PES-board, analog servos are associated with specific ports, outlined as follows:
+For the PES Board, analog servos are associated with specific ports, outlined as follows:
 
 ```
-// pes-board pin names
+// pes board pin names
 PB_D0
 PB_D1
 PB_D2
@@ -65,15 +65,15 @@ PB_D3
 ### Create Servo Objects
 ---------------------------
 
-Add the servo driver ``Servo.h`` to the top of the ``main.cpp`` file:
+Add the servo driver ``Servo.h`` to the top of the ***main.cpp*** file:
 
 ```
 #include "pm2_drivers/Servo.h"
 ```
 
-To be able to start to use the ``servo`` driver, the initial step is to create the servo objects and specify the pins to which the hardware will be connected in the ``main`` scope.
+To be able to start to use the ``servo`` driver, the initial step is to create the servo objects and specify the pins to which the hardware will be connected in the ``main()`` scope.
 
-In the following step, two servos are plugged into pins D0 - D1 on the PES-Board. Then create an object with the associated pins passed as an argument:
+In the following step, two servos are plugged into pins **D0 - D1** on the PES Board. Then create an object with the associated pins passed as an argument:
 
 ```
 Servo servo_D0(PB_D0);
@@ -100,7 +100,7 @@ In order to properly control the servo, the basic step that should be performed 
 >    <i>Example pulse widths and corresponding angles</i>
 ></p>
 >
->In the second servo illustrations, the zero position corresponds to a pulse width of 1 ms, while the maximum angle is achieved at 2 ms. Hence, a calibration process is undertaken to determine these calibration values. These calibration values are specific to the example shown in the figure and do not hold for the servos we use. Also, our servo drivers runs at 50 Hz, therefor the servo period resp. pulse with is 20 ms.
+>In the second servo illustrations, the zero position corresponds to a pulse width of 1 ms, while the maximum angle is achieved at 2 ms. Hence, a calibration process is undertaken to determine these calibration values. These calibration values are specific to the example shown in the figure and do not hold for the servos we use. Also, our servo drivers runs at 50 Hz, therefor the servo period response pulse with is 20 ms.
 >
 > For more information see: [HERE][2]
 </details>
@@ -115,6 +115,9 @@ After setting the minimum and maximum pulse width via the servo driver, sending 
 > - Servo Futaba S3001/RELY S-0090
 > - Additional wires to connect the servo to the board
 > - Jumper wires
+>
+> Software:
+> - Matlab file: [pulse_to_pos_eval.m](../matlab/pulse_to_pos_eval.m)
 
 #### Procedure
 
@@ -127,7 +130,7 @@ int servo_counter = 0; // define servo counter, this is an additional variable
 const int loops_per_seconds = static_cast<int>(ceilf(1.0f / (0.001f * static_cast<float>(main_task_period_ms))));
 ```
 
-To monitor the *servo_input* value, it's necessary to include the following printing statement outside of the do execute main task scope:
+To monitor the ``servo_input`` variable value, it's necessary to include the following printing statement inside the ``while()`` loop to be enforced every iteration regardless of whether the main task has been triggered:
 
 ```
 // print to the serial terminal
@@ -156,7 +159,7 @@ if ((servo_input < 1.0f) &&                     // constrain servo_input to be <
 servo_counter++;
 ```
 
-To reset the *servo_input* variable to zero and disable the servos without restarting the program, add the following command to the else statement. This is triggered by pressing the **USER** button while the main task is running (second time you press the button).
+To reset the ``servo_input`` variable to zero and disable the servos without restarting the program, add the following command to the ``else()`` statement. This is triggered by pressing the **USER** button while the main task is running (second time you press the button).
 
 ```
 // reset variables and objects
@@ -166,8 +169,8 @@ servo_D1.disable();
 servo_input = 0.0f;
 ```
 
-- In the subsequent step, compile the program. Once compilation is complete, click the **USER** button to initiate the execution. This action prompts the *servo_input* variable value to display on the serial monitor.
-- The goal is to monitor the servo_input variable and the servo. Every one second, this variable increases by the specified value. Record the displayed value on paper after the servo initial movement will take place. Continue monitoring the variable and the servo until increasing the variable no longer results in further rotation. At this point, record the maximum value displayed on the screen.
+- In the subsequent step, compile the program. Once compilation is complete, click the **USER** button to initiate the execution. This action prompts the ``servo_input`` variable value to display on the serial monitor.
+- The goal is to monitor the ``servo_input`` variable and the servo. Every one second, this variable increases by the specified value. Record the displayed value on paper after the servo initial movement will take place. Continue monitoring the variable and the servo until increasing the variable no longer results in further rotation. At this point, record the maximum value displayed on the screen.
 - After collecting the data points, input them into [pulse_to_pos_eval.m](../matlab/pulse_to_pos_eval.m) under the respective headings *servo1_pulse_start*, *servo1_pulse_end* for both servos. This file will create a plot that presents the position dependency before and after the calibration process.
 - Now that the values are known, beneath the servo object declaration, define the appropriate variables with the values obtained in the process.
 
@@ -186,12 +189,12 @@ servo_D0.calibratePulseMinMax(servo_D0_ang_min, servo_D0_ang_max);
 servo_D1.calibratePulseMinMax(servo_D1_ang_min, servo_D1_ang_max);
 ```
 
-- Now the *servo_input* variable in the range from 0.0f to 1.0f will be maped in the driver internally to the pulse width range from value of *servo_D0_ang_min* to value of *servo_D0_ang_max*.
+- Now the ``servo_input`` variable in the range from 0.0f to 1.0f will be maped in the driver internally to the pulse width range from value of ``servo_D0_ang_min`` to value of ``servo_D0_ang_max``.
 
 ### Further Information
 ---------------------------
 
-#### Enabling the servo
+#### Enabling the Servo
 
 To use the servo, the initial step is to enable it. This action starts the servo and moves it to the zero position, as this position is defined as the default. But the initial possition can also be passed as argument so that servo will move to the particular position after enabling it.
 
@@ -213,7 +216,7 @@ if (!servo_D0.isEnabled()) {
 
 The class design incorporates the capability to execute smooth movements by adjusting the servo's maximum acceleration. This feature is suitable for movements that need smooth motions, eliminating abrupt movements. As default, the servo will move as fast as possible.
 
-The following function can be used as an example to establish smooth movement and needs to be placed after the ``servo`` calibration:  
+The following function can be used as an example to establish smooth movement and needs to be placed after the ``servo`` object calibration:  
 
 ```
 // servo.setNormalisedPulseWidth: before calibration (0,1) -> (min pwm, max pwm)

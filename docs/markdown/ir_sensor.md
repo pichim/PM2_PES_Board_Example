@@ -5,7 +5,7 @@
 [3]: https://robocraze.com/blogs/post/ir-sensor-working
 [4]: https://os.mbed.com/platforms/ST-Nucleo-F446RE/
 
-# Analog distance sensor
+# Analog Distance Sensor
 
 The analog distance sensor is equipped with an IR diode and uses triangulation to measure distances. Using infrared technology, it calculates distances by measuring angles (indirectly). This device emits infrared light, observes reflections, and provides real-time distance measurements. Valuable for tasks requiring distance determination, it serves as a cheap and simple solution for applications where you need to measure the distance.
 
@@ -15,7 +15,7 @@ The analog distance sensor is equipped with an IR diode and uses triangulation t
 >Very briefly infrared sensors work on the principle of reflected light waves. Infrared light reflected from objects or sent from an infrared remote or beacon. Infrared sensors can be used to measure distance or proximity. The reflected light is detected and then an estimate of the distance between the sensor and the object is calculated. The following is a simple representation of the principle of operation:
 ><p align="center">
 >    <img src="../images/how-infrared-sensors-work.png" alt="how_IR_works" width="440"/> </br>
->    <i> Working Principle </i>
+>    <i> Working principle </i>
 ></p>
 >
 > More detailed explanation can be found: [HERE][3]
@@ -61,7 +61,7 @@ The analog distance sensor is equipped with an IR diode and uses triangulation t
 * Remember that reliable measurements can only be made within the measurement range. Be especially careful near the minimum range because of its course near this point (see distance measuring characteristics chart in the technical documentation of the sensor).
 * It is important to note that the underlying principle of this measurement method is based on the reflection of a light beam. There for, the measurement is significantly influenced by the surface of the reflecting object. Measuring objects with a surface that reflects light rays poorly will degrade the accuracy.
 
-## Analog distance sensor
+## Analog Distance Sensor
 
 The ``AnalogIn`` class is a driver provided in the ``mbed-os`` libary. The driver maps the input signal received from 0...3.3V to 0.0f...1.0f. This should be kept in mind when using the sensor to interpret the received values correctly.
 
@@ -82,11 +82,13 @@ If you are not sure how to connect the sensor, click the following hint.
 </p>
 </details>
 
+<br>
+
 ### Create Analog Distance Sensor Object
 
-To start working with the sensor, it is necessary to plug it correclty and create an ``AnalogIn`` object in the ``main.cpp`` file.
+To start working with the sensor, it is necessary to plug it correclty and create an ``AnalogIn`` object in the ***main.cpp*** file.
 
-To be able to use the tooling from the MBed platform, it is necessary to include the library at the beginning of the file ``main.cpp`` file:
+To be able to use the tooling from the MBed platform, it is necessary to include the library at the beginning of the ***main.cpp*** file:
 
 ```
 #include "mbed.h"
@@ -121,7 +123,7 @@ The sensor returns distances in normalised volts, which we then scale to millivo
 
 <br>
 
-The first step of the procedure is the simultaneous measurement of the actual distance and the corresponding voltage readings received from the sensor for several distances. Once the values have been measured, it is best to use a program like MATLAB/Python for data processing, where the measurements can be evaluated and further processed. The goal is to approximate the measured characteristics from millivolts to distance in cm as a non-linear function (a map) and determine the coefficients of the function that converts the signal from millivolts into a distance. The solution to this problem will be found via nummerical opitimazitaion. A list of hardware and a linke to a file that is needed to perform the calibration can be found below:
+The first step of the procedure is the simultaneous measurement of the actual distance and the corresponding voltage readings received from the sensor for several distances. Once the values have been measured, it is best to use a program like MATLAB/Python for data processing, where the measurements can be evaluated and further processed. The goal is to approximate the measured characteristics from millivolts to distance in [cm] as a non-linear function (a map) and determine the coefficients of the function that converts the signal from millivolts into a distance. The solution to this problem will be found via nummerical opitimazitaion. A list of hardware and a linke to a file that is needed to perform the calibration can be found below:
 
 >Hardware:
 > - NUCLEO-F446RE board
@@ -136,31 +138,31 @@ The first step of the procedure is the simultaneous measurement of the actual di
 
 #### Procedure
 
-- Tape the paper tape to the floor from the edge of the wall and use a tape measure to mark the measurement points on the tape (e.g. 0 to 15cm every 1cm, then 17.5 to 30cm every 2.5cm and 35 to 75cm every 5cm, appropriate measurements may vary depending on the sensor type)
+- Tape the paper tape to the floor from the edge of the wall and use a tape measure to mark the measurement points on the tape (e.g. 0 to 15 cm every 1 cm, then 17.5 to 30 cm every 2.5 cm and 35 to 75 cm every 5 cm, appropriate measurements may vary depending on the sensor type)
 
 <p align="center">
     <img src="../images/IR_task.png" alt="IR task" width="650"/> </br>
     <i>Performing the exercise</i>
 </p>
 
-- To read the values measured by the sensor, it is essential to include a command that will be executed every iteration of the program. There for, this command is positioned within the *while* loop. The command will start reading sensor values after starting the program execution with the **USER** button. 
+- To read the values measured by the sensor, it is essential to include a command that will be executed every iteration of the program. There for, this command is positioned within the ``while()`` loop but after ``if()`` statement which indicates that the command will start reading sensor values after starting the program execution with the **USER** button. 
 
 ```
 // read analog input
 ir_distance_mV = 1.0e3f * ir_analog_in.read() * 3.3f;
 ```
 
-**Notes:**
+**NOTE:**
 - Keep in mind that the signal is mapped from 0...3.3V to a range of 0.0f...1.0f. Consequently, the reading needs to be multiplied by 3.3, representing the maximum range of the sensor, and then by 1000 to convert the signal from volts to millivolts.
 
-- To continuously receive printouts on the serial monitor, place the command within the while loop, ensuring constant output regardless of the main task execution:
+- To continuously receive printouts on the serial monitor, place the command within the ``while()`` loop, ensuring constant output regardless of the main task execution:
 
 ```
 // print to the serial terminal
 printf("IR distance mV: %f \n", ir_distance_mV);
 ```
 
-- To reset the variables to the initial values without restarting the program, add the following command in the else statement, triggered by pressing the **USER** button while the program is running.
+- To reset the variables to the initial values without restarting the program, add the following command in the ``else()`` statement, triggered by pressing the **USER** button while the program is running.
 
 ```
 // reset variables and objects
@@ -171,9 +173,9 @@ ir_distance_mV = 0.0f;
 - Once the above commands are implemented, the next step is to compile and run the application.
 - During the calibration process, position the sensor's edge at the marked points on the tape. The sensor should face the wall to measure the distance from. It's important to align the sensor beam parallel to the ground. Simultaneously, note the distance and the corresponding readout values displayed on the serial monitor after applying it to each designated point.
 - After collecting the data points, input them into [ir_sensor_eval.m](../matlab/ir_sensor_eval.m) under the respective variables dist_cm and dist_mV. This file aids in determining the coefficients for the optimal-fit curve. To achieve accurate results, it's crucial to define a suitable range of values for the curve fitting.
-- Following this, proceed to create a function that converts the sensor readings into a physical length (cm). While the function definition can be positioned at the end of the ``main.cpp`` file, it must be declared before the *main* function to ensure successful compilation.
+- Following this, proceed to create a function that converts the sensor readings into a physical length [cm]. While the function definition can be positioned at the end of the ***main.cpp*** file, it must be declared before the ``main()`` function to ensure successful compilation.
 
-Function definition (at the end of the **main** file)
+Function definition (at the end of the ***main.cpp*** file)
 
 ```
 float ir_sensor_compensation(float ir_distance_mV)
@@ -200,7 +202,7 @@ Possible situation:
 
 In the case of this function, there is the possibility of a situation where a division by zero is performed. This situation is unlikely but theoretically possible, so it is very important to carefully analyze the operations performed by the program. Dividing by zero can lead to a complete failure, which in the case of a simple robot does not necessarily end up as spectacular as in the case of a drone at an altitude of 30 meters.
 
-Function declaration (at the beginning of the ``main.cpp`` file)
+Function declaration (at the beginning of the ***main.cpp*** file)
 
 ```
 // function declaration, definition at the end
@@ -214,13 +216,13 @@ float ir_distance_mV = 0.0f; // define a variable to store measurement (in mV)
 float ir_distance_cm = 0.0f;
 ```
 
-Following this, proceed to call the function for evaluation within the *while* loop.
+Following this, proceed to call the function for evaluation within the ``while()`` loop.
 
 ```
 ir_distance_cm = ir_sensor_compensation(ir_distance_mV);
 ```
 
-- To reset the variables to the initial values without restarting the program, add the following command to the else statement, triggered by pressing the **USER** button while program is running.
+- To reset the variables to the initial values without restarting the program, add the following command to the ``else()`` statement, triggered by pressing the **USER** button while program is running.
 
 ```
 // reset variables and objects
@@ -244,7 +246,7 @@ Below are the graphs showing the results from the calibration process.
 
 The first graph illustrates the non-linear relationship between the sensor's received voltage and its distance from an obstacle. In the second graph two curves are presented: the blue curve representing measured points and the green curve the optimal-fit function. The third graph shows how well the fitted functions relateds to its optimum (the closer to a linear function, the better).
 
-**Notes:**
+**NOTE:**
 - Keep in mind that the signal is mapped to a range of 0.0f to 1.0f. Consequently, the reading needs to be multiplied by 3.3, representing the maximum range of the sensor, and then by 1000 to convert the signal from volts to millivolts.
 
 - After the calibration, using the sensor is straight forward however, the measured values need to be calibrated using the function acquired during the calibration process. This ensures the result is available as physical distance. Determining this function for each sensor individually is recommended.

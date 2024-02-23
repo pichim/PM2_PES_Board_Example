@@ -2,7 +2,7 @@
 
 Here you'll find valuable tips for your project, development, programming, and writing code for a robot or a similar mechatronic system.
 
-## Project development
+## Project Development
 
 Initial steps for your project and the development process.
 
@@ -22,14 +22,14 @@ This stage holds significant importance, particularly in group collaboration, as
 
 ### 2. Flow-Chart
 
-Creating a flowchart at the project's outset offers important benefits. It provides a visual roadmap, aiding in understanding the project's structure. The flow-chart serves as an early detection tool for potential bottlenecks or complexities, allowing for strategic problem-solving. Detailed planning during the creation of the flow-chart minimizes oversights and unexpected issues. The flow-chart diagram acts as a reference guide, ensuring on-going alignment with the project objectives. Prior to coding, having a comprehensive flow-chart allows for the existence of the entire logic. The programmer can systematically implement the flow-chart and its underlying logic, breaking down the process into individual steps that can be implemented and tested separately. This approach facilitates the gradual evolution of the software, ensuring a structured and efficient implementation process. More about creating flow-chart diagrams can be found under the section [FLow-Chart](#1-flow-chart)
+Creating a flowchart at the project's outset offers important benefits. It provides a visual roadmap, helping in understanding the project's structure. The flow-chart serves as an early detection tool for potential bottlenecks or complexities, allowing for strategic problem-solving. Detailed planning during the creation of the flow-chart minimizes oversights and unexpected issues. The flow-chart diagram acts as a reference guide, ensuring on-going alignment with the project objectives. Prior to coding, having a comprehensive flow-chart allows for the existence of the entire logic. The programmer can systematically implement the flow-chart and its underlying logic, breaking down the process into individual steps that can be implemented and tested separately. This approach facilitates the gradual evolution of the software, ensuring a structured and efficient implementation process. More about creating flow-chart diagrams can be found under the section [FLow-Chart](#1-flow-chart)
 
 ### 3. Coding
 
 When it comes to coding, the following steps are crucial for a successful project development:
 
--  <b>Have no Fear </b>- Start programming as soon as possible. Even if you don't have a clear idea of what you are doing DO IT! You will learn a lot and gain experience that will be useful in the future.
-- <b>Just play</b> - Start small, play with your system, allow yourselft to make errors, learn from them... and have **FUN**!
+-  <b>Have no Fear </b>- Start programming as soon as possible. Even if you don't have a clear idea of what you are doing - DO IT! You will learn a lot and gain experience that will be useful in the future.
+- <b>Just play</b> - Start small, play with your system, allow yourselft to make errors, learn from them... and have <b>FUN!</b>
 - <b>Step by Step Implementation</b> - Start implementing the ideas you have gathered. With an idea of what actuators and sensors you want to use, as well as how your robot is supposed to work - start writing code gradually. Familiarize yourself with the capabilities of the elements you are using and think about their application to your project. 
 - <b>Test</b> - Test your code... test, test, test. Testing after each step is implemented is very important due to the fact that only doing so will protect you from larger errors. Debugging large and complex parts of code weill be painfull!
 - <b>Priftf Debug</b> - When encountering issues in your code, embrace debugging as a crucial problem-solving tool. It entails identifying and resolving errors, ensuring your program functions seamlessly. After detecting each error and before making each change, think about the solution and then make changes, and go back to the previous point!
@@ -45,7 +45,7 @@ Through (fast and early) prototyping, you not only validate the feasibility of y
     <center> <i>Fast Prototyping and 3D Printing</i> </center>
 </p>
 
-## Programming tips
+## Programming Tips
 
 Here are essential programming tips to consider during the coding process:
 
@@ -153,7 +153,7 @@ Below you can find an example of a flow chart of a mechatronic system that will 
     <i>Flow chart</i>
 </p>
 
-### 2. State machine
+### 2. State Machine
 
 A state machine represents different states a robot can be in and the transitions between these states based on certain conditions or events. To create a state machine, follow these steps:
 - <b>Identify States and Events</b> - Enumerate the distinct states your robot can be in (e.g., idle, moving, obstacle detected). Identify events or conditions that trigger transitions between states (e.g. button pressed, sensor input within a certain range, ...). <b>A FLOW-CHART DIAGRAM IS REALLY HELPFUL HERE!</b>

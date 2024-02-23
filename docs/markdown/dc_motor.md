@@ -72,9 +72,9 @@ The ``DCMotor`` class is a versatile tool designed for controlling the velocity 
 
 To start working with the DC motor, it is necessary to plug it correctly and create an object in the ***main.cpp*** file and assign the correct pins.
 
-### Connection to the PES-Board
+### Connection to the PES Board
 
-DC motors have assigned pins on the PES board. Seen from the motor, **PWM** is the input and **ENC** (Encoder) is the output of the system:
+DC motors have assigned pins on the PES Board. Seen from the motor, **PWM** is the input and **ENC** (Encoder) is the output of the system:
 
 ```
 // PES-Board Pin Names
@@ -100,7 +100,7 @@ Pins M1 and M2 represent the output of the H-Bridge, so voltage plus (+) and min
 
 ### Enabling the Power Electronics
 
-The PES board can control up to 3 DC motors. Configuring the driver involves setting up the PWM pins, essential for adjusting the voltage that gets applied.
+The PES Board can control up to 3 DC motors. Configuring the driver involves setting up the PWM pins, essential for adjusting the voltage that gets applied.
 <details Closed>
 <summary><b>H-bridge and PWM</b></summary>
 
@@ -124,25 +124,26 @@ The PES board can control up to 3 DC motors. Configuring the driver involves set
 </details>
 
 <br>
-To power the DC motors, connect the two battery packs to the back of the PES board. Each battery back delivers approx. 6V, resulting in 12V total (parallel). If your are using only one battery pack you have to bridge the remaining pins on the back of the PES board. Turn on the PES board by using the ON/OFF switch. After turning on the power, enable the external power electronics (H-bridge) by creating a ``DigitalOut`` object and set the digital out to 1 (or true). This object needs to be created alongside other necessary variables and objects.
+
+To power the DC motors, connect the two battery packs to the back of the PES Board. Each battery back delivers approx. 6V, resulting in 12V total (parallel). If your are using only one battery pack you have to bridge the remaining pins on the back of the PES Board. Turn on the PES Board by using the ON/OFF switch. After turning on the power, enable the external power electronics (H-bridge) by creating a ``DigitalOut`` object and set the digital out to 1 (or true). This object needs to be created alongside other necessary variables and objects.
 
 <br>
 
 ```
-// create object to enable power electronics for the dc motors
+// create object to enable power electronics for the DC motors
 DigitalOut enable_motors(PB_ENABLE_DCMOTORS);
 ```
 
 To complete the motor activation process, set the value of the object to 1, enabling the power electronics.
 
 ```
-// enable hardwaredriver dc motors: 0 -> disabled, 1 -> enabled
+// enable hardwaredriver DC motors: 0 -> disabled, 1 -> enabled
 enable_motors = 1; // setting this once would actually be enough
 ```
 
-### Create DC Motor Object and command the DC motor
+### Create DC Motor Object and Command the DC motor
 
-The provided examples show three different used cases of a DC motor and how to use the ``DCMotor`` class. We assume that we have three DC motors and encoders that are plugged into pins M1 - M3 on the PES board. You can also test each used case separately when only one DC motor is available.
+The provided examples show three different used cases of a DC motor and how to use the ``DCMotor`` class. We assume that we have three DC motors and encoders that are plugged into pins **M1 - M3** on the PES board. You can also test each used case separately when only one DC motor is available.
 - [Motor M1](#motor-m1-open-loop) is used Open-Loop
 - [Motor M2](#motor-m2-closed-loop-velocity-control) is used Closed-Loop Velocity Control (Rotations per Second)
 - [Motor M3](#motor-m3-closed-loop-position-control) is used Closed-Loop Position Control (Rotations)
@@ -175,7 +176,7 @@ pwm_M1.write(0.75f); // apply 6V to the motor
 
 #### Motor M2 Closed-Loop Velocity Control
 
-Since we are reusing the pins from M1, we can leave the motor connected to M1. To be able to use the dc motor in a velocity controlled closed loop comment out the previous code for motor M1, e.g.:
+Since we are reusing the pins from M1, we can leave the motor connected to M1. To be able to use the DC motor in a velocity controlled closed loop comment out the previous code for motor M1, e.g.:
 
 ```
 // // motor M1
@@ -213,8 +214,8 @@ To receive the measured velocity/speed, include the following command inside the
 printf("Motor velocity: %f \n", motor_M2.getVelocity());
 ```
 
-**Note:**
-- If the motor start spinning immediatly after enabling the hardware with maximum speed, the motor is connected incorrectly and the cables for M1 and M2 from the PES board to the motor or the cables from the encoder A and B need to be swapped.
+**NOTE:**
+- If the motor start spinning immediatly after enabling the hardware with maximum speed, the motor is connected incorrectly and the cables for M1 and M2 from the PES Board to the motor or the cables from the encoder A and B need to be swapped.
 - The maximum physically possible velocity is calculated and set in the driver based on the input arguments.
   
 The default motor driver does not activate the motion planner, meaning the speed setpoint will be reached as quickly as possible. To test this, you can place the following command inside the ``while()`` loop.
@@ -230,7 +231,7 @@ Nevertheless, the driver is designed to be able to command the motor with smooth
     <i>DC Motor Velocity Control Block Diagram</i>
 </p>
 
-To be able to use the motion planner, the module needs to be activated with the following command, that is placed below the dc motor declaration:
+To be able to use the motion planner, the module needs to be activated with the following command, that is placed below the DC motor declaration:
 
 ```
 // enable the motion planner for smooth movement
@@ -251,13 +252,13 @@ Adjustments to the maximum acceleration can be done by using the following comma
 motor_M2.setMaxAcceleration(motor_M2.getMaxAcceleration() * 0.5f);
 ```
 
-**Important Note:**
+**IMPORTANT NOTE:**
 
-You can swap seamlessly between speed and position control by applying the appropriate commands to the motor. The motor driver will automatically switch between the two control modes.
+- You can swap seamlessly between speed and position control by applying the appropriate commands to the motor. The motor driver will automatically switch between the two control modes.
 
 #### Motor M3 Closed-Loop Position Control
 
-Since we are reusing the pins from M1, we can leave the motor connected to M1. To be able to use the dc motor in a position controlled closed loop comment out the previous code for motor M1, e.g.:
+Since we are reusing the pins from M1, we can leave the motor connected to M1. To be able to use the DC motor in a position controlled closed loop comment out the previous code for motor M2, e.g.:
 
 ```
 // // motor M2

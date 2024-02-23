@@ -10,13 +10,13 @@ We will discuss different control strategies for motor control, e.g. speed contr
 ## Hardware
 
 >Part 1:
-> - PES board with NUCLEO-F446RE board
+> - PES Board with NUCLEO-F446RE board
 > - Mini USB cable
 > - DC motor
 > - Jumper wires
 
 >Part 2:
-> - PES board with NUCLEO-F446RE board
+> - PES Board with NUCLEO-F446RE board
 > - Mini USB cable
 > - Ultrasonic sensor 
 > - Mechanical button
@@ -28,9 +28,9 @@ We will discuss different control strategies for motor control, e.g. speed contr
 
 ## Part 1
 
-In the first task, we will focus solely on understanding the motor functionality and control mechanisms. To achieve this, we'll rely on the information provided in the hardware tutorial: [DC Motor Tutorial](../markdown/dc_motor.md)
+In the first task, we will focus just on understanding the motor functionality and control mechanisms. To achieve this, we'll rely on the information provided in the hardware tutorial: [DC Motor Tutorial](../markdown/dc_motor.md)
 
-**Important Note: In this tutorial, the motors are consistently connected to the same pin. However, it's worth noting that there is an option to connect them to different pins: M2 and M3. You can run up to 3 DC motors with one PES board.**
+**Important Note: In this tutorial, the motors are consistently connected to the same pin. However, it's worth noting that there is an option to connect them to different pins: M2 and M3. You can run up to 3 DC motors with one PES Board.**
 
 ## Part 2
 
@@ -50,7 +50,7 @@ Before doing the task you may look at the [Structuring a Robot Task Tutorial](..
    
 2. Connect the mechanical button to pin **PC_5** and and ground to the corresponding pin (see [Nucleo Board Pinmap][0])
    
-3. Define a mechanical button onject in the ``main()`` function with the appropriate pullup mode
+3. Define a ``mechanical button`` object in the ``main()`` function with the appropriate pullup mode
 
 ```
 // mechanical button
@@ -171,7 +171,7 @@ switch (robot_state) {
         break;
 ```
 
-1.   In the **FORWARD** state, include a command to execute 2.9f forward rotations and a condition that transitions to the **BACKWARD** after reaching 2.85f revolutions. Also, add a condition that, if the distance measured by the ultrasonic sensor is less than 7.0f cm, the system will enter the **EMERGENCY** state.
+1.   In the **FORWARD** state, include a command to execute 2.9f forward rotations and a condition that transitions to the **BACKWARD** after reaching 2.85f revolutions. Also, add a condition that, if the distance measured by the ultrasonic sensor is less than 4.5f cm, the system will enter the **EMERGENCY** state.
 
 ```
     case RobotState::FORWARD:
@@ -191,7 +191,7 @@ switch (robot_state) {
         break;
 ```
 
-13.  In the **BACKWARD** state, the device returns to the initial position. Additionally, include a statement to transition to the Sleep state after reaching that position.
+13.  In the **BACKWARD** state, the device returns to the initial position. Additionally, include a statement to transition to the **SLEEP** state after reaching that position.
 
 ```
     case RobotState::BACKWARD:
@@ -206,7 +206,7 @@ switch (robot_state) {
         break;
 ```
 
-14.  In the **EMERGENCY** state, the machine needs to quickly return to the initial position and turn off. To achieve this, disable the motion planner, as it allows for the fastest possible movement. Subsequently, turn off the machine, simulating the effect of pressing the emergency button. To reuse the mechatronic system, reset the machine using the **RESET** button. Inside the **Emergency** state:
+14.  In the **EMERGENCY** state, the machine needs to quickly return to the initial position and turn off. To achieve this, disable the motion planner, as it allows for the fastest possible movement. Subsequently, turn off the machine, simulating the effect of pressing the emergency button. To reuse the mechatronic system, reset the machine using the **RESET** button. Inside the **EMERGENCY** state:
 
 ```
     case RobotState::EMERGENCY:
@@ -245,7 +245,7 @@ motor_M3.enableMotionPlanner(true);
 
 ## Summary
 
-In the third workshop, we explored DC motors and the functionyllity of the drivers. In the first part, we focused on understanding the motor functionality and the different ways to control it. In the second part, we designed a state machine that incorporated the mechanical button and ultrasonic sensor. The state machine mimicked a can crusher press, moving the motor forward and backward, and transitioning to the **EMERGENCY** state if an obstacle was detected.
+In the third workshop, we explored DC motors and the functionality of the drivers. In the first part, we focused on understanding the motor functionality and the different ways to control it. In the second part, we designed a state machine that incorporated the mechanical button and ultrasonic sensor. The state machine mimicked a can crusher press, moving the motor forward and backward, and transitioning to the **EMERGENCY** state if an obstacle was detected.
 
 ## Solutions
 

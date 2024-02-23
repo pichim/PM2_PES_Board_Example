@@ -18,7 +18,7 @@ Participants will explore hardware utilization, specifically the IR Sensor and a
 >Part 2:
 > - NUCLEO-F446RE board
 > - Mini USB cable
-> - IR sensor (check which one you have in your kid, the model name is on the side, it will determine the maximum range of the suported measurements)
+> - IR sensor (check which one you have in your kit, the model name is on the side, it will determine the maximum range of the suported measurements)
 > - Additional wires to connect the sensor to the NUCLEO board
 > - Paper tape
 > - Length measuring tape
@@ -47,7 +47,7 @@ After finishing the task read through the code, read the comments and try to und
 
 ## Part 2
 
-The second task will be carried out using an IR distance sensor. This task will be to calibrate the sensor so that it can be used to measure distances in centimeters. Further we want to understand the sensors possible used cased, corner cases and limitations, basicly to understand the sensor as a system and what to look out for for us an engineers.
+The second task will be carried out using an IR distance sensor. This task will be to calibrate the sensor so that it can be used to measure distances in centimeters. We want to learn more about how sensors are used, including different situations they might be used in, unusual situations, and what they can't do. This helps us understand sensors better as a whole system, so we know what to watch out for as engineers.
 
 1. Read the IR sensor manual. There you can find technical infromation about the sensor and instructions for the connection to the Nucleo board. Perform the calibration according to the hardware tutorial:
    

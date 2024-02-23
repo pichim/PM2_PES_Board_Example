@@ -13,11 +13,11 @@ Furthermore, participants will be introduced to new tools/programming concepts, 
 > - PES board with NUCLEO-F446RE board
 > - Mini USB cable
 > - Servo Futaba S3001/RELY S-0090
-> - Additional wires to connect the servo to the PES board
+> - Additional wires to connect the servo to the PES Board
 > - Jumper wires
 
 >Part 2:
-> - PES board with NUCLEO-F446RE board
+> - PES Board with NUCLEO-F446RE board
 > - Mini USB cable
 > - Ultrasonic sensor 
 > - Mechanical button
@@ -27,13 +27,13 @@ Furthermore, participants will be introduced to new tools/programming concepts, 
 
 ### Assignment
 
-We assume that you know the general structure of the PES board, if not, please visit: [PES board](../../README.md#pes-board)
+We assume that you know the general structure of the PES Board, if not, please visit: [PES board](../../README.md#pes-board)
 
 ## Part 1
 
 The first task will be the integration of two servo motors and the corresponding calibration process.
 
-1. Refer to the Servo manual for a step-by-step hardware tutorial on the usage of a servo motor and on the calibration process. There you can find also information about how to connect the servos to the PES board. Follow the instructions outlined in the haradware tutorial to complete the calibration.
+1. Refer to the Servo manual for a step-by-step hardware tutorial on the usage of a servo motor and on the calibration process. There you can find also information about how to connect the servos to the PES Board. Follow the instructions outlined in the haradware tutorial to complete the calibration.
 
     > [Servo Tutorial](../markdown/servo.md)
 
@@ -57,7 +57,7 @@ Below you can find a flow chart diagram showing the logic of the transitions for
     <i>Flow chart</i>
 </p>
 
-1. Connect the mechanical button to the **PC_5** pin on the Nucleo board (see [Nucleo Board Pinmap][0]). And add the ultrasonic distance sensor driver ***UltrasonicSensor.h*** to the top of the ***main.cpp*** file:
+1. Connect the mechanical button to the **PC_5** pin on the Nucleo board (see [Nucleo Board Pinmap][0]). And add the ultrasonic distance sensor driver ``UltrasonicSensor.h`` to the top of the ***main.cpp*** file:
 
 ```
 #include "pm2_drivers/UltrasonicSensor.h"
