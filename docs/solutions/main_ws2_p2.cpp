@@ -59,8 +59,8 @@ int main()
     float us_distance_cm = 0.0f;
 
     // min and max ultra sonic sensor reading
-    float us_distance_min = 4.0f;
-    float us_distance_max = 50.0f;
+    float us_distance_min = 6.0f;
+    float us_distance_max = 40.0f;
 
     // servo
     Servo servo_D0(PB_D0);

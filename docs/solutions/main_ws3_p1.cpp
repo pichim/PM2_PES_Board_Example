@@ -68,10 +68,10 @@ int main()
     // it is assumed that only one motor is available, there fore
     // we use the pins from M1, so you can leave it connected to M1
     DCMotor motor_M3(PB_PWM_M1, PB_ENC_A_M1, PB_ENC_B_M1, gear_ratio_M3, kn_M3, voltage_max);
-    // limit max. velocity to half physical possible velocity
-    motor_M3.setMaxVelocity(motor_M3.getMaxPhysicalVelocity() * 0.5f);
     // enable the motion planner for smooth movement
     motor_M3.enableMotionPlanner(true);
+    // limit max. velocity to half physical possible velocity
+    motor_M3.setMaxVelocity(motor_M3.getMaxPhysicalVelocity() * 0.5f);
 
     // start timer
     main_task_timer.start();

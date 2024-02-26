@@ -178,14 +178,14 @@ switch (robot_state) {
         // press is moving forward until it reaches 2.9f rotations, 
         // when reaching the value go to BACKWARD
         motor_M3.setRotation(2.9f); // setting this once would actually be enough
-        // switching condition is sligthly smaller for robustness
-        if (motor_M3.getRotation() > 2.89f) {
-            robot_state = RobotState::BACKWARD;
-        }
         // if the distance from the sensor is less than 4.5f cm,
         // we transition to the EMERGENCY state
         if (us_distance_cm < 4.5f) {
             robot_state = RobotState::EMERGENCY;
+        }
+        // switching condition is sligthly smaller for robustness
+        if (motor_M3.getRotation() > 2.89f) {
+            robot_state = RobotState::BACKWARD;
         }
 
         break;

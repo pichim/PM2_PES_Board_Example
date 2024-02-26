@@ -134,7 +134,7 @@ To power the DC motors, connect the two battery packs to the back of the PES Boa
 DigitalOut enable_motors(PB_ENABLE_DCMOTORS);
 ```
 
-To complete the motor activation process, set the value of the object to 1, enabling the power electronics.
+To complete the motor activation process, set the value of the object to 1, enabling the power electronics. This should be applied inside the ``while()`` loop, and preferably inside the ``if()`` function so that activation takes place consciously.
 
 ```
 // enable hardwaredriver DC motors: 0 -> disabled, 1 -> enabled
@@ -205,7 +205,11 @@ const float kn_M2 = 180.0f / 12.0f;  // motor constant
 // it is assumed that only one motor is available, there fore
 // we use the pins from M1, so you can leave it connected to M1
 DCMotor motor_M2(PB_PWM_M1, PB_ENC_A_M1, PB_ENC_B_M1, gear_ratio_M2, kn_M2, voltage_max);
-motor_M2.enableMotionPlanner(true);
+```
+We can additionally use the driver functionality to limit the maximum rotational velocity to half the maximum physical velocity at which the motor can rotate.
+```
+// limit max. velocity to half physical possible velocity
+motor_M2.setMaxVelocity(motor_M2.getMaxPhysicalVelocity() * 0.5f);
 ```
 
 To receive the measured velocity/speed, include the following command inside the ``while()`` loop that prints motor speed values to the serial terminal. This allows us to verify the correctness of the connection, ensuring that the motor's rotation direction aligns with our expectations and corresponds to the displayed speed values.
@@ -267,7 +271,12 @@ Since we are reusing the pins from M1, we can leave the motor connected to M1. T
 // // it is assumed that only one motor is available, there fore
 // // we use the pins from M1, so you can leave it connected to M1
 // DCMotor motor_M2(PB_PWM_M1, PB_ENC_A_M1, PB_ENC_B_M1, gear_ratio_M2, kn_M2, voltage_max);
+// // limit max. velocity to half physical possible velocity
+// motor_M2.setMaxVelocity(motor_M2.getMaxPhysicalVelocity() * 0.5f);
+// // enable the motion planner for smooth movements
 // motor_M2.enableMotionPlanner(true);
+// // limit max. acceleration to half of the default acceleration
+// motor_M2.setMaxAcceleration(motor_M2.getMaxAcceleration() * 0.5f);
 ```
 
 To use Motor M3 in closed loop for position control, we insert the following code snipped:

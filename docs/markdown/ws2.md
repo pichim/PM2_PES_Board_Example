@@ -140,8 +140,8 @@ switch (robot_state) {
 
 ```
 // min and max ultra sonic sensor reading, (us_distance_min, us_distance_max) -> (servo_min, servo_max)
-float us_distance_min = 4.0f;
-float us_distance_max = 50.0f;
+float us_distance_min = 6.0f;
+float us_distance_max = 40.0f;
 ```
 
 9. Implement the following code snippet and discuss it:

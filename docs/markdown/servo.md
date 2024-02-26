@@ -150,8 +150,11 @@ if (!servo_D1.isEnabled())
 - Next, use the following function and statements. These will enable the incremental adjustment of the servo position every one second. It is important to ensure that the incremental change in the servo position, i.e., the pulse width, is very small to obtain precise minimum and maximum values. Try to find a tradoff between too large and therefor too long execution time to wait for and too small and therefor not long enough values.
 
 ```
+// command the servos
 servo_D0.setNormalisedPulseWidth(servo_input);
 servo_D1.setNormalisedPulseWidth(servo_input);
+
+// calculate inputs for the servos for the next cycle
 if ((servo_input < 1.0f) &&                     // constrain servo_input to be < 1.0f
     (servo_counter % loops_per_seconds == 0) && // true if servo_counter is a multiple of loops_per_second
     (servo_counter != 0))                       // avoid servo_counter = 0
