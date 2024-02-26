@@ -67,7 +67,7 @@ DCMotor motor_M2(PB_PWM_M2, PB_ENC_A_M2, PB_ENC_B_M2, gear_ratio, kn, voltage_ma
 - The control algorithm in the ``LineFollower`` driver works best if the motion planner for the dc motors is disabled.
 
 ### Connection to the PES Board
----------------------------
+
 As communication protocol I2C is used. I2C relies on a data pin and a clock pin (more information can be found [here][2]). To power the sensor, a voltage of 5V is required.
 
 In the described robot, the following pins are utilized:
@@ -98,7 +98,6 @@ To plug the power source you will need to use:
 </p>
 
 ### Create Line Follower Object
----------------------------
 
 Initially, it's essential to add the suitable driver to our ***main.cpp*** file and then create an object with the following variables defined (in **SI** units):
 
@@ -127,7 +126,7 @@ LineFollower lineFollower(PB_9, PB_8, bar_dist, d_wheel, L_wheel, motor_M2.getMa
 - The velocity values provided as input are originally expressed in revolutions per second. However, within the driver, these values are converted into radians per second for calculation purposes. Once the calculation is completed in the driver, it is then converted back into revolutions per second. This conversion allows for the use of a unit directly compatible with the DC motor object.
 
 ### Parametres Adjustment
----------------------------
+
 The ``LineFollower`` class provides functionality to dynamically adjust the following key parameters:
 
 1. Proportional Gain (Kp) and Non-linear Gain (Kp_nl):
@@ -141,7 +140,7 @@ The ``LineFollower`` class provides functionality to dynamically adjust the foll
 - Description: This parameter limits the maximum wheel velocity (argument in rotations per second), indirectly affecting the robot's linear and angular velocities. User can adjust this limit to optimize performance for their system (tuning).
 
 ### Driver Ussage
----------------------------
+
 The mathematical operations carried out within the driver determine the speed values for each wheel: right and left. These speed values are expressed in revolutions per second (RPS), allowing direct control of the motors using these values. Below is the code that should be executed when the **USER** button is pressed.
 
 ```
@@ -158,7 +157,7 @@ motor_M2.setVelocity(lineFollower.getLeftWheelVelocity());  // set a desired spe
 Below, you'll find an in-depth manual explaining the inner driver functions. While it's not mandatory to use this manual, familiarizing yourself with the content will certainly help. For enhanced comprehension, it's recommended to refer to the [kinematics](../markdown/kinematics.md) document, which provides explanations of the mathematical operations involved.
 
 ### Thread Algorithm Description
----------------------------
+
 The ``followLine()`` function is a thread task method responsible for controlling the robot to follow a line based on sensor readings.
 
 1. Thread Execution: The ``followLine()`` method runs continuously in a thread loop. It waits for a thread flag to be set before executing, indicating that it should perform the task.
@@ -174,7 +173,7 @@ The ``followLine()`` function is a thread task method responsible for controllin
 4. Wheel Velocity Conversion: The calculated wheel speeds are converted from radians per second to revolutions per second (``m_right_wheel_velocity`` and ``m_left_wheel_velocity``).
 
 #### Angular Velocity Controller
--------------------------------
+
 The ``ang_cntrl_fcn()`` function is responsible for calculating the angular velocity of the robot based on the detected angle of the line relative to the robot's orientation. This function uses proportional and non-linear control to calculate the velocity based on the measured angle.
 
 1. Input Parameters:
@@ -196,7 +195,7 @@ The ``ang_cntrl_fcn()`` function is responsible for calculating the angular velo
 - The function returns the calculated angular velocity (``retval``).
 
 #### Linear Velocity Controller
--------------------------------
+
 The ``vel_cntrl_fcn()`` function calculates the linear velocity of the robot based on its angular velocity and geometric parameters. The function ensures that one of the robot's wheels always turns at the maximum velocity specified by the user while the other adjusts its speed to maintain the desired angular velocity.
 
 1. Input Parameters:

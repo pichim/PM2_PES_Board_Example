@@ -49,7 +49,7 @@ The internally used sensor measures the angle of the servo's output shaft absolu
 The ``servo`` driver is designed for controlling servos, commanding the angle within a normalized range of 0.0f to 1.0f. Internally there is a motion planner running which can be used to perform smooth movements (acceleration constrained trajectories).
 
 ### Connection to the PES Board
----------------------------
+
 For the PES Board, analog servos are associated with specific ports, outlined as follows:
 
 ```
@@ -63,7 +63,6 @@ PB_D3
 [PES Board pinmap](../datasheets/pes_board_peripherals.pdf)
 
 ### Create Servo Objects
----------------------------
 
 Add the servo driver ``Servo.h`` to the top of the ***main.cpp*** file:
 
@@ -81,7 +80,6 @@ Servo servo_D1(PB_D1);
 ```
 
 ### Calibration
----------------------------
 
 In order to properly control the servo, the basic step that should be performed is the calibration.
 
@@ -195,7 +193,6 @@ servo_D1.calibratePulseMinMax(servo_D1_ang_min, servo_D1_ang_max);
 - Now the ``servo_input`` variable in the range from 0.0f to 1.0f will be maped in the driver internally to the pulse width range from value of ``servo_D0_ang_min`` to value of ``servo_D0_ang_max``.
 
 ### Further Information
----------------------------
 
 #### Enabling the Servo
 
