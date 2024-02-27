@@ -190,3 +190,19 @@ The following links contain the workshops instructions:
 - https://www.digikey.com
 - https://www.conrad.ch
 - https://www.distrelec.ch
+
+## C++ Online Compiler and Example Projects (at your own risk : - ))
+
+### Online C++ Compiler
+
+- Online C++ Compiler: https://www.onlinegdb.com/online_c++_compiler
+
+### C/C++ for Visual Studio Code
+
+- C/C++ for Visual Studio Code: https://code.visualstudio.com/docs/languages/cpp
+
+The following links are kind of older projects, but they might help you to get started with C++ in Visual Studio Code.
+
+- Example Projects:
+  - Windows: https://github.com/pichim/chirp
+  - Windows using WSL: https://github.com/pichim/mag_calib
