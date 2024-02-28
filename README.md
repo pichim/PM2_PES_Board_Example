@@ -37,7 +37,7 @@ Michael Wüthrich | Szarek Maciej | Peter Michael |
 
 2. [Hardware](#hardware)
     * [Nucleo F446RE](#nucleo-f446re)
-        * [Nucleo Pinmap](#nucleo-platform-pinmap)
+        * [Nucleo Pinmap][0]
     * [PES Board](#pes-board)
         * [Pheripherals](#pheripherals)
         * [Pin-Mapping](#pin-mapping)

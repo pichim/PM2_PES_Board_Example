@@ -1,7 +1,7 @@
 <!-- link list, last updated 07.12.2023 -->
 [0]: https://www.pololu.com/product/1136
 [1]: https://www.pololu.com/product/136
-[2]: https://www.pololu.com/product/1137
+[2]: https://www.pololu.com/product/2464
 [3]: https://robocraze.com/blogs/post/ir-sensor-working
 [4]: https://os.mbed.com/platforms/ST-Nucleo-F446RE/
 
@@ -28,33 +28,29 @@ The analog distance sensor is equipped with an IR diode and uses triangulation t
 
 ## Technical Specifications
 
-| | | | Sharp GP2D120 | Sharp GP2Y0A21YK0F | Sharp GP2Y0A02YK0F|
+| | | | Sharp GP2D120 | Sharp GP2Y0A21YK0F | Sharp GP2Y0A41SK0F|
 |-|-|-|-|-|-|
 | |Symbol|Conditions| | | |
 |**Absolute Maximum Ratings**       |    |Ta=25 °C, Vcc = 5 VDC|                                    |                                    |                          |
 |Supply Voltage                     |Vcc |                     |-0.3 to +7 V                        |-0.3 to +7 V                        |-0.3 to +7 V              |
 |Output Terminal Voltage            |Vo  |                     |-0.3 to (Vcc +0.3) V                |-0.3 to (Vcc +0.3) V                |-0.3 to (Vcc +0.3) V      |
 |Operating Temperature              |Topr|                     |-10 to +60 °C                       |-10 to +60 °C                       |-10 to +60 °C             |
-|Storage Temperature                |Tstg|                     |-40 to +70 °C                       |-40 to +70 °C                       |-40 to +70 °C             |
-|**Operating Supply Voltage**                                                                                                               |
+|**Operating Supply Voltage**                                                                                                                                       |
 |Supply Voltage                     |Vcc |                     |4.5 to 5.5 V                        |4.5 to 5.5 V                        |4.5 to 5.5 V              |
 |**Electro-optical Characteristics**|    |Ta=25 °C, Vcc = 5 VDC|                                    |                                    |                          |
-|Measuring Distance Range           |ΔL  |                     |(MIN) 4.00 (TYP) ---- (MAX) 30.0 cm |(MIN) 10.0 (TYP) ---- (MAX) 30.0 cm |(MIN) 20.0 (TYP) ---- (MAX) 150 cm |
-|Output Terminal Voltage            |Vo  |at max range         |(MIN) 0.25 (TYP) 0.40 (MAX) 0.55 V  |(MIN) 0.25 (TYP) 0.40 (MAX) 0.55 V  |(MIN) 0.25 (TYP) 0.40 (MAX) 0.55 V |
-|Output Terminal Difference         |ΔVo |between range limits |(MIN) 1.95 (TYP) 2.25 (MAX) 2.55 V  |(MIN) 1.65 (TYP) 1.90 (MAX) 2.15 V  |(MIN) 1.80 (TYP) 2.05 (MAX) 2.30 V |
-|Average Supply Current             |Icc |at max range         |(MIN) ---- (TYP) 33.0 (MAX) 50.0 mA |(MIN) ---- (TYP) 30.0 (MAX) 40.0 mA |(MIN) ---- (TYP) 33.0 (MAX) 50.0 mA |
+|Measuring Distance Range           |ΔL  |                     |(MIN) 4.0 (TYP) ---- (MAX) 30.0 cm  |(MIN) 10.0 (TYP) ---- (MAX) 30.0 cm |(MIN) 4.0 (TYP) ---- (MAX) 30.0 cm |
 
 ## Links
 
 [Sharp GP2D120][0] <br>
 [Sharp GP2Y0A21YK0F][1] <br>
-[Sharp GP2Y0A02YK0F][2] <br>
+[Sharp GP2Y0A41SK0F][2] <br>
 
 ## Datasheets
 
 [Sharp GP2D120](../datasheets/GP2D120-DATA-SHEET.pdf) <br>
 [Sharp GP2Y0A21YK0F](../datasheets/gp2y0a21yk0f.pdf) <br>
-[Sharp GP2Y0A02YK0F](../datasheets/gp2y0a02yk_e.pdf)
+[Sharp GP2Y0A41SK0F](../datasheets/GP2Y0A41SK0F.pdf)
 
 ## Practical Tips
 
@@ -99,7 +95,6 @@ Create an object with the pin's name passed as an argument and define a variable
 ```
 // ir distance sensor
 float ir_distance_mV = 0.0f; // define a variable to store measurement (in mV)
-float ir_distance_cm = 0.0f;
 AnalogIn ir_analog_in(PC_2); // create AnalogIn object to read in the infrared distance sensor
                              // 0...3.3V are mapped to 0...1
 ```
@@ -138,7 +133,7 @@ The first step of the procedure is the simultaneous measurement of the actual di
 
 #### Procedure
 
-- Tape the paper tape to the floor from the edge of the wall and use a tape measure to mark the measurement points on the tape (e.g. 0 to 15 cm every 1 cm, then 17.5 to 30 cm every 2.5 cm and 35 to 75 cm every 5 cm, appropriate measurements may vary depending on the sensor type)
+- Tape the paper tape to the flat surface from the edge of the choosen object and use a tape measure to mark the measurement points on the tape (e.g. 0 to 15 cm every 1 cm, then 17.5 to 30 cm every 2.5 cm and 35 to 75 cm every 5 cm, appropriate measurements may vary depending on the sensor type)
 
 <p align="center">
     <img src="../images/IR_task.png" alt="IR task" width="650"/> </br>
@@ -172,7 +167,7 @@ ir_distance_mV = 0.0f;
 
 - Once the above commands are implemented, the next step is to compile and run the application.
 - During the calibration process, position the sensor's edge at the marked points on the tape. The sensor should face the wall to measure the distance from. It's important to align the sensor beam parallel to the ground. Simultaneously, note the distance and the corresponding readout values displayed on the serial monitor after applying it to each designated point.
-- After collecting the data points, input them into [ir_sensor_eval.m](../matlab/ir_sensor_eval.m) under the respective variables dist_cm and dist_mV. This file aids in determining the coefficients for the optimal-fit curve. To achieve accurate results, it's crucial to define a suitable range of values for the curve fitting.
+- After collecting the data points, input them into [ir_sensor_eval.m](../matlab/ir_sensor_eval.m) under the respective variables dist_cm and dist_mV. This file aids in determining the coefficients for the optimal-fit curve. <b>To achieve accurate results, it's crucial to define a suitable range of values for the curve fitting. Check the name of the sensor and look for its range, only within this range the fitting will be accurate</b>
 - Following this, proceed to create a function that converts the sensor readings into a physical length [cm]. While the function definition can be positioned at the end of the ***main.cpp*** file, it must be declared before the ``main()`` function to ensure successful compilation.
 
 Function definition (at the end of the ***main.cpp*** file)
