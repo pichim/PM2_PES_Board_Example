@@ -73,6 +73,12 @@ This document covers all the information about:
 
 During the course, we will use the Nucleo-F446RE board from ST in combination with the PES board designed and developed at ZHAW. The basic hardware kid that students receive includes a variety of sensors and actuators for practical applications.
 
+>**IMPORTANT NOTE:**
+>
+>- <b>When working with hardware (connecting, reconnecting etc.), board must always be de-energised (PES Board not connected to computer and power switch on board OFF)</b>
+>- <b>The USB cable should only be connected to the computer after the power switch has been switched on.</b> 
+>- <b>Some laptops have already been damaged during inappropriate use of the board and hardwares.</b>
+
 ### Nucleo F446RE
 
 The Nucleo-F446RE is a microcontroller development board featuring the STM32F446RET6 microcontroller from STMicroelectronics. It provides a versatile platform for prototyping and developing embedded systems, offering a wide range of peripherals, connectivity options, and compatibility with the Arduino and ST Morpho ecosystems.
@@ -99,9 +105,9 @@ The PES Board is a hardware board with additional sensors, devices and power ele
 - 3 Encoder-Counter
 - 9-axis IMU (accelerometer, gyroscope, magnetometer)
 
-><b>Important Information Related to the PES Board</b>
->- <b>Using the PES Board with power On and hardware running while connected to your computer/laptop happens at your own risk. There was a case where the students laptop was damaged in the past.</b>
->- <b>Under now circumstances leave the battery charger connected to the PES Board when using the PES Board or having it connected to your computer.</b>
+>**IMPORTANT NOTE:**
+>- <b>Using the PES Board with power ON and hardware running while connected to your computer/laptop happens at your own risk. There was a case where the students laptop was damaged in the past.</b>
+>- <b>The voltage of the DO (servos) is set via the switch behind the charging socket: 3.3 V or 5 V</b>
 >- <b>Motor encoder soldering can be wrong. Do not assume that if you plug in one motor and everything works you can then also use the same connections with different motor. You have to make sure that the physical rotation is according to your assumption and that a positive input leads to a positive change of increments.</b>
 >- <b>Depending on the PES Board version DCMotor M3 rotation direction might be inverted.</b>
 >- <b>Depending on the PES Board version the Pin map might differ.</b>
@@ -113,9 +119,12 @@ The kit includes two sets of 6V battery packs, which can be connected in series 
     <i>Battery Packs</i>
 </p>
 
-If you are using a single battery pack, the remaining pins need to be bridged.
+The batteries enables the board to be powered independently of the connection to the computer/laptop, eliminating the need for a connection via the Mini USB cable. The board continues to receive a stable 5V supply while offering the option to use a 12V supply for the power electronics of the motors. To activate the external battery power, switch the slider on the PES Board to the ON position.
 
-The batteries enables the board to be powered independently of the connection to the computer/laptop, eliminating the need for a connection via the Mini USB cable. The board continues to receive a stable 5V supply while offering the option to use a 12V supply for the power electronics of the motors. To activate the external battery power, switch the slider on the PES board to the ON position.
+<b>Single battery pack</b> - if you are using a single battery pack, the remaining pins need to be bridged. If only 6 V is used, this must be parameterised accordingly in the firmware when parameterising motion controller class.
+
+<b>Charging bateries</b> - the battery packs are only charged when the PES Board circuit breaker is set to OFF.
+
 
 #### Pheripherals
 
