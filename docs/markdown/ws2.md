@@ -221,6 +221,7 @@ if (do_reset_all_once) {
     led1 = 0;
     servo_D0.disable();
     us_distance_cm = 0.0f;
+    robot_state = RobotState::INITIAL;
 }
 ```
 
