@@ -248,8 +248,3 @@ In the second workshop, the integration of a servo along with the PES board, ser
 
 - [Workshop 2, Part 1](../solutions/main_ws2_p1.cpp)
 - [Workshop 2, Part 2](../solutions/main_ws2_p2.cpp)
-
-<p align="center">
-    <img src="../images/pulse_position_eval.png" alt="Normalised Position before and after Calibration" width="710"/> </br>
-    <i>Normalised Position before and after Calibration</i>
-</p>

@@ -113,9 +113,6 @@ After setting the minimum and maximum pulse width via the servo driver, sending 
 > - Servo Futaba S3001/RELY S-0090
 > - Additional wires to connect the servo to the board
 > - Jumper wires
->
-> Software:
-> - Matlab file: [pulse_to_pos_eval.m](../matlab/pulse_to_pos_eval.m)
 
 #### Procedure
 
