@@ -75,9 +75,9 @@ During the course, we will use the Nucleo-F446RE board from ST in combination wi
 
 >**IMPORTANT NOTE:**
 >
->- <b>When working with hardware (connecting, reconnecting etc.), board must always be de-energised (PES Board not connected to computer and power switch on board OFF)</b>
+>- <b>When working with hardware (connecting, reconnecting etc.), it is recommended that all power sources are disconnected. This is a general safety measurement! So for us, the Nucleo is disconnected and the PES Board **Power Switch** is **OFF** when ever we change someting at the hardware setup.</b>
 >- <b>The USB cable should only be connected to the computer after the power switch has been switched on.</b> 
->- <b>Some laptops have already been damaged during inappropriate use of the board and hardwares.</b>
+>- <b>Various Nucleo boards, PES Borads and even laptops have been damaged in the past.</b>
 
 ### Nucleo F446RE
 
