@@ -221,7 +221,7 @@ The following function can be used as an example to establish smooth movement an
 servo_D0.calibratePulseMinMax(servo_D0_ang_min, servo_D0_ang_max);
 
 // default acceleration of the servo motion profile is 1.0e6f
-servo_D0.setMaxAcceleration(0.**3f**);
+servo_D0.setMaxAcceleration(0.3f);
 ```
 
 This function allows the adjustment of the maximum acceleration during the movement. If the argument is omitted, the function defaults to a very large number, resulting in the fastest possible movement. For a smooth motion, you can input any argument greater than zero.
