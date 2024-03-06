@@ -169,7 +169,6 @@ servo_input = 0.0f;
 
 - In the subsequent step, compile the program. Once compilation is complete, click the **USER** button to initiate the execution. This action prompts the ``servo_input`` variable value to display on the serial monitor.
 - The goal is to monitor the ``servo_input`` variable and the servo. Every one second, this variable increases by the specified value. Record the displayed value on paper after the servo initial movement will take place. Continue monitoring the variable and the servo until increasing the variable no longer results in further rotation. At this point, record the maximum value displayed on the screen.
-- After collecting the data points, input them into [pulse_to_pos_eval.m](../matlab/pulse_to_pos_eval.m) under the respective headings *servo1_pulse_start*, *servo1_pulse_end* for both servos. This file will create a plot that presents the position dependency before and after the calibration process.
 - Now that the values are known, beneath the servo object declaration, define the appropriate variables with the values obtained in the process.
 
 ```
