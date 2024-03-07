@@ -75,7 +75,7 @@ mechanical_button.mode(PullUp);    // sets pullup between pin and 3.3 V, so that
 
 3. Read the ultrasonic sensor manual and create an object in the ``main()`` function
     >[Ultrasonic Sensor Manual](../markdown/ultrasonic_sensor.md)
-4. Make sure that you add a statement to handle non-valid measurment e.g.:
+4. Make sure that you add a reading command and statement to handle non-valid measurment. This should be placed inside ``while()`` loop within ``if()`` statement, to be executed after clicking **USER** button:
 
 ```
 // read us sensor distance, only valid measurements will update us_distance_cm
@@ -97,7 +97,7 @@ enum RobotState {
 } robot_state = RobotState::INITIAL;
 ```
 
-6. In the ``while()`` loop, after setting the varibale ``do_execute_main_task``, place the blank template of the state machine:
+6. In the ``while()`` loop, after setting the variable ``do_execute_main_task``, place the blank template of the state machine:
 
 ```
 // state machine
@@ -248,3 +248,8 @@ In the second workshop, the integration of a servo along with the PES board, ser
 
 - [Workshop 2, Part 1](../solutions/main_ws2_p1.cpp)
 - [Workshop 2, Part 2](../solutions/main_ws2_p2.cpp)
+
+<p align="center">
+    <img src="../images/pulse_to_position_eval.png" alt="Pulse to position " width="710"/> </br>
+    <i>Pulse width to normalised position for both servos </i>
+</p>

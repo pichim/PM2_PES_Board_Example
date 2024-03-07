@@ -49,7 +49,8 @@ Michael Wüthrich | Szarek Maciej | Peter Michael |
         * [Line Follower Array](docs/markdown/line_follower.md)
 3. [Tips](#tips)
     * [Project Development](docs/markdown/tips.md#project-development)
-    * [Programming Tips](docs/markdown/tips.md#programming-tips)
+    * [Programming](docs/markdown/tips.md#programming)
+        * [Main file description](docs/markdown/main_description.md)
     * [Structuring a Robot Task](docs/markdown/tips.md#structuring-a-robot-task)
 
 4. [Workshops](#workshops)
@@ -164,7 +165,7 @@ The following links contain the hardware tutorials. The documents contain specif
 
 Tips that you might find useful can be found in the document [Tips](docs/markdown/tips.md). Here you can find information about: 
 - [Project Development](docs/markdown/tips.md#project-development)
-- [Programming Tips](docs/markdown/tips.md#programming-tips)
+- [Programming](docs/markdown/tips.md#programming)
 - [Structuring a Robot Task](docs/markdown/tips.md#structuring-a-robot-task)
 
 ## Workshops

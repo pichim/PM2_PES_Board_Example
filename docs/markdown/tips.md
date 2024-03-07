@@ -45,7 +45,9 @@ Through (fast and early) prototyping, you not only validate the feasibility of y
     <center> <i>Fast Prototyping and 3D Printing</i> </center>
 </p>
 
-## Programming Tips
+## Programming
+
+To understand the structure of the underlying ***main.cpp*** file, click [here](../markdown/main_description.md) to read the description.
 
 Here are essential programming tips to consider during the coding process:
 
@@ -128,7 +130,6 @@ printf("Debugging: %d", value);
 - First and foremost, don't trust any AI. Always check the answer and the code before using it. Never the less, these tools can be very helpful and often point you in the right direction. But in the end, you have to understand the code you are implementing.
 - Utilize ChatGPT for interactive assistance during programming. Describe issues, ask questions, or seek guidance on code-related problems to receive helpful suggestions.
 - Leverage ChatGPT to explore algorithms, design patterns, or coding concepts. Describe your requirements, and ChatGPT can provide insights, code snippets, or explanations to enhance your understanding.
-
 
 ## Structuring a Robot-Task
 

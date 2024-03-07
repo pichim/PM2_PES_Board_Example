@@ -97,13 +97,6 @@ The operation is straightforward since all processes are encapsulated within the
 us_distance_cm = us_sensor.read();
 ```
 
-or simply
-
-```
-// read us sensor distance, only valid measurements will update us_distance_cm
-us_distance_cm = us_sensor;
-```
-
 If no new valid measurement is available, the ``read()`` function returns -1.0f. This needs to be handeled appropriately in the application, as an example:
 
 ```
