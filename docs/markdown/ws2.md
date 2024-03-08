@@ -75,7 +75,7 @@ mechanical_button.mode(PullUp);    // sets pullup between pin and 3.3 V, so that
 
 3. Read the ultrasonic sensor manual and create an object in the ``main()`` function
     >[Ultrasonic Sensor Manual](../markdown/ultrasonic_sensor.md)
-4. Make sure that you add a reading command and statement to handle non-valid measurment. This should be placed inside ``while()`` loop within ``if()`` statement, to be executed after clicking **USER** button:
+4. Make sure that you add a reading command and a statement to handle non-valid measurment. This should be placed inside the ``while()`` loop in the scope of the ``if()`` statement. So that it is executed after clicking the **USER** button:
 
 ```
 // read us sensor distance, only valid measurements will update us_distance_cm
@@ -97,7 +97,7 @@ enum RobotState {
 } robot_state = RobotState::INITIAL;
 ```
 
-6. In the ``while()`` loop, after setting the variable ``do_execute_main_task``, place the blank template of the state machine:
+6. In the ``if (do_execute_main_task)`` statement, where ``do_execute_main_task`` is ``true``, place the blank template of the state machine:
 
 ```
 // state machine

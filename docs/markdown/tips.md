@@ -47,9 +47,9 @@ Through (fast and early) prototyping, you not only validate the feasibility of y
 
 ## Programming
 
-To understand the structure of the underlying ***main.cpp*** file, click [here](../markdown/main_description.md) to read the description.
+An explanation of the structure of the default ***main.cpp*** file can be found in [Main File Description](../markdown/main_description.md).
 
-Here are essential programming tips to consider during the coding process:
+Beginning here some essential programming tips are presented. These tips are crucial for writing clean, readable, and maintainable code.
 
 #### 1. Code Readability
 
