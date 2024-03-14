@@ -9,9 +9,8 @@
 
 The analog distance sensor is equipped with an IR diode and uses triangulation to measure distances. Using infrared technology, it calculates distances by measuring angles (indirectly). This device emits infrared light, observes reflections, and provides real-time distance measurements. Valuable for tasks requiring distance determination, it serves as a cheap and simple solution for applications where you need to measure the distance.
 
-<details Closed>
-<summary><b>How does it work?</b></summary>
 
+><b>How does it work?</b><br>
 >Very briefly infrared sensors work on the principle of reflected light waves. Infrared light reflected from objects or sent from an infrared remote or beacon. Infrared sensors can be used to measure distance or proximity. The reflected light is detected and then an estimate of the distance between the sensor and the object is calculated. The following is a simple representation of the principle of operation:
 ><p align="center">
 >    <img src="../images/how-infrared-sensors-work.png" alt="how_IR_works" width="440"/> </br>
@@ -19,7 +18,6 @@ The analog distance sensor is equipped with an IR diode and uses triangulation t
 ></p>
 >
 > More detailed explanation can be found: [HERE][3]
-</details>
 
 <p align="center">
     <img src="../images/ir-distance-sensor.png" alt="IR_sensor" width="400"/> </br>
@@ -103,9 +101,8 @@ AnalogIn ir_analog_in(PC_2); // create AnalogIn object to read in the infrared d
 
 The sensor returns distances in normalised volts, which we then scale to millivolts, there for it is necessary to convert the signal to a unit of length. To do so, it is necessary to determine the function (mapping) that converts the signal from millivolts into a distance in centimeters. This function can be determined by the calibration process. The calibration process is described in the folowing section.
 
-<details Closed>
-<summary><b>For what do we need the calibration?</b></summary>
 
+><b>For what do we need the calibration?</b><br>
 >Calibrating the IR distance sensor is essential to establish a precise relationship between the sensor's analog voltage readings and actual distances. In the technical documentation it is possible to find a dependency between voltage readings and distance such as the following:
 >
 ><p align="center">
@@ -113,8 +110,6 @@ The sensor returns distances in normalised volts, which we then scale to millivo
 >   <i>Distance measuring characteristics</i>
 ></p>
 >The above figure shows expected values that can serve as a reference for the measurements to be made. However, all sensors, especially those of lower quality (hobby grade), may be characterized by a slightly altered curve, so a calibration process should be carried out before using such sensors for an application where the distance needs to measured acccurately.
-
-</details>
 
 <br>
 

@@ -83,9 +83,8 @@ Servo servo_D1(PB_D1);
 
 In order to properly control the servo, the basic step that should be performed is the calibration.
 
-<details Closed>
-<summary><b>Why calibration?</b></summary>
 
+><b>Why calibration?</b><br>
 >Servos are commanded through PWM (Pulse Width Modulation) signals, enabling the adjustment of the servo motor rotation through varying duty cycle PWM pulses. Initially, the specific pulse width corresponding to a particular servo angle is unknown. Hence, a calibration process is necessary to determine the minimum pulse width for the minimun angle and the maximum pulse width associated with the maximum angle. Carefull, these is just an example and does not represent the real values for the servos we use nor the real maximum angle the servos can reach.
 ><p align="center">
 >    <img src="../images/servo_figures.png" alt="drawing" width="800"/> </br>
@@ -101,7 +100,6 @@ In order to properly control the servo, the basic step that should be performed 
 >In the second servo illustrations, the zero position corresponds to a pulse width of 1 ms, while the maximum angle is achieved at 2 ms. Hence, a calibration process is undertaken to determine these calibration values. These calibration values are specific to the example shown in the figure and do not hold for the servos we use. Also, our servo drivers runs at 50 Hz, therefor the servo period response pulse with is 20 ms.
 >
 > For more information see: [HERE][2]
-</details>
 
 The calibration process involves sending progressively wider pulses to determine, the pulse width corresponding to the minimal angle and the pulse width corresponding to the maximum angle of the servo. Best practice is to start with a very small pulse width and gradually increase it until the servo starts moving. This process is repeated until the servo reaches its maximum angle and stops moving, even though the pulse width is further increased. The pulse width values corresponding to the minimum and maximum positions are used as calibration values. It may be necessary to use a slightly higher minimal value and a slightly lower maximum value to ensure that the servo is working as expected (safety margins).
 

@@ -126,6 +126,8 @@ The batteries enables the board to be powered independently of the connection to
 
 <b>Charging bateries</b> - the battery packs are only charged when the PES Board circuit breaker is set to OFF.
 
+><b> Resources </b><br>
+>All additional technical information such as schematics and pin maps for the PES Board can be found in a folder <b>docs/datasheets/pes_board_data/</b>. Also included there are CAD files of the combined Nucleo F446RE and PES Board in .3dxml extensions (for 3Dexperience).
 
 #### Pheripherals
 

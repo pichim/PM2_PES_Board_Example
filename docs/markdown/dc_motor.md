@@ -4,6 +4,7 @@
 [2]: https://www.pololu.com/product/3485/specs
 [3]: https://nathandumont.com/blog/h-bridge-tutorial
 [4]: https://www.electronics-tutorials.ws/blog/pulse-width-modulation.html
+[5]: https://www.pololu.com/category/213/12v-carbon-brush-cb-20d-gearmotors
 
 # DC Motor
 
@@ -34,6 +35,7 @@ A direct current (DC) motor is an electrical machine that converts electrical en
 
 ## Links
 
+[12V Carbon Brush (CB) 20D Gearmotors][5] <br>
 [31:1 Metal Gearmotor 20Dx41L mm 12V CB][0] <br>
 [78:1 Metal Gearmotor 20Dx43L mm 12V CB][1] <br>
 [488:1 Metal Gearmotor 20Dx46L mm 12V CB][2] <br>
@@ -101,9 +103,8 @@ Pins M1 and M2 represent the output of the H-Bridge, so voltage plus (+) and min
 ### Enabling the Power Electronics
 
 The PES Board can control up to 3 DC motors. Configuring the driver involves setting up the PWM pins, essential for adjusting the voltage that gets applied.
-<details Closed>
-<summary><b>H-bridge and PWM</b></summary>
 
+><b>H-bridge and PWM</b><br>
 ><p align="center">
 >    <img src="../images/hbridge_switches.png" alt="H-bridge Example" width="460"/> </br>
 >    <i>H-bridge Example</i>
@@ -118,10 +119,9 @@ The PES Board can control up to 3 DC motors. Configuring the driver involves set
 >Pulse Width Modulation (PWM) in DC motor control means varying the duty cycle of a rapidly switching signal to regulate the average voltage applied to the motor. By adjusting the duty cycle of the PWM, the average voltage is adjusted accordingly.
 ><br>
 ><br>
-
+>
 > - Further information about H-bridges can be found [here][3].
 > - Further information about PWM and DC motors can be found [here][4].
-</details>
 
 <br>
 
@@ -163,7 +163,7 @@ Then a ``FastPWM`` object needs to be created, which is used to command the volt
 FastPWM pwm_M1(PB_PWM_M1); // create FastPWM object to command motor M1
 ```
 
-Motor M1 is used open-loop, meaning we just apply a certain voltage to the motor. The relation between the applied voltage and the speed is linear and the gain that maps voltage to speed is called the motor constant. The mapping is (0.0f...1.0f) $\rightarrow$ (-12V...12V):
+Motor M1 is used open-loop, meaning we just apply a certain voltage to the motor. The relation between the applied voltage and the speed is linear and the gain that maps voltage to speed is called the motor constant [rpm/V]. The mapping is (0.0f...1.0f) $\rightarrow$ (-12V...12V):
 - PWM input 0.0f $\rightarrow$ -12V is applied to the motor
 - PWM input 0.5f $\rightarrow$ 0V
 - PWM input 1.0f $\rightarrow$ 12V
@@ -201,7 +201,7 @@ const float voltage_max = 12.0f; // maximum voltage of battery packs, adjust thi
 
 // motor M2
 const float gear_ratio_M2 = 78.125f; // gear ratio
-const float kn_M2 = 180.0f / 12.0f;  // motor constant
+const float kn_M2 = 180.0f / 12.0f;  //  [rpm/V]
 // it is assumed that only one motor is available, there fore
 // we use the pins from M1, so you can leave it connected to M1
 DCMotor motor_M2(PB_PWM_M1, PB_ENC_A_M1, PB_ENC_B_M1, gear_ratio_M2, kn_M2, voltage_max);
@@ -267,7 +267,7 @@ Since we are reusing the pins from M1, we can leave the motor connected to M1. T
 ```
 // // motor M2
 // const float gear_ratio_M2 = 78.125f; // gear ratio
-// const float kn_M2 = 180.0f / 12.0f;  // motor constant
+// const float kn_M2 = 180.0f / 12.0f;  // motor constant [rpm/V]
 // // it is assumed that only one motor is available, there fore
 // // we use the pins from M1, so you can leave it connected to M1
 // DCMotor motor_M2(PB_PWM_M1, PB_ENC_A_M1, PB_ENC_B_M1, gear_ratio_M2, kn_M2, voltage_max);
@@ -284,7 +284,7 @@ To use Motor M3 in closed loop for position control, we insert the following cod
 ```
 // motor M3
 const float gear_ratio_M3 = 78.125f; // gear ratio
-const float kn_M3 = 180.0f / 12.0f;  // motor constant
+const float kn_M3 = 180.0f / 12.0f;  // motor constant [rpm/V]
 // it is assumed that only one motor is available, there fore
 // we use the pins from M1, so you can leave it connected to M1
 DCMotor motor_M3(PB_PWM_M1, PB_ENC_A_M1, PB_ENC_B_M1, gear_ratio_M3, kn_M3, voltage_max);

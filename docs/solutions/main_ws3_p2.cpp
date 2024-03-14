@@ -67,7 +67,7 @@ int main()
 
     // motor M3
     const float gear_ratio_M3 = 78.125f; // gear ratio
-    const float kn_M3 = 180.0f / 12.0f;  // motor constant
+    const float kn_M3 = 180.0f / 12.0f;  // motor constant [rpm/V]
     // it is assumed that only one motor is available, there fore
     // we use the pins from M1, so you can leave it connected to M1
     DCMotor motor_M3(PB_PWM_M1, PB_ENC_A_M1, PB_ENC_B_M1, gear_ratio_M3, kn_M3, voltage_max);
@@ -166,6 +166,7 @@ int main()
                 enable_motors = 0;
                 us_distance_cm = 0.0f;
                 motor_M3.enableMotionPlanner(true);
+		robot_state = RobotState::INITIAL;
             }
         }
 
