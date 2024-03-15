@@ -225,7 +225,7 @@ printf("Motor velocity: %f \n", motor_M2.getVelocity());
 The default motor driver does not activate the motion planner, meaning the speed setpoint will be reached as quickly as possible. To test this, you can place the following command inside the ``while()`` loop.
 
 ```
-motor_M2.setVelocity(motor_M3.getMaxVelocity() * 0.5f); // set speed setpoint to half physical possible velocity
+motor_M2.setVelocity(motor_M2.getMaxVelocity() * 0.5f); // set speed setpoint to half physical possible velocity
 ```
 
 Nevertheless, the driver is designed to be able to command the motor with smooth movements using a motion planner. This motion planner or trajectory generator creates acceleration and speed limited trajectories.
