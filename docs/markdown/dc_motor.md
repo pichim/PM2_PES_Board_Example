@@ -62,6 +62,42 @@ A direct current (DC) motor is an electrical machine that converts electrical en
 ## Encoder and Relative Positioning
 
 - The magnetic encoder is a sensor device that uses magnets to measure the angle of the motor. It consists of a magnetically encoded disk attached to the rotating part and a sensor that detects changes in the magnetic field, converting them into electrical signals (pulses). Counting these pulses provides information about the angle of the motor. Computing the time derivative of the angle nummericaly provides the angular velocity of the motor.
+- The direction of rotation is determined by the sequence of pulses observed at the A and B outputs. This principle is illustrated in the accompanying diagram, where clockwise (CW) rotation is regarded as the positive direction, and counterclockwise (CCW) rotation as the negative direction:
+<p align="center">
+    <img src="../images/encoder_dir.png" alt="Encoder direction" width="400"/> </br>
+    <i>Determining the direction of rotation</i>
+</p>
+
+- If pulse A precedes pulse B, the rotation direction is recognized as CW. Conversely, if pulse B precedes pulse A, the rotation direction is identified as CCW.
+- Below are measurements taken with a pico scope oscilloscope showing readings from channel A and B. The descriptions of the images include information about the voltage transmitted to the motor. 
+
+<center>
+<table>
+<tbody>
+<tr>
+<td><center> Clockwise CW </center></td>
+<td><center> Counter clockwise CCW </center></td>
+</tr>
+<tr>
+<td><center> 3.6 V </center> </td>
+<td><center> -3.6 V </center></td>
+</tr>
+<tr>
+<td><img src="../images/encoder_signals_M100_1_plus_3_6V.PNG"   alt="Encoder direction 3.6V" width="400"/></td>
+<td><img src="../images/encoder_signals_M100_1_minus_3_6V.PNG"   alt="Encoder direction -3.6V" width="400"/></td>
+</tr>
+<tr>
+<td><center> 6 V </center> </td>
+<td><center> -6 V </center></td>
+</tr>
+<tr>
+<td><img src="../images/encoder_signals_M100_1_plus_6V.PNG"   alt="Encoder direction 6V" width="400"/></td>
+<td><img src="../images/encoder_signals_M100_1_minus_6V.PNG"   alt="Encoder direction -6V" width="400"/></td>
+</tr>
+</tbody>
+</table>
+</center>
+
 - It's very important to understand that the used magnetic encoders provide relative position information. This means that the encoder only returns counts about changes in position relative to the point where it was initialized/started counting, and the initial position upon power-up is considered as the zero reference point. Therefore and only if absolute measruments are needed a homing procedure needs to be done after every startup uf the system. The accuracy of the measurements relies on the consistency of this referencing. Any absolute positioning requires additional sensors and additional code to perform the homing procedure.
 
 ## Practical Tips
@@ -119,6 +155,22 @@ The PES Board can control up to 3 DC motors. Configuring the driver involves set
 >Pulse Width Modulation (PWM) in DC motor control means varying the duty cycle of a rapidly switching signal to regulate the average voltage applied to the motor. By adjusting the duty cycle of the PWM, the average voltage is adjusted accordingly.
 ><br>
 ><br>
+>
+>The motor is connected to the input M1 and M2 representing the output from the H-Bridge, so the voltages plus (+) and minus (-). The following images show the voltages on the M1 and M2 pins when sending the PWM commands with values:
+> - 0.5
+><p align="center">
+>    <img src="../images/h_bridge_signals_M100_1_PWM_0_5.PNG" alt="Output values of voltage PWM 0.5" width="600"/> </br>
+>    <i>Output values of voltage on M1 and M2 pins with PWM = 0.5</i>
+></p>
+>
+> - 0.75
+><p align="center">
+>    <img src="../images/h_bridge_signals_M100_1_PWM_0_75.PNG" alt="Output values of voltage PWM 0.75" width="600"/> </br>
+>    <i>Output values of voltage on M1 and M2 pins with PWM = 0.75</i>
+></p>
+>As depicted in the images above, when the PWM signal registers at 0.5, a duration of precisely 25 microseconds (half of a full cycle, which is 50 microseconds) delivers a 12V charge to the M1 pin. Simultaneously, another 25 microseconds applies 12V to the M2 pin, resulting in an average voltage of 0V, effectively stalling the motor rotation.
+>
+>Conversely, in the second scenario, 12V is supplied to the M1 pin for 3/4 of a full cycle, totaling 37.5 microseconds, while the remaining 12.5 microseconds allocates 12V to the M2 pin. This arrangement yields an average voltage of 6V, facilitating motor rotation at half the maximum speed.
 >
 > - Further information about H-bridges can be found [here][3].
 > - Further information about PWM and DC motors can be found [here][4].
@@ -225,7 +277,7 @@ printf("Motor velocity: %f \n", motor_M2.getVelocity());
 The default motor driver does not activate the motion planner, meaning the speed setpoint will be reached as quickly as possible. To test this, you can place the following command inside the ``while()`` loop.
 
 ```
-motor_M2.setVelocity(motor_M2.getMaxVelocity() * 0.5f); // set speed setpoint to half physical possible velocity
+motor_M2.setVelocity(motor_M3.getMaxVelocity() * 0.5f); // set speed setpoint to half physical possible velocity
 ```
 
 Nevertheless, the driver is designed to be able to command the motor with smooth movements using a motion planner. This motion planner or trajectory generator creates acceleration and speed limited trajectories.
