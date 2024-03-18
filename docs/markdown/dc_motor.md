@@ -83,16 +83,16 @@ A direct current (DC) motor is an electrical machine that converts electrical en
 <td><center> -3.6 V </center></td>
 </tr>
 <tr>
-<td><img src="../images/encoder_signals_M100_1_plus_3_6V.PNG"   alt="Encoder direction 3.6V" width="400"/></td>
-<td><img src="../images/encoder_signals_M100_1_minus_3_6V.PNG"   alt="Encoder direction -3.6V" width="400"/></td>
+<td><img src="../images/encoder_signals_M100_1_plus_3_6V.PNG"   alt="Encoder direction 3.6V" width="600"/></td>
+<td><img src="../images/encoder_signals_M100_1_minus_3_6V.PNG"   alt="Encoder direction -3.6V" width="600"/></td>
 </tr>
 <tr>
 <td><center> 6 V </center> </td>
 <td><center> -6 V </center></td>
 </tr>
 <tr>
-<td><img src="../images/encoder_signals_M100_1_plus_6V.PNG"   alt="Encoder direction 6V" width="400"/></td>
-<td><img src="../images/encoder_signals_M100_1_minus_6V.PNG"   alt="Encoder direction -6V" width="400"/></td>
+<td><img src="../images/encoder_signals_M100_1_plus_6V.PNG"   alt="Encoder direction 6V" width="600"/></td>
+<td><img src="../images/encoder_signals_M100_1_minus_6V.PNG"   alt="Encoder direction -6V" width="600"/></td>
 </tr>
 </tbody>
 </table>
@@ -159,13 +159,13 @@ The PES Board can control up to 3 DC motors. Configuring the driver involves set
 >The motor is connected to the input M1 and M2 representing the output from the H-Bridge, so the voltages plus (+) and minus (-). The following images show the voltages on the M1 and M2 pins when sending the PWM commands with values:
 > - 0.5
 ><p align="center">
->    <img src="../images/h_bridge_signals_M100_1_PWM_0_5.PNG" alt="Output values of voltage PWM 0.5" width="600"/> </br>
+>    <img src="../images/h_bridge_signals_M100_1_PWM_0_5.PNG" alt="Output values of voltage PWM 0.5" width="1000"/> </br>
 >    <i>Output values of voltage on M1 and M2 pins with PWM = 0.5</i>
 ></p>
 >
 > - 0.75
 ><p align="center">
->    <img src="../images/h_bridge_signals_M100_1_PWM_0_75.PNG" alt="Output values of voltage PWM 0.75" width="600"/> </br>
+>    <img src="../images/h_bridge_signals_M100_1_PWM_0_75.PNG" alt="Output values of voltage PWM 0.75" width="1000"/> </br>
 >    <i>Output values of voltage on M1 and M2 pins with PWM = 0.75</i>
 ></p>
 >As depicted in the images above, when the PWM signal registers at 0.5, a duration of precisely 25 microseconds (half of a full cycle, which is 50 microseconds) delivers a 12V charge to the M1 pin. Simultaneously, another 25 microseconds applies 12V to the M2 pin, resulting in an average voltage of 0V, effectively stalling the motor rotation.
