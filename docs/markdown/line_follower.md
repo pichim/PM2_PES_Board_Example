@@ -80,6 +80,11 @@ In the described robot, the following pins are utilized:
 
 <b>As previously emphasized, this sensor is highly sensitive, and improper connections can lead to damage. It's very important to thoroughly examine the provided pictures illustrating the correct way of connecting the sensor to avoid any issues.</b> <br>
 
+<b> Take note of the pin descriptions on the sensor. Connect the red power cable to the pin labeled 5V and the black ground cable to the pin labeled GND.</b>
+<p align="center">
+    <img src="../images/line_follower_sensor_look.png" alt="Line follower sensor look from above" width="750"/>
+</p>
+
 To plug the power source you will need to use:
 
 - 2 m/f jumper wires (black and red)
@@ -87,14 +92,14 @@ To plug the power source you will need to use:
     <img src="../images/mf_line_follower_array_connection.png" alt="Line follower sensor mf connection" width="750"/>
 </p>
 
-- 2 f/f jumpre wires (black and red)
+- 2 f/f jumper wires (black and red)
 <p align="center">
     <img src="../images/ff_line_follower_array_connection.png" alt="Line follower sensor ff connection" width="750"/>
 </p>
 
-<b> Take note of the pin descriptions on the sensor. Connect the red power cable to the pin labeled 5V and the black ground cable to the pin labeled GND.</b>
+- 2 f/f jumper wires (green and yellow)
 <p align="center">
-    <img src="../images/line_follower_sensor_look.png" alt="Line follower sensor look from above" width="750"/>
+    <img src="../images/SDA_SCL_plugging.png" alt="SDA_SCL" width="750"/>
 </p>
 
 ### Create Line Follower Object
