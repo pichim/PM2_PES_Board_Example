@@ -23,10 +23,10 @@
 
 # PM2 PES Board, Hardware and Driver Documentation
 
-Michael Wüthrich | Szarek Maciej | Peter Michael |
+| Michael E. Peter | Michael Wüthrich | Maciej Szarek |
 |-|-|-|
-| wuem@zhaw.ch | szar@zhaw.ch | pmic@zhaw.ch |
-| TE 301 | TE 302 | TE 307 |
+| pmic@zhaw.ch | wuem@zhaw.ch | szar@zhaw.ch |
+| TE 307 | TE 301 | TE 302 |
 
 # Table of Contents
 1. [Course Setup](#course-setup)
@@ -46,7 +46,7 @@ Michael Wüthrich | Szarek Maciej | Peter Michael |
         * [Ultrasonic Sensor](docs/markdown/ultrasonic_sensor.md)
         * [Servo](docs/markdown/servo.md)
         * [DC Motor](docs/markdown/dc_motor.md)
-        * [Line Follower Array](docs/markdown/line_follower.md)
+        * [Line Follower](docs/markdown/line_follower.md)
 3. [Tips](#tips)
     * [Project Development](docs/markdown/tips.md#project-development)
     * [Programming](docs/markdown/tips.md#programming)
@@ -113,6 +113,8 @@ The PES Board is a hardware board with additional sensors, devices and power ele
 >- <b>Depending on the PES Board version DCMotor M3 rotation direction might be inverted.</b>
 >- <b>Depending on the PES Board version the Pin map might differ.</b>
 
+#### Batteries
+
 The kit includes two sets of 6V battery packs, which can be connected in series to provide 12 volts. The battery packs need to be connected to the back of the PES Board. The picture below illustrates the proper battery connection required to get a total voltage of 12V.
 
 <p align="center">
@@ -124,10 +126,17 @@ The batteries enables the board to be powered independently of the connection to
 
 <b>Single battery pack</b> - if you are using a single battery pack, the remaining pins need to be bridged. If only 6 V is used, this must be parameterised accordingly in the firmware when parameterising motion controller class.
 
-<b>Charging bateries</b> - the battery packs are only charged when the PES Board circuit breaker is set to OFF.
+#### Charging the Batteries
 
-><b> Resources </b><br>
->All additional technical information such as schematics and pin maps for the PES Board can be found in a folder <b>docs/datasheets/pes_board_data/</b>. Also included there are CAD files of the combined Nucleo F446RE and PES Board in .3dxml extensions (for 3Dexperience).
+<b>Using the Charger</b> - if you connect the charger to the PES Board, the battery packs need to be connected. If the battery packs (2 packs for 12 volts or one pack and a jumper for 6 volts) are not connected when you plug in the charger, the PES Board will be destroyed.
+
+<b>Charging batteries</b> - the battery packs are only charged when the PES Board circuit breaker is set to OFF.
+
+<b>Usage while charging</b> - don't use the PES Board while it is charging.
+
+#### Resources
+
+All additional technical information such as schematics and pin maps for the PES Board can be found in a folder <b>docs/datasheets/pes_board_data/</b>. Also included there are CAD files of the combined Nucleo F446RE and PES Board in .3dxml extensions (for 3Dexperience).
 
 #### Pheripherals
 
@@ -136,11 +145,11 @@ The batteries enables the board to be powered independently of the connection to
     <i>PES Board pheripherals</i>
 </p>
 
-PDF: [pes_board_peripherals.pdf](docs/datasheets/pes_board_peripherals.pdf)
+- [pes_board_peripherals.pdf](docs/datasheets/pes_board_peripherals.pdf)
 
 #### Pin-Mapping
 
-PDF: [pes_board_pin_mapping.pdf](docs/datasheets/pes_board_pin_mapping.pdf)
+- [pes_board_pin_mapping.pdf](docs/datasheets/pes_board_pin_mapping.pdf)
 
 ### Hardware Kit
 
@@ -170,12 +179,25 @@ Tips that you might find useful can be found in the document [Tips](docs/markdow
 - [Programming](docs/markdown/tips.md#programming)
 - [Structuring a Robot Task](docs/markdown/tips.md#structuring-a-robot-task)
 
-## Workshops
+## Workshops, Solutions and Examples
 
 The following links contain the workshops instructions:
 - [Workshop 1](docs/markdown/ws1.md)
 - [Workshop 2](docs/markdown/ws2.md)
 - [Workshop 3](docs/markdown/ws3.md)
+
+And here you find all the solutions, as well as some additional examples:
+- [Solution Workshop 1](../solutions/main_ws1.cpp)
+- [Solution Workshop 2, Part 1](../solutions/main_ws2_p1.cpp)
+- [Solution Workshop 2, Part 2](../solutions/main_ws2_p2.cpp)
+- [Solution Workshop 3, Part 1](../solutions/main_ws3_p1.cpp)
+- [Solution Workshop 3, Part 2](../solutions/main_ws3_p2.cpp)
+- [Example Line Follower](../solutions/main_line_follower.cpp)
+- [ExampleLine follower Base Example](../solutions/main_line_follower_base_ss24.cpp)
+- [ExampleDifferential Drive Robot Kinematics Calibration](../solutions/main_calib_kinematic_ss24.cpp)
+
+### Additional Information
+- [Differential Drive Kinematics](docs/markdown/kinematics.md)
 
 ## Weblinks
 
@@ -215,6 +237,6 @@ The following links contain the workshops instructions:
 
 The following links are kind of older projects, but they might help you to get started with C++ in Visual Studio Code.
 
-- Example Projects:
+#### Example Projects:
   - Windows: https://github.com/pichim/chirp
-  - Windows using WSL: https://github.com/pichim/mag_calib
+  - Windows using WSL (Windows Subsystem for Linux): https://github.com/pichim/mag_calib

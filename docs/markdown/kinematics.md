@@ -1,5 +1,5 @@
 <!-- link list, last updated 16.02.2024 -->
-[0]: https://en.wikipedia.org/wiki/Differential_wheeled_robot
+[0]: https://en.wikipedia.org/wiki/Differentiab_wheeled_robot
 
 # Differential Robot Kinematics
 
@@ -13,7 +13,7 @@ The kinematics of a differential drive robot describe the relationship between t
 
 **Model parameters:**
 - Wheel radius $r$
-- Wheel base $L$
+- Wheel base $b$
 
 **Input values:**
 - Forward velocity $v$ 
@@ -65,19 +65,19 @@ $$
 Assuming that the two wheels are spinning positive in the forward direction of the robot, the rotational speed can be expressed by the following equation
 
 $$
-\omega = \frac{v_1 - v_2}{L}
+\omega = \frac{v_1 - v_2}{b}
 $$
 
 Expressing this in terms of the rotational speed of the wheels, we get
 
 $$
-\omega = \frac{\omega_1\cdot r - \omega_2\cdot r}{L}
+\omega = \frac{\omega_1\cdot r - \omega_2\cdot r}{b}
 $$
 
 and split this into the form
 
 $$
-v = \frac{r}{L} \cdot \omega_1 - \frac{r}{L} \cdot \omega_2
+v = \frac{r}{b} \cdot \omega_1 - \frac{r}{b} \cdot \omega_2
 $$
 
 ### Transformation matrix
@@ -91,7 +91,7 @@ v \\\
 \end{bmatrix} =
 \begin{bmatrix}
 \frac{r}{2} & \frac{r}{2} \\\
-\frac{r}{L} & -\frac{r}{L}
+\frac{r}{b} & -\frac{r}{b}
 \end{bmatrix}
 \cdot
 \begin{bmatrix}
@@ -104,7 +104,7 @@ $$
 \mathbf{C}_{wheel2robot} =
 \begin{bmatrix}
 \frac{r}{2} & \frac{r}{2} \\\
-\frac{r}{L} & -\frac{r}{L}
+\frac{r}{b} & -\frac{r}{b}
 \end{bmatrix}
 $$
 
@@ -116,8 +116,8 @@ $$
 \omega_1
 \end{bmatrix} = 
 \begin{bmatrix}
-\frac{1}{r} & \frac{L}{2\cdot r} \\\
-\frac{1}{r} & -\frac{L}{2\cdot r}
+\frac{1}{r} & \frac{b}{2\cdot r} \\\
+\frac{1}{r} & -\frac{b}{2\cdot r}
 \end{bmatrix}
 \cdot
 \begin{bmatrix}
@@ -129,8 +129,8 @@ $$
 $$
 \mathbf{C}_{robot2wheel} =
 \begin{bmatrix}
-\frac{1}{r} & \frac{L}{2\cdot r} \\\
-\frac{1}{r} & -\frac{L}{2\cdot r}
+\frac{1}{r} & \frac{b}{2\cdot r} \\\
+\frac{1}{r} & -\frac{b}{2\cdot r}
 \end{bmatrix}
 $$
 
@@ -141,14 +141,12 @@ As mentioned previously when writing code with the above transformations, the ei
 ```
 // robot kinematics
 const float r_wheel = 0.0563f / 2.0f; // wheel radius in meters
-const float L_wheel = 0.13f;          // wheelbase, distance from wheel to wheel in meters
+const float b_wheel = 0.13f;          // wheelbase, distance from wheel to wheel in meters
 Eigen::Matrix2f Cwheel2robot; // transform wheel to robot
 Cwheel2robot <<  r_wheel / 2.0f   ,  r_wheel / 2.0f   ,
-                 r_wheel / L_wheel, -r_wheel / L_wheel;
-Eigen::Vector2f robot_coord;  // contains v and w (robot translational and rotational velocities)
-Eigen::Vector2f wheel_speed;  // w1 w2 (wheel speed)
-robot_coord.setZero();
-wheel_speed.setZero();
+                 r_wheel / b_wheel, -r_wheel / b_wheel;
+Eigen::Vector2f robot_coord = {0.0f, 0.0f};  // contains v and w (robot translational and rotational velocity)
+Eigen::Vector2f wheel_speed = {0.0f, 0.0f};  // w1 w2 (wheel speed)
 ```
 
 To calculate the rotational speeds of the wheels, you must first define the desired values of the linear and rotational speed of the robot, e.g.
@@ -170,6 +168,7 @@ wheel_speed = Cwheel2robot.inverse() * robot_coord;
 To access the velocity of the wheels just use the appropriate index:
 
 ```
+// set velocity setpoints in rps
 motor_right.setVelocity(wheel_speed(0) / (2.0f * M_PI));
 motor_left.setVelocity(wheel_speed(1) / (2.0f * M_PI));
 ```

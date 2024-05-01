@@ -47,15 +47,15 @@ int main()
                                      // 6.0f V if you only use one battery pack
     const float gear_ratio = 78.125f; 
     const float kn = 180.0f / 12.0f;
-    // motor M1 and M2, do NOT enable motion planner, disabled per default
+    // motor M1 and M2, do NOT enable motion planner when used with the LineFollower (disabled per default)
     DCMotor motor_M1(PB_PWM_M1, PB_ENC_A_M1, PB_ENC_B_M1, gear_ratio, kn, voltage_max);
     DCMotor motor_M2(PB_PWM_M2, PB_ENC_A_M2, PB_ENC_B_M2, gear_ratio, kn, voltage_max);
 
-    const float d_wheel = 0.0564f; // wheel diameter in meters
-    const float L_wheel = 0.13f;   // wheelbase, distance from wheel to wheel in meters
-    const float bar_dist = 0.083f; // distance from wheel axis to leds on sensor bar / array
-    // line follower driver
-    LineFollower lineFollower(PB_9, PB_8, bar_dist, d_wheel, L_wheel, motor_M2.getMaxPhysicalVelocity());
+    const float d_wheel = 0.035f;  // wheel diameter in meters
+    const float b_wheel = 0.1518f; // wheelbase, distance from wheel to wheel in meters
+    const float bar_dist = 0.118f; // distance from wheel axis to leds on sensor bar / array in meters
+    // line follower
+    LineFollower lineFollower(PB_9, PB_8, bar_dist, d_wheel, b_wheel, motor_M2.getMaxPhysicalVelocity());
 
     // start timer
     main_task_timer.start();
@@ -65,7 +65,6 @@ int main()
         main_task_timer.reset();
 
         if (do_execute_main_task) {
-
             // visual feedback that the main task is executed, setting this once would actually be enough
             led1 = 1;
             enable_motors = 1;

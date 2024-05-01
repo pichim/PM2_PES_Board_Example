@@ -4,7 +4,9 @@
 [2]: https://learn.sparkfun.com/tutorials/serial-peripheral-interface-spi/all
 [3]: https://os.mbed.com/platforms/ST-Nucleo-F446RE/
 
-# Line Follower Array 
+# Line Follower 
+
+## Line Follower Array
 
 The sensor incorporates eight diodes for line detection, with each diode's illumination indicating the presence of a line beneath it. The IR brightness control and indicator can be adjusted with the on-board potentiometer. The sensor's I2C interface allows for easy integration with the PES Board, and the sensor's low power consumption makes it suitable for battery-powered applications. The sensor's compact size and low weight make it an ideal choice for small robots.
 
@@ -14,7 +16,7 @@ The sensor incorporates eight diodes for line detection, with each diode's illum
 
 ## Technical Specifications
 
-| | Sparkfun Line follower sensor array |
+| Sparkfun Line follower sensor array | |
 |-|-|
 |Sensor eyes number    | 8           |
 |Interface             | I2C         |
@@ -31,9 +33,128 @@ The sensor incorporates eight diodes for line detection, with each diode's illum
 
 [Sparkfun Line Follower Sensor Array](../datasheets/line_follower_array.pdf)
 
-## **WARNING**
+## **WARNING 1**
 
-<b>Before attempting to connect the sensor, it is crucial to carefully review the section [Connection to the PES Board](../markdown/line_follower.md#connection-to-the-pes-board). This sensor is highly sensitive, and mishandling during the connection process can lead to destruction of the sensor. Therefore, thorough understanding and caution are necessary to avoid damaging the unit!</b>
+<b>Before attempting to connect the sensor, it is important to carefully review the section [Connection to the PES Board](../markdown/line_follower.md#connection-to-the-pes-board). This sensor is highly sensitive, and mishandling during the connection will lead to destruction of the sensor. Therefore caution is necessary to avoid damaging the unit!</b>
+
+### Connection to the PES Board
+
+As communication protocol I2C is used. I2C relies on a data pin and a clock pin (more information can be found [here][2]). To power the sensor, a voltage of 5V is required.
+
+Using the following pins is recommended:
+- Data Pin **PB_9**
+- Clock Pin **PB_8**
+
+[Nucleo Board pinmap][3]
+
+## **WARNING 2 :-)**
+
+<b>As previously emphasized, this sensor is highly sensitive, and improper connections can lead to damage. It's very important to thoroughly examine the provided pictures illustrating the correct way of the connection from the sensor.</b> <br>
+
+<b> Take note of the pin descriptions on the sensor. Connect a red power cable to the pin labeled 5V and a black ground cable to the pin labeled GND.</b>
+<p align="center">
+    <img src="../images/line_follower_sensor_look.png" alt="Line follower sensor look from above" width="750"/>
+</p>
+
+To plug the power source you will need to use:
+
+- 2 m/f jumper wires (black and red)
+<p align="center">
+    <img src="../images/mf_line_follower_array_connection.png" alt="Line follower sensor mf connection" width="750"/>
+</p>
+
+- or
+
+<p align="center">
+    <img src="../images/ff_line_follower_array_connection.png" alt="Line follower sensor ff connection" width="750"/>
+</p>
+
+- and 2 f/f jumper wires (green and yellow) for the I2C communication
+
+<p align="center">
+    <img src="../images/SDA_SCL_plugging.png" alt="SDA_SCL" width="750"/>
+</p>
+
+## Sensor Bar Driver (in case you want to develop your own line following algorithm)
+
+Include the necessary driver in the ***main.cpp*** file
+
+```
+#include "pm2_drivers/SensorBar.h"
+```
+
+- SDA pin - Used for data transfer in I2C standard
+- SCL pin - Used for clock synchronization
+- bar_dist - Distance from wheel axis to leds on sensor bar / array in meters
+
+and create a variable for the distance from the wheel axis to the LEDs on the sensor bar / array and a ``SensorBar`` object with the pin names for the I2C communication 
+
+```
+const float bar_dist = 0.083f; // distance from wheel axis to leds on sensor bar / array in meters
+SensorBar sensorBar(PB_9, PB_8, bar_dist);
+```
+
+#### Sensor Bar Usage
+
+If you want to read out the angle of the line relative to the robot and only update it when the line is detected you need to define a persistent variable to store the angle. This variable should be updated in the main loop when the line is detected. The angle is calculated in the driver and can be accessed by the user.
+
+```
+float angle = 0.0f;
+```
+
+The sensor bar driver provides functionality to read the sensor values and calculate the angle of the line relative to the robot's orientation.
+
+```
+// only update sensor bar angle if a led is triggered
+if (sensorBar.isAnyLedActive()) {
+    angle = sensorBar.getAvgAngleRad();
+}
+```
+
+You can now use this angle to control the robot's movement based on the line detection. If you wnat to use the line follower driver, please refer to the next section.
+
+### Using Eigen Library (Linear Algebra)
+
+You can use the Eigen library for linear algebra operations. The library is used for matrix operations, such as matrix multiplication and inversion, which are essential for the kinematic calculations in the driver.
+
+As usual include the library in the ***main.cpp*** file.
+
+```
+#include "Eigen/Dense"
+```
+
+Now you're able to define the mapping from wheel velocity to the robot velocities as a 2x2 matrix using the following code snippet, check out [Kinematics](../markdown/kinematics.md) for more information.
+
+```
+const float r_wheel = 0.0564f / 2.0f; // wheel radius in meters
+const float b_wheel = 0.13f;          // wheelbase, distance from wheel to wheel in meters
+// transforms robot to wheel velocities
+Eigen::Matrix2f Cwheel2robot;
+Cwheel2robot << r_wheel / 2.0f,       r_wheel / 2.0f,
+                r_wheel / b_wheel, -r_wheel / b_wheel;
+```
+
+Usually the control law to follow a line is implemented with respect to the robot, so translational forward velocity and angular velocity. Assuming you already have the robot velocities, you can calculate the wheel velocities using the inverse of the matrix defined above.
+
+```
+// map robot velocities to wheel velocities in rad/sec
+Eigen::Vector2f wheel_speed = Cwheel2robot.inverse() * robot_coord;
+```
+
+In the above code snippet, the variable ``robot_coord`` is a 2x1 ``Eigen::Vector2f`` vector containing the robot translational forward velocity and the angular velocity. The resulting ``wheel_speed`` vector contains the right and left wheel velocities in radians per second.
+
+To output the wheel velocities as setpoints to the DC motors, you can use the following code snippet.
+
+```
+// setpoints for the dc-motors in rps
+motor_M1.setVelocity(wheel_speed(0) / (2.0f * M_PI)); // set a desired speed for speed controlled dc motors M1
+motor_M2.setVelocity(wheel_speed(1) / (2.0f * M_PI)); // set a desired speed for speed controlled dc motors M2
+```
+
+## Examples for Summer School 2024
+
+- [Line follower Base Example](../solutions/main_line_follower_base_ss24.cpp)
+- [Differential Drive Robot Kinematics Calibration](../solutions/main_calib_kinematic_ss24.cpp)
 
 ## Line Follower Driver
 
@@ -41,7 +162,7 @@ The ``LineFollower`` driver is used to calculate wheel speed based on encoder se
 
 To start using the ``LineFollower`` driver, the initial step in the ***main.cpp*** file is to create the ``LineFollower`` object and specify the pins to which the object will be assigned.
 
-To set up the module in the main function, it's necessary that you define two DC motor objects. To do so, please see the instructions provided in [DC motor](../markdown/dc_motor.md). Code snipets that should be placed in the correct places:
+To set up the module in the main function, it's necessary that you define two DC motor objects. To do so, please see the instructions provided in [DC Motor](../markdown/dc_motor.md). Code snipets that should be placed in the correct places:
 
 ```
 #include "pm2_drivers/DCMotor.h"
@@ -54,10 +175,10 @@ DigitalOut enable_motors(PB_ENABLE_DCMOTORS);
 
 ```
 const float voltage_max = 12.0f; // maximum voltage of battery packs, adjust this to
-                                 // 6.0f V if you only use one battery pack
+                                    // 6.0f V if you only use one battery pack
 const float gear_ratio = 78.125f; 
 const float kn = 180.0f / 12.0f;
-// motor M1 and M2, do NOT enable motion planner, disabled per default
+// motor M1 and M2, do NOT enable motion planner when used with the LineFollower (disabled per default)
 DCMotor motor_M1(PB_PWM_M1, PB_ENC_A_M1, PB_ENC_B_M1, gear_ratio, kn, voltage_max);
 DCMotor motor_M2(PB_PWM_M2, PB_ENC_A_M2, PB_ENC_B_M2, gear_ratio, kn, voltage_max);
 ```
@@ -66,50 +187,14 @@ DCMotor motor_M2(PB_PWM_M2, PB_ENC_A_M2, PB_ENC_B_M2, gear_ratio, kn, voltage_ma
 - Follow the instructions [Motor M2 Closed-Loop Velocity Control](../markdown/dc_motor.md#motor-m2-closed-loop-velocity-control)
 - The control algorithm in the ``LineFollower`` driver works best if the motion planner for the dc motors is disabled.
 
-### Connection to the PES Board
-
-As communication protocol I2C is used. I2C relies on a data pin and a clock pin (more information can be found [here][2]). To power the sensor, a voltage of 5V is required.
-
-In the described robot, the following pins are utilized:
-- Data **PB_9**
-- Clock **PB_8**
-
-[Nucleo Board pinmap][3]
-
-## **WARNING 2**
-
-<b>As previously emphasized, this sensor is highly sensitive, and improper connections can lead to damage. It's very important to thoroughly examine the provided pictures illustrating the correct way of connecting the sensor to avoid any issues.</b> <br>
-
-<b> Take note of the pin descriptions on the sensor. Connect the red power cable to the pin labeled 5V and the black ground cable to the pin labeled GND.</b>
-<p align="center">
-    <img src="../images/line_follower_sensor_look.png" alt="Line follower sensor look from above" width="750"/>
-</p>
-
-To plug the power source you will need to use:
-
-- 2 m/f jumper wires (black and red)
-<p align="center">
-    <img src="../images/mf_line_follower_array_connection.png" alt="Line follower sensor mf connection" width="750"/>
-</p>
-
-- 2 f/f jumper wires (black and red)
-<p align="center">
-    <img src="../images/ff_line_follower_array_connection.png" alt="Line follower sensor ff connection" width="750"/>
-</p>
-
-- 2 f/f jumper wires (green and yellow)
-<p align="center">
-    <img src="../images/SDA_SCL_plugging.png" alt="SDA_SCL" width="750"/>
-</p>
-
-### Create Line Follower Object
+### Create Line Follower Object (in case you don't want to develop your own line follower Algorithm)
 
 Initially, it's essential to add the suitable driver to our ***main.cpp*** file and then create an object with the following variables defined (in **SI** units):
 
 - SDA pin - Used for data transfer in I2C standard
 - SCL pin - Used for clock synchronization
 - d_wheel - Wheel diameter in meters
-- L_wheel - Wheelbase, distance from wheel to wheel in meters
+- b_wheel - Wheelbase, distance from wheel to wheel in meters
 - bar_dist - Distance from wheel axis to leds on sensor bar / array
 - max_motor_vel_rps - Maximum motor speed given in revolutions per second
 
@@ -120,11 +205,11 @@ The remaining values are defined by default, but there is a possibility to chang
 ```
 
 ```
-const float d_wheel = 0.0564f; // wheel diameter in meters
-const float L_wheel = 0.13f;   // wheelbase, distance from wheel to wheel in meters
-const float bar_dist = 0.083f; // distance from wheel axis to leds on sensor bar / array
-// line follower driver
-LineFollower lineFollower(PB_9, PB_8, bar_dist, d_wheel, L_wheel, motor_M2.getMaxPhysicalVelocity());
+const float d_wheel = 0.035f;  // wheel diameter in meters
+const float b_wheel = 0.1518f; // wheelbase, distance from wheel to wheel in meters
+const float bar_dist = 0.118f; // distance from wheel axis to leds on sensor bar / array in meters
+// line follower
+LineFollower lineFollower(PB_9, PB_8, bar_dist, d_wheel, b_wheel, motor_M2.getMaxPhysicalVelocity());
 ```
 
 **NOTE:** 
@@ -140,8 +225,8 @@ The ``LineFollower`` class provides functionality to dynamically adjust the foll
 - Description: These parameters influence the proportional gain and non-linear gain (squared) in the robot's angular velocity control, allowing user to fine-tune the response to deviations from the desired line angle.
 
 2. Maximum Wheel Velocity:
-- Function: ``void setMaxWheelVelocity(float max_wheel_vel)``
-- Parameter: ``max_wheel_vel``
+- Function: ``void setMaxWheelVelocity(float wheel_vel_max)``
+- Parameter: ``wheel_vel_max``
 - Description: This parameter limits the maximum wheel velocity (argument in rotations per second), indirectly affecting the robot's linear and angular velocities. User can adjust this limit to optimize performance for their system (tuning).
 
 ### Driver Ussage
@@ -156,10 +241,18 @@ motor_M1.setVelocity(lineFollower.getRightWheelVelocity()); // set a desired spe
 motor_M2.setVelocity(lineFollower.getLeftWheelVelocity());  // set a desired speed for speed controlled dc motors M2
 ```
 
+Also disable the h-bridge with
+
+```
+// reset variables and objects
+led1 = 0;
+enable_motors = 0;
+```
+
 **NOTE:** 
 - The ``LineFollower`` class assumes that the right motor is M1 and the left motor is M2 (sitting on the robot and looking forward) and that a positive speed setpoint to the motor M1 and M2 will rotate the robot positively around the z-axis (counter-clockwise seen from above).
 
-Below, you'll find an in-depth manual explaining the inner driver functions. While it's not mandatory to use this manual, familiarizing yourself with the content will certainly help. For enhanced comprehension, it's recommended to refer to the [kinematics](../markdown/kinematics.md) document, which provides explanations of the mathematical operations involved.
+Below, you'll find an in-depth manual explaining the inner driver functions. While it's not mandatory to use this manual, familiarizing yourself with the content will certainly help. For enhanced comprehension, it's recommended to refer to the [Kinematics](../markdown/kinematics.md) document, which provides explanations of the mathematical operations involved.
 
 ### Thread Algorithm Description
 
@@ -167,15 +260,15 @@ The ``followLine()`` function is a thread task method responsible for controllin
 
 1. Thread Execution: The ``followLine()`` method runs continuously in a thread loop. It waits for a thread flag to be set before executing, indicating that it should perform the task.
 
-2. Sensor Reading: Inside the ``while()`` loop, the method checks if any LEDs on the sensor bar are active. If any LEDs are active, it calculates the average angle of the detected line segments relative to the robot's orientation. This angle is stored in ``m_sensor_bar_avgAngleRad``.
+2. Sensor Reading: Inside the ``while()`` loop, the method checks if any LEDs on the sensor bar are active. If any LEDs are active, it calculates the average angle of the detected line segments relative to the robot's orientation. This angle is stored in ``m_angle``.
 
 3. Control Calculation:
-- The maximum wheel velocity in radians per second (``m_max_wheel_vel_rads``) is calculated based on the maximum wheel velocity (``m_max_wheel_vel``).
+- The maximum wheel velocity in radians per second is calculated based on the maximum wheel velocity in rotations per seconds (``m_wheel_vel_max_rps``).
 - The rotational velocity (``m_robot_coord(1)``) is determined using a control ``ang_cntrl_fcn()`` function, which adjusts the robot's orientation to align it with the detected line.
 - The translational velocity (``m_robot_coord(0)``) is determined using another control ``vel_cntrl_fcn()`` function, which calculates the robot's forward velocity based on the rotational velocity and geometric parameters.
 - The robot's wheel speeds are calculated using the inverse transformation matrix ``m_Cwheel2robot``.
 
-4. Wheel Velocity Conversion: The calculated wheel speeds are converted from radians per second to revolutions per second (``m_right_wheel_velocity`` and ``m_left_wheel_velocity``).
+4. Wheel Velocity Conversion: The calculated wheel speeds are converted from radians per second to revolutions per second (``m_wheel_right_velocity_rps`` and ``m_wheel_left_velocity_rps``).
 
 #### Angular Velocity Controller
 
@@ -187,37 +280,35 @@ The ``ang_cntrl_fcn()`` function is responsible for calculating the angular velo
 - ``angle``: The angle of the detected line relative to the robot's orientation.
 
 2. Calculation:
-- If the angle is positive (``angle > 0``), the function calculates the angular velocity (``retval``) using the formula:
+- If the angle is positive (``angle >= 0``), the function calculates the angular velocity using the formula:
     ```
     ang_vel = Kp * angle + Kp_nl * angle * angle
     ```
     This formula applies proportional control (``Kp * angle``) along with a non-linear correction term (``Kp_nl * angle * angle``).
-- If the angle is zero or negative (``angle <= 0``), the function calculates the angular velocity (``retval``) using a similar formula but with a negative sign for the non-linear term:
+- If the angle is zero or negative (``angle < 0``), the function calculates the angular velocity (``retval``) using a similar formula but with a negative sign for the non-linear term:
     ```
     ang_vel = Kp * angle - Kp_nl * angle * angle
     ```
-3. Output:
-- The function returns the calculated angular velocity (``retval``).
 
 #### Linear Velocity Controller
 
 The ``vel_cntrl_fcn()`` function calculates the linear velocity of the robot based on its angular velocity and geometric parameters. The function ensures that one of the robot's wheels always turns at the maximum velocity specified by the user while the other adjusts its speed to maintain the desired angular velocity.
 
 1. Input Parameters:
-- ``wheel_speed_max``: Maximum wheel speed in radians per second.
-- ``b``: Geometric parameter related to the distance between the wheels .
-- ``robot_omega``: Angular velocity of the robot.
+- ``wheel_vel_max``: Maximum wheel speed in radians per second.
+- ``rotation_to_wheel_vel``: Geometric parameter related to the distance between the wheels .
+- ``robot_ang_vel``: Angular velocity of the robot.
 - ``Cwheel2robot``: Transformation matrix from wheel to robot coordinates.
 
 2. Calculation:
-- If ``robot_omega`` is positive, it assigns the maximum wheel speed to the first wheel and calculates the speed for the second wheel by subtracting ``2 * b * robot_omega`` from the maximum speed.
-- If ``robot_omega`` is negative or zero, it assigns the maximum wheel speed to the second wheel and calculates the speed for the first wheel by adding ``2 * b * robot_omega`` to the maximum speed.
+- If ``robot_ang_vel`` is positive, it assigns the maximum wheel speed to the first wheel and calculates the speed for the second wheel by subtracting ``2 * b * robot_ang_vel`` from the maximum speed.
+- If ``robot_ang_vel`` is negative or zero, it assigns the maximum wheel speed to the second wheel and calculates the speed for the first wheel by adding ``2 * b * robot_ang_vel`` to the maximum speed.
 - The function then calculates the robot's coordinate velocities by multiplying the transformation matrix ``Cwheel2robot`` by the wheel speeds.
 - Finally, it returns the linear velocity of the robot, which corresponds to the velocity along the x-axis in the robot's coordinate system.
 
 3. Output:
 - The function returns the calculated linear velocity of the robot.
 
-## Solution
+## Example
 
-[Line follower](../solutions/line_follower.txt)
+- [Line Follower](../solutions/main_line_follower.cpp)
