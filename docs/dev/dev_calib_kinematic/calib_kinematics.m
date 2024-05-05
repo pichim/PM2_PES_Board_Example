@@ -33,24 +33,16 @@ r_cw_cog  = norm(cw_cog);
 r_ccw_cog = norm(ccw_cog);
 
 % alpha -> correct wheelbase
-alpha_0 = (cw_cog(1) + ccw_cog(1)) / (-4*L_square);
-alpha_1 = (cw_cog(2) - ccw_cog(2)) / (-4*L_square);
-% alpha_0 * 180/pi
-% alpha_1 * 180/pi
+alpha = (cw_cog(1) + ccw_cog(1)) / (-4*L_square);
+alpha * 180/pi
 
-b_actual_0 = (pi/2) / (pi/2 - alpha_0) * b_wheel;
-b_actual_1 = (pi/2) / (pi/2 - alpha_1) * b_wheel;
-b_actual   = (pi/2) / (pi/2 - 0.5 * (alpha_0 + alpha_1)) * b_wheel;
+b_actual = (pi/2) / (pi/2 - alpha) * b_wheel;
 
 % beta -> correct radius
-beta_0 = (cw_cog(1) - ccw_cog(1)) / (-4*L_square);
-beta_1 = (cw_cog(2) + ccw_cog(2)) / (-4*L_square);
-% beta_0 * 180/pi
-% beta_1 * 180/pi
+beta = (cw_cog(1) - ccw_cog(1)) / (-4*L_square);
+beta * 180/pi
 
-R_actual_0 = L_square/2 / sin(beta_0/2);
-R_actual_1 = L_square/2 / sin(beta_1/2);
-R_actual   = L_square/2 / sin(0.5 * (beta_0 + beta_1)/2);
+R_actual   = (L_square/2) / sin(beta/2);
 
 Ed = (R_actual + b_actual/2) / (R_actual - b_actual/2);
 ra = 0.5 * (r1_wheel + r2_wheel);
