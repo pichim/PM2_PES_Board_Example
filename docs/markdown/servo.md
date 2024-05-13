@@ -91,13 +91,13 @@ In order to properly control the servo, the basic step that should be performed 
 >    <i>Example pulse widht, PWM and servo angle</i>
 ></p>
 >
->The charts above illustrate a direct dependency between pulse width and servo angle. As the pulse width increases, the servo anlge changes proportianal. Keep in mind the minimum angle might not be at zero pulse width. This relationship is further demonstrated in the illustration below.
+>The charts above illustrate a direct dependency between pulse width and servo angle. As the pulse width increases, the servo anlge changes proportional. Keep in mind the minimum angle might not be at zero pulse width. This relationship is further demonstrated in the illustration below.
 ><p align="center">
 >    <img src="../images/servo-motor-pwm-signal-rotation.png" alt="drawing" width="650"/> </br>
 >    <i>Example pulse widths and corresponding angles</i>
 ></p>
 >
->In the second servo illustrations, the zero position corresponds to a pulse width of 1 ms, while the maximum angle is achieved at 2 ms. Hence, a calibration process is undertaken to determine these calibration values. These calibration values are specific to the example shown in the figure and do not hold for the servos we use. Also, our servo drivers runs at 50 Hz, therefor the servo period response pulse with is 20 ms.
+>In the second servo illustrations, the zero position corresponds to a pulse width of 1 ms, while the maximum angle is achieved at 2 ms. Hence, a calibration process is undertaken to determine these calibration values. These calibration values are specific to the example shown in the figure and do not hold for the servos we use. Also, our servo drivers runs at 50 Hz, therefor the servo period response pulse width is 20 ms.
 >
 > For more information see: [HERE][2]
 
@@ -140,7 +140,7 @@ if (!servo_D1.isEnabled())
     servo_D1.enable();
 ```
 
-- Next, use the following function and statements. These will enable the incremental adjustment of the servo position every one second. It is important to ensure that the incremental change in the servo position, i.e., the pulse width, is very small to obtain precise minimum and maximum values. Try to find a tradoff between too large and therefor too long execution time to wait for and too small and therefor not long enough values.
+- Next, use the following function and statements. These will enable the incremental adjustment of the servo position every one second. It is important to ensure that the incremental change in the servo position, i.e., the pulse width, is very small to obtain precise minimum and maximum values. Try to find a tradeoff between too large and therefor too long execution time to wait for and too small and therefor not long enough values.
 
 ```
 // command the servos

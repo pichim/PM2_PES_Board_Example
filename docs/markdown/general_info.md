@@ -35,7 +35,7 @@ By forking the repository, you can freely experiment with changes without affect
 
 ## Arm Mbed
 
-Arm Mbed is a comprehensive embedded systems development platform designed for embedded systems. It offers a range of tools, libraries, and acces to a real time C++ based OS to simplify and accelerate the development process for Arm-based microcontrollers. Mbed provides a unified and scalable environment, supporting diverse applications in the field of embedded systems and IoT.
+Arm Mbed is a comprehensive embedded systems development platform, it offers a range of tools, libraries, and acces to a real time C++ based OS to simplify and accelerate the development process for Arm-based microcontrollers. Mbed provides a unified and scalable environment, supporting diverse applications in the field of embedded systems and IoT.
 
 ### Mbed Studio
 

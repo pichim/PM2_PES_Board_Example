@@ -51,8 +51,8 @@ A direct current (DC) motor is an electrical machine that converts electrical en
     <i>Approximate static characteristics of 78:1 DC Motor</i>
 </p>
 
-- The above static motor characteristics represent measured and interpolated data from the 78:1 DC Motor. The static characteristics from other gear boxes ca be found in the datasheet [20D Pololu Motors](../datasheets/pololu-20d-metal-gearmotors.pdf). It is advisable to make informed decisions and choices when selecting the motors. Incorporating safety margins to account for possible inaccuracies or variations and avoid operating the motors at their limiting boundaries. The main takeaways from the characteristics can be summarized as follows:
-  - The relation between speed and voltage is linear (not visible in the graph), the more voltage that is applied, the higher the rotational speed. The gain that maps voltage to speed is called the motor constant and for the 78:1 DC Motor the value is 180 RPM / 12 V = 0.25 RPM/V or 0.25 RPS/V.
+- The above static motor characteristics represent measured and interpolated data from the 78:1 DC Motor. The static characteristics from other gear boxes can be found in the datasheet [20D Pololu Motors](../datasheets/pololu-20d-metal-gearmotors.pdf). It is advisable to make informed decisions and choices when selecting the motors. Incorporating safety margins to account for possible inaccuracies or variations and avoid operating the motors at their limiting boundaries. The main takeaways from the characteristics can be summarized as follows:
+  - The relation between speed and voltage is linear (not visible in the graph), the more voltage that is applied, the higher the rotational speed. The gain that maps voltage to speed is called the motor constant and for the 78:1 DC Motor the value is 180 RPM / 12 V = 15 RPM/V or 0.25 RPS/V.
   - The relation between current and torque is also linear, the more current that is flowing throught the coils, the more torque is applied.
   - At zero torque we can reach a maximum speed of 180 RPM at 12V. The maximum speed can only be reached when the motor is not under load.
   - At maximum torque the motor is not able to rotate / accelerate anymore, all energy is used to apply the torque.
@@ -177,7 +177,7 @@ The PES Board can control up to 3 DC motors. Configuring the driver involves set
 
 <br>
 
-To power the DC motors, connect the two battery packs to the back of the PES Board. Each battery back delivers approx. 6V, resulting in 12V total (parallel). If your are using only one battery pack you have to bridge the remaining pins on the back of the PES Board. Turn on the PES Board by using the ON/OFF switch. After turning on the power, enable the external power electronics (H-bridge) by creating a ``DigitalOut`` object and set the digital out to 1 (or true). This object needs to be created alongside other necessary variables and objects.
+To power the DC motors, connect the two battery packs to the back of the PES Board. Each battery back delivers approx. 6V, resulting in 12V total (series). If your are using only one battery pack you have to bridge the remaining pins on the back of the PES Board. Turn on the PES Board by using the ON/OFF switch. After turning on the power, enable the external power electronics (H-bridge) by creating a ``DigitalOut`` object and set the digital out to 1 (or true). This object needs to be created alongside other necessary variables and objects.
 
 <br>
 
