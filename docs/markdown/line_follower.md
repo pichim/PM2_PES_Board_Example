@@ -45,7 +45,7 @@ Using the following pins is recommended:
 - Data Pin **PB_9**
 - Clock Pin **PB_8**
 
-[Nucleo Board pinmap][3]
+[Mbed ST-Nucleo-F446RE</font>][3]
 
 ## **WARNING 2 :-)**
 
@@ -83,11 +83,10 @@ Include the necessary driver in the ***main.cpp*** file
 #include "pm2_drivers/SensorBar.h"
 ```
 
-- SDA pin - Used for data transfer in I2C standard
-- SCL pin - Used for clock synchronization
-- bar_dist - Distance from wheel axis to leds on sensor bar / array in meters
-
 and create a variable for the distance from the wheel axis to the LEDs on the sensor bar / array and a ``SensorBar`` object with the pin names for the I2C communication 
+
+- SDA pin - Used for data transfer in I2C standard (``PB_9``)
+- SCL pin - Used for clock synchronization (``PB_8``)
 
 ```
 const float bar_dist = 0.083f; // distance from wheel axis to leds on sensor bar / array in meters
@@ -96,7 +95,7 @@ SensorBar sensorBar(PB_9, PB_8, bar_dist);
 
 #### Sensor Bar Usage
 
-If you want to read out the angle of the line relative to the robot and only update it when the line is detected you need to define a persistent variable to store the angle. This variable should be updated in the main loop when the line is detected. The angle is calculated in the driver and can be accessed by the user.
+If you want to read out the angle of the line relative to the robot and only update the variable ``angle`` when the line is detected you need to define a persistent variable to store the angle. This variable should be updated in the main loop when the line is detected. The angle is calculated in the driver and can be accessed by the user.
 
 ```
 float angle = 0.0f;
@@ -111,7 +110,7 @@ if (sensorBar.isAnyLedActive()) {
 }
 ```
 
-You can now use this angle to control the robot's movement based on the line detection. If you wnat to use the line follower driver, please refer to the next section.
+You can now use this angle to control the robot's movement based on the line detection. If you want to use the line follower driver, please refer to the next section.
 
 ### Using Eigen Library (Linear Algebra)
 
@@ -153,12 +152,12 @@ motor_M2.setVelocity(wheel_speed(1) / (2.0f * M_PI)); // set a desired speed for
 
 ## Examples for Summer School 2024
 
-- [Line follower Base Example](../solutions/main_line_follower_base_ss24.cpp)
 - [Differential Drive Robot Kinematics Calibration](../solutions/main_calib_kinematic_ss24.cpp)
+- [Line follower Base Example](../solutions/main_line_follower_base_ss24.cpp)
 
-## Line Follower Driver
+## Line Follower Driver (in case you don't want to develop your own line following algorithm)
 
-The ``LineFollower`` driver is used to calculate wheel speed based on encoder sensor readings and the robot geometry, as well as on other settings declared by the user.
+The ``LineFollower`` driver is designed to drive (control) a differential drive robot with a line follower array attached along a black line on white background.
 
 To start using the ``LineFollower`` driver, the initial step in the ***main.cpp*** file is to create the ``LineFollower`` object and specify the pins to which the object will be assigned.
 
@@ -175,7 +174,7 @@ DigitalOut enable_motors(PB_ENABLE_DCMOTORS);
 
 ```
 const float voltage_max = 12.0f; // maximum voltage of battery packs, adjust this to
-                                    // 6.0f V if you only use one battery pack
+                                 // 6.0f V if you only use one battery pack
 const float gear_ratio = 78.125f; 
 const float kn = 180.0f / 12.0f;
 // motor M1 and M2, do NOT enable motion planner when used with the LineFollower (disabled per default)
@@ -185,20 +184,20 @@ DCMotor motor_M2(PB_PWM_M2, PB_ENC_A_M2, PB_ENC_B_M2, gear_ratio, kn, voltage_ma
 
 **NOTE:**
 - Follow the instructions [Motor M2 Closed-Loop Velocity Control](../markdown/dc_motor.md#motor-m2-closed-loop-velocity-control)
-- The control algorithm in the ``LineFollower`` driver works best if the motion planner for the dc motors is disabled.
+- The control algorithm in the ``LineFollower`` driver works best if the motion planner for the dc motors is disabled (should be default).
 
-### Create Line Follower Object (in case you don't want to develop your own line follower Algorithm)
+### Create Line Follower Object
 
 Initially, it's essential to add the suitable driver to our ***main.cpp*** file and then create an object with the following variables defined (in **SI** units):
 
-- SDA pin - Used for data transfer in I2C standard
-- SCL pin - Used for clock synchronization
+- SDA pin - Used for data transfer in I2C standard (``PB_9``)
+- SCL pin - Used for clock synchronization (``PB_8``)
+- bar_dist - Distance from wheel axis to leds on sensor bar / array
 - d_wheel - Wheel diameter in meters
 - b_wheel - Wheelbase, distance from wheel to wheel in meters
-- bar_dist - Distance from wheel axis to leds on sensor bar / array
 - max_motor_vel_rps - Maximum motor speed given in revolutions per second
 
-The remaining values are defined by default, but there is a possibility to change some of the parameters, as described below the description of the internal algorithm operation.
+The remaining values are defined by default, but there is a possibility to change some of the parameters, as described below the description of the internal algorithm.
 
 ```
 #include "pm2_drivers/LineFollower.h"
@@ -222,12 +221,12 @@ The ``LineFollower`` class provides functionality to dynamically adjust the foll
 1. Proportional Gain (Kp) and Non-linear Gain (Kp_nl):
 - Function: ``void setRotationalVelocityGain(float Kp, float Kp_nl)``
 - Parameters: ``Kp`` and ``Kp_nl``
-- Description: These parameters influence the proportional gain and non-linear gain (squared) in the robot's angular velocity control, allowing user to fine-tune the response to deviations from the desired line angle.
+- Description: These parameters influence the proportional gain and non-linear gain (squared) in the robot's angular velocity controller, allowing the user to fine-tune the response to deviations from the desired line angle.
 
 2. Maximum Wheel Velocity:
-- Function: ``void setMaxWheelVelocity(float wheel_vel_max)``
+- Function: ``void setMaxWheelVelocityRPS(float wheel_vel_max)``
 - Parameter: ``wheel_vel_max``
-- Description: This parameter limits the maximum wheel velocity (argument in rotations per second), indirectly affecting the robot's linear and angular velocities. User can adjust this limit to optimize performance for their system (tuning).
+- Description: This parameter limits the maximum wheel velocity (argument in rotations per second), indirectly affecting the robot's linear and angular velocities. The user can adjust this limit to tune the performance of their system.
 
 ### Driver Ussage
 
@@ -241,7 +240,7 @@ motor_M1.setVelocity(lineFollower.getRightWheelVelocity()); // set a desired spe
 motor_M2.setVelocity(lineFollower.getLeftWheelVelocity());  // set a desired speed for speed controlled dc motors M2
 ```
 
-Also disable the h-bridge with
+Don't forget to reset the variables when the **USER** button is pressed again.
 
 ```
 // reset variables and objects

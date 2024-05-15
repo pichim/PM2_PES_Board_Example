@@ -193,7 +193,7 @@ And here you find all the solutions, as well as some additional examples:
 - [Solution Workshop 3, Part 1](../solutions/main_ws3_p1.cpp)
 - [Solution Workshop 3, Part 2](../solutions/main_ws3_p2.cpp)
 - [Example Line Follower](../solutions/main_line_follower.cpp)
-- [Example Line follower Base Example](../solutions/main_line_follower_base_ss24.cpp)
+- [Example Line Follower Base Example](../solutions/main_line_follower_base_ss24.cpp)
 - [Example Differential Drive Robot Kinematics Calibration](../solutions/main_calib_kinematic_ss24.cpp)
 
 ### Additional Information

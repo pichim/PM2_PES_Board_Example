@@ -24,7 +24,7 @@ The kinematics of a differential drive robot describe the relationship between t
 - Left wheel velocity $\omega_2$ 
 
 **NOTE:** 
-- For the implementation in C++, we'll use the Eigen. Eigen is a C++ template library for linear algebra.
+- For the implementation in C++, we use Eigen. Eigen is a powerfull C++ library for linear algebra.
 
 ## Deriving the Kinematic Model
 
