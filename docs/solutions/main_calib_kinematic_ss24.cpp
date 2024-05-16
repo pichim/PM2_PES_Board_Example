@@ -51,25 +51,30 @@ int main()
     DCMotor motor_M1(PB_PWM_M1, PB_ENC_A_M1, PB_ENC_B_M1, gear_ratio, kn, voltage_max);
     DCMotor motor_M2(PB_PWM_M2, PB_ENC_A_M2, PB_ENC_B_M2, gear_ratio, kn, voltage_max);
 
+    // const float r1_wheel = 0.0357f / 2.0f; // right wheel radius in meters
+    // const float r2_wheel = 0.0357f / 2.0f; // left  wheel radius in meters
+    // const float b_wheel = 0.1520f;  // wheelbase, distance from wheel to wheel in meters
+    const float r1_wheel = 0.01783f; // right wheel radius in meters
+    const float r2_wheel = 0.01787f; // left  wheel radius in meters
+    const float b_wheel  = 0.15572f; // wheelbase, distance from wheel to wheel in meters
+    const float radius_ratio = r1_wheel / r2_wheel;
+
     // additional dc motor settings (don't use them for the line follower)
     motor_M1.enableMotionPlanner();
     motor_M1.setMaxVelocity(motor_M1.getMaxVelocity() * 0.6f);
     motor_M1.setMaxAcceleration(motor_M1.getMaxAcceleration() * 0.2f);
     motor_M1.setVelocityCntrlIntegratorLimitsPercent(100.0f);
     motor_M2.enableMotionPlanner();
-    motor_M2.setMaxVelocity(motor_M2.getMaxVelocity() * 0.6f);
-    motor_M2.setMaxAcceleration(motor_M2.getMaxAcceleration() * 0.2f);
+    motor_M2.setMaxVelocity(motor_M2.getMaxVelocity() * 0.6f * radius_ratio);
+    motor_M2.setMaxAcceleration(motor_M2.getMaxAcceleration() * 0.2f * radius_ratio);
     motor_M2.setVelocityCntrlIntegratorLimitsPercent(100.0f);
 
-    const float r1_wheel = 0.0175f; // right wheel radius in meters
-    const float r2_wheel = 0.0175f; // left  wheel radius in meters
-    const float b_wheel = 0.1518f;  // wheelbase, distance from wheel to wheel in meters
     // transforms robot to wheel velocities
     Eigen::Matrix2f Cwheel2robot;
     Cwheel2robot << r1_wheel / 2.0f   ,  r2_wheel / 2.0f   ,
                     r1_wheel / b_wheel, -r2_wheel / b_wheel;
 
-    const float L_square = 0.8f;     // forward distance in meters
+    const float L_square = 1.4f;     // forward distance in meters
     const float turn = -M_PI / 2.0f; // rotation angle in radians
                                      // -90 deg for right turn (CW), +90 deg for left turn (CCW)
 

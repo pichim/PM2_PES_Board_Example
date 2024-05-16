@@ -2,24 +2,27 @@ clc, clear variables
 %%
 
 % nominal square length
-L_square = 0.8;
+L_square = 1.4;
 
 % nominal values active during the measurement
-r1_wheel = (1.275 / 1.3) * 0.0357 / 2.0; % 0.0175
-r2_wheel = (1.275 / 1.3) * 0.0357 / 2.0; % 0.0175
-b_wheel = 0.1518;                        % 0.1518
+% const float r1_wheel = 0.0357f / 2.0f; // right wheel radius in meters
+% const float r2_wheel = 0.0357f / 2.0f; // left  wheel radius in meters
+% const float b_wheel = 0.1520f;  // wheelbase, distance from wheel to wheel in meters
+r1_wheel = 0.0357 / 2.0;
+r2_wheel = 0.0357 / 2.0;
+b_wheel = 0.1520;
 
 % 4 CW run points (x, y) in meters
-cw  = [  -4.5,   1.0;...
-        -11.0,  -1.0; ...
-        -26.5,  -6.5; ...
-        -34.0,  -7.5] * 0.01;
+cw  = [  -5.0,   5.0;...
+         -5.0,   5.0; ...
+         -5.0,   5.0; ...
+         -5.0,   0.0] * 0.01;
 
 % 4 CCW run points (x, y) in meters
-ccw = [  -6.0,  -1.5;...
-        -11.0,  -2.0; ...
-        -16.0,  -3.0; ...
-        -21.0,  -4.0] * 0.01;
+ccw = [ -16.0,  -5.0;...
+        -16.0,  -5.0; ...
+        -16.0,  -5.0; ...
+        -16.0,  -5.0] * 0.01;
 
 
 %%
