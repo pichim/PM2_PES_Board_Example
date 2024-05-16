@@ -187,14 +187,14 @@ The following links contain the workshops instructions:
 - [Workshop 3](docs/markdown/ws3.md)
 
 And here you find all the solutions, as well as some additional examples:
-- [Solution Workshop 1](../solutions/main_ws1.cpp)
-- [Solution Workshop 2, Part 1](../solutions/main_ws2_p1.cpp)
-- [Solution Workshop 2, Part 2](../solutions/main_ws2_p2.cpp)
-- [Solution Workshop 3, Part 1](../solutions/main_ws3_p1.cpp)
-- [Solution Workshop 3, Part 2](../solutions/main_ws3_p2.cpp)
-- [Example Line Follower](../solutions/main_line_follower.cpp)
-- [Example Line Follower Base Example](../solutions/main_line_follower_base_ss24.cpp)
-- [Example Differential Drive Robot Kinematics Calibration](../solutions/main_calib_kinematic_ss24.cpp)
+- [Solution Workshop 1](docs/solutions/main_ws1.cpp)
+- [Solution Workshop 2, Part 1](docs/solutions/main_ws2_p1.cpp)
+- [Solution Workshop 2, Part 2](docs/solutions/main_ws2_p2.cpp)
+- [Solution Workshop 3, Part 1](docs/solutions/main_ws3_p1.cpp)
+- [Solution Workshop 3, Part 2](docs/solutions/main_ws3_p2.cpp)
+- [Example Line Follower](docs/solutions/main_line_follower.cpp)
+- [Example Line Follower Base Example](docs/solutions/main_line_follower_base_ss24.cpp)
+- [Example Differential Drive Robot Kinematics Calibration](docs/solutions/main_calib_kinematic_ss24.cpp)
 
 ### Additional Information
 - [Differential Drive Kinematics](docs/markdown/kinematics.md)
