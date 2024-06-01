@@ -139,6 +139,12 @@ $$
 As mentioned previously when writing code with the above transformations, the eigen library is used to define vectors and matrices and perform linear algebra. First, define the geometric values of the vehicle, such as wheel radius and wheelbase. In addition, you can write the corresponding matrix and define vectors that will contain the wheel speeds and robot's velocities.
 
 ```
+#include "eigen/Dense.h"
+
+#define M_PIf 3.14159265358979323846f /* pi */
+```
+
+```
 // robot kinematics
 const float r_wheel = 0.0563f / 2.0f; // wheel radius in meters
 const float b_wheel = 0.13f;          // wheelbase, distance from wheel to wheel in meters
@@ -169,6 +175,6 @@ To access the velocity of the wheels just use the appropriate index:
 
 ```
 // set velocity setpoints in rps
-motor_right.setVelocity(wheel_speed(0) / (2.0f * M_PI));
-motor_left.setVelocity(wheel_speed(1) / (2.0f * M_PI));
+motor_right.setVelocity(wheel_speed(0) / (2.0f * M_PIf));
+motor_left.setVelocity(wheel_speed(1) / (2.0f * M_PIf));
 ```

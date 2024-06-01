@@ -9,6 +9,8 @@
 #include "eigen/Dense.h"
 #include "pm2_drivers/SensorBar.h"
 
+#define M_PIf 3.14159265358979323846f /* pi */
+
 bool do_execute_main_task = false; // this variable will be toggled via the user button (blue button) and
                                    // decides whether to execute the main task or not
 bool do_reset_all_once = false;    // this variable is used to reset certain variables and objects and
@@ -70,7 +72,7 @@ int main()
     const float Kp{5.0f};
 
     // velocity controller data
-    const float wheel_vel_max = 2.0f * M_PI * motor_M2.getMaxPhysicalVelocity();
+    const float wheel_vel_max = 2.0f * M_PIf * motor_M2.getMaxPhysicalVelocity();
 
     // start timer
     main_task_timer.start();
@@ -98,8 +100,8 @@ int main()
             Eigen::Vector2f wheel_speed = Cwheel2robot.inverse() * robot_coord;
 
             // setpoints for the dc-motors in rps
-            motor_M1.setVelocity(wheel_speed(0) / (2.0f * M_PI)); // set a desired speed for speed controlled dc motors M1
-            motor_M2.setVelocity(wheel_speed(1) / (2.0f * M_PI)); // set a desired speed for speed controlled dc motors M2
+            motor_M1.setVelocity(wheel_speed(0) / (2.0f * M_PIf)); // set a desired speed for speed controlled dc motors M1
+            motor_M2.setVelocity(wheel_speed(1) / (2.0f * M_PIf)); // set a desired speed for speed controlled dc motors M2
 
         } else {
             // the following code block gets executed only once

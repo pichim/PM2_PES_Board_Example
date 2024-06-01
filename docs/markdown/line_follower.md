@@ -119,7 +119,9 @@ You can use the Eigen library for linear algebra operations. The library is used
 As usual include the library in the ***main.cpp*** file.
 
 ```
-#include "Eigen/Dense"
+#include "eigen/Dense.h"
+
+#define M_PIf 3.14159265358979323846f /* pi */
 ```
 
 Now you're able to define the mapping from wheel velocity to the robot velocities as a 2x2 matrix using the following code snippet, check out [Kinematics](../markdown/kinematics.md) for more information.
@@ -146,8 +148,8 @@ To output the wheel velocities as setpoints to the DC motors, you can use the fo
 
 ```
 // setpoints for the dc-motors in rps
-motor_M1.setVelocity(wheel_speed(0) / (2.0f * M_PI)); // set a desired speed for speed controlled dc motors M1
-motor_M2.setVelocity(wheel_speed(1) / (2.0f * M_PI)); // set a desired speed for speed controlled dc motors M2
+motor_M1.setVelocity(wheel_speed(0) / (2.0f * M_PIf)); // set a desired speed for speed controlled dc motors M1
+motor_M2.setVelocity(wheel_speed(1) / (2.0f * M_PIf)); // set a desired speed for speed controlled dc motors M2
 ```
 
 ## Examples for Summer School 2024

@@ -8,6 +8,8 @@
 #include "pm2_drivers/DCMotor.h"
 #include "eigen/Dense.h"
 
+#define M_PIf 3.14159265358979323846f /* pi */
+
 bool do_execute_main_task = false; // this variable will be toggled via the user button (blue button) and
                                    // decides whether to execute the main task or not
 bool do_reset_all_once = false;    // this variable is used to reset certain variables and objects and
@@ -74,9 +76,9 @@ int main()
     Cwheel2robot << r1_wheel / 2.0f   ,  r2_wheel / 2.0f   ,
                     r1_wheel / b_wheel, -r2_wheel / b_wheel;
 
-    const float L_square = 1.4f;     // forward distance in meters
-    const float turn = -M_PI / 2.0f; // rotation angle in radians
-                                     // -90 deg for right turn (CW), +90 deg for left turn (CCW)
+    const float L_square = 1.4f;      // forward distance in meters
+    const float turn = -M_PIf / 2.0f; // rotation angle in radians
+                                      // -90 deg for right turn (CW), +90 deg for left turn (CCW)
 
     // calculate pure forward and pure turn movement as wheel angles
     Eigen::Vector2f robot_coord_forward = {L_square, 0.0f};
@@ -111,15 +113,15 @@ int main()
             // state machine
             switch (robot_state) {
                 case RobotState::FORWARD:
-                    motor_M1.setRotationRelative(wheel_angle_forward(0) / (2.0f * M_PI));
-                    motor_M2.setRotationRelative(wheel_angle_forward(1) / (2.0f * M_PI));
+                    motor_M1.setRotationRelative(wheel_angle_forward(0) / (2.0f * M_PIf));
+                    motor_M2.setRotationRelative(wheel_angle_forward(1) / (2.0f * M_PIf));
                     robot_state = RobotState::TURN;
                     break;
                 case RobotState::TURN:
                     if ((fabs(motor_M1.getRotationTarget() - motor_M1.getRotation()) < angle_threshold) &&
                         (fabs(motor_M2.getRotationTarget() - motor_M2.getRotation()) < angle_threshold)) {
-                        motor_M1.setRotationRelative(wheel_angle_turn(0) / (2.0f * M_PI));
-                        motor_M2.setRotationRelative(wheel_angle_turn(1) / (2.0f * M_PI));
+                        motor_M1.setRotationRelative(wheel_angle_turn(0) / (2.0f * M_PIf));
+                        motor_M2.setRotationRelative(wheel_angle_turn(1) / (2.0f * M_PIf));
                         robot_state = RobotState::FORWARD_OR_RESET;
                     }
                     break;
