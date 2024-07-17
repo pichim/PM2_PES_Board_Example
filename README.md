@@ -1,4 +1,4 @@
-<!-- 
+https://www.printables.com/de/model/516177-universal-spur-gears-collection-module-15<!-- 
     Styling Rules:
     - When ever possible *.md [Links] should be used, and not just bold text
     - In a *.md [Link] all words start with a capital letter, e.g.: [Course setup]
@@ -171,6 +171,7 @@ The following links contain the hardware tutorials. The documents contain specif
 - [Servo](docs/markdown/servo.md)
 - [DC Motor](docs/markdown/dc_motor.md)
 - [Line Follower Array](docs/markdown/line_follower.md)
+- [IMU](docs/markdown/imu.md)
 
 ## Tips
 
@@ -193,8 +194,13 @@ And here you find all the solutions, as well as some additional examples:
 - [Solution Workshop 3, Part 1](docs/solutions/main_ws3_p1.cpp)
 - [Solution Workshop 3, Part 2](docs/solutions/main_ws3_p2.cpp)
 - [Example Line Follower](docs/solutions/main_line_follower.cpp)
+- [Example Gimbal](docs/solutions/gimbal.cpp)
 - [Example Line Follower Base Example](docs/solutions/main_line_follower_base_ss24.cpp)
 - [Example Differential Drive Robot Kinematics Calibration](docs/solutions/main_calib_kinematic_ss24.cpp)
+
+In the folder (docs/cad/WS2) and (docs/cad/WS3) you will find the printable files needed to build the demonstration model for workshop 2 and workshop 3. For workshop 3, you need to edit the parts: rack and gear wheel because they are only available in STL print-ready format. Editing can be done in Prusa Slicer, which offers the possibility of minor modification.
+- rack - one hole should be added, in order to screw the rack to the carriage on which the sensor is located, or possibly lengthen this element (details available: https://www.printables.com/de/model/522220-universal-gear-rack-collection-different-modules)
+- make a hole in the element for the motor shaft (details available: https://www.printables.com/de/model/516177-universal-spur-gears-collection-module-15)
 
 ### Additional Information
 - [Differential Drive Kinematics](docs/markdown/kinematics.md)
