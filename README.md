@@ -1,4 +1,4 @@
-https://www.printables.com/de/model/516177-universal-spur-gears-collection-module-15<!-- 
+<!-- 
     Styling Rules:
     - When ever possible *.md [Links] should be used, and not just bold text
     - In a *.md [Link] all words start with a capital letter, e.g.: [Course setup]
