@@ -2,13 +2,18 @@
  * TODO:
  % - measure the actual current limit voltage for the 2 motors
  * - draw a wirring diagramm
+ * - introduce enable ping
+ * - change pin configuration so that is is actually working with the PES Board attached
+ * - test current fuctionality
+ * - write Stepper md file with a smal example
+ * - intruduce enable pin again (if there is enough DOs)
  * 
  * notes:
  * - 5V output from PES Board does not deliver enough current, so students need to use
  *   an additional battery pack
  * - enable pin is active when low
  * - potentiometer was adjusted so that when two motors are rotating with 0.1 rps and 4.0 rps for the bigger motor
- *   and 5.0 rps for the smaller motors, the motors are spinning without humming
+ *   and 5.0 rps for the smaller motors, the motors are spinning without humming without microstepping
  * - min and max speed in rps (tested with one battery pack half charged):
  *     SY35ST36-1004A, smaller motor    |  SY42STH38-1684A, bigger motor
  *         min:   0.1 rps               |    0.1 rps
