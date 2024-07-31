@@ -1,9 +1,7 @@
 /**
  * TODO:
  % - measure the actual current limit voltage for the 2 motors
- * - draw a wirring diagramm
  * - introduce enable ping
- * - change pin configuration so that is is actually working with the PES Board attached
  * - test current fuctionality
  * - write Stepper md file with a smal example
  * - intruduce enable pin again (if there is enough DOs)
@@ -65,8 +63,8 @@ int main()
     DigitalOut user_led(USER_LED);
 
     // stepper motors
-    Stepper stepper_M1(PA_8, PB_10);
-    Stepper stepper_M2(PB_4, PB_5);
+    Stepper stepper_M1(PB_9, PB_8);
+    Stepper stepper_M2(PB_4, PA_7);
 
     // start timer
     main_task_timer.start();
