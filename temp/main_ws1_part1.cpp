@@ -6,16 +6,6 @@
 // drivers
 #include "DebounceIn.h"
 
-// IR sensor
-#include "IRSensor.h"
-
-float ir_distance_mv = 0.0f;
-float ir_distance_cm = 0.0f;
-AnalogIn ir_analog_in(PC_2); // create AnalogIn object for IR sensor, pin is defined in PESBoardPinMap.h
-const float cal_a = 9227.1320f; // calibration value a for IR sensor, you need to insert the value that you got from the MATLAB file
-const float cal_b = -350.8126f; // calibration value b for IR sensor
-IRSensor ir_sensor(PC_2, cal_a, cal_b); // create IRSensor object for IR sensor, pin is defined in PESBoardPinMap.h
-
 bool do_execute_main_task = false; // this variable will be toggled via the user button (blue button) and
                                    // decides whether to execute the main task or not
 bool do_reset_all_once = false;    // this variable is used to reset certain variables and objects and
@@ -26,8 +16,6 @@ DebounceIn user_button(BUTTON1);   // create DebounceIn to evaluate the user but
 void toggle_do_execute_main_fcn(); // custom function which is getting executed when user
                                    // button gets pressed, definition at the end
 
-float ir_sensor_compensation(float ir_distance_mv);
-
 // main runs as an own thread
 int main()
 {
@@ -36,7 +24,7 @@ int main()
 
     // while loop gets executed every main_task_period_ms milliseconds, this is a
     // simple approach to repeatedly execute main
-    const int main_task_period_ms = 1000; // define main task period time in ms e.g. 20 ms, therefore
+    const int main_task_period_ms = 20; // define main task period time in ms e.g. 20 ms, therefore
                                         // the main task will run 50 times per second
     Timer main_task_timer;              // create Timer object which we use to run the main task
                                         // every main_task_period_ms
@@ -75,7 +63,6 @@ int main()
 
                 // reset variables and objects
                 led1 = 0;
-                ir_distance_mv = 0.0f;
             }
         }
 
@@ -90,12 +77,6 @@ int main()
             printf("Warning: Main task took longer than main_task_period_ms\n");
         else
             thread_sleep_for(main_task_period_ms - main_task_elapsed_time_ms);
-
-        ir_distance_mv = ir_analog_in.read() * 3.3f * 1000.0f; // read voltage in mV
-        ir_distance_cm = ir_sensor_compensation(ir_distance_mv); // apply compensation
-        // ir_distance_cm = ir_sensor.readcm(); // read distance in cm from IRSensor object
-        // print to the serial terminal
-        printf("IR distance mV: %f IR distance cm: %f \n", ir_distance_mv, ir_distance_cm);
     }
 }
 
@@ -106,17 +87,4 @@ void toggle_do_execute_main_fcn()
     // set do_reset_all_once to true if do_execute_main_task changed from false to true
     if (do_execute_main_task)
         do_reset_all_once = true;
-}
-
-float ir_sensor_compensation(float ir_distance_mv)
-{
-    // insert values that you got from the MATLAB file
-    static const float a = 9227.1320f;
-    static const float b = -350.8126f;
-
-    // avoid division by zero by adding a small value to the denominator
-    if (ir_distance_mv + b == 0.0f)
-        ir_distance_mv -= 0.001f;
-
-    return a / (ir_distance_mv + b);
 }
