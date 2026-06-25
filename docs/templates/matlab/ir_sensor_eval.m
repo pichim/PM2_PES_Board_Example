@@ -2,9 +2,11 @@ clc, clear variables
 %% parameter fit
 
 % Distance Data
-dist_cm = [4:1:15, 16:2:30];
+dist_cm = [4:1:15, 16:2:30]';
 
-dist_mV = [];
+dist_mV = [2871.016, 2410.036, 1967.107, 1711.913, 1526.303, 1371.04, 1262.783, ...
+    1190.79, 1096.26, 1037.14, 991.746, 940.973, 907.13, 861.463, 852.867, ...
+    784.64, 744.343, 703.833, 669.937, 661.07]';
 
 % Define a fit region: in the example we only want [7, 70]
 ind_fit = dist_cm >= 7.0 & dist_cm <= 70;
