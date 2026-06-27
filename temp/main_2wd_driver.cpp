@@ -6,6 +6,10 @@
 // drivers
 #include "DebounceIn.h"
 
+// motors inludes
+#include "FastPWM.h"
+#include "DCMotor.h"
+
 bool do_execute_main_task = false; // this variable will be toggled via the user button (blue button) and
                                    // decides whether to execute the main task or not
 bool do_reset_all_once = false;    // this variable is used to reset certain variables and objects and
@@ -19,6 +23,38 @@ void toggle_do_execute_main_fcn(); // custom function which is getting executed 
 // main runs as an own thread
 int main()
 {
+    // motor1 (open loop) PWM output
+    // FastPWM pwm_M1(PB_PWM_M1);
+
+    DigitalOut enable_motors(PB_ENABLE_DCMOTORS);
+    enable_motors = 1; 
+
+    // m2 for velocity closed loop control
+    const float voltage_max = 12.0f;
+
+    const float gear_ratio = 100.0f; 
+    const float speed_constant = 140.0f;
+    const float kn_M1 = speed_constant / voltage_max; // [rad/s/V] speed constant of the motor
+
+    DCMotor motor_M1(PB_PWM_M1, PB_ENC_A_M1, PB_ENC_B_M1, gear_ratio, kn_M1, voltage_max);
+
+
+    
+    // enable the motion planner for smooth movements
+    motor_M1.enableMotionPlanner();
+    // limit max. velocity to half physical possible velocity
+    // motor_M1.setMaxVelocity(motor_M1.getMaxPhysicalVelocity() * 0.5f);
+    // limit max. acceleration to half of the default acceleration
+    // motor_M1.setMaxAcceleration(motor_M1.getMaxAcceleration() * 0.5f);
+
+    const float kn_M2 = speed_constant / voltage_max; // [rad/s/V] speed constant of the motor
+
+    DCMotor motor_M2(PB_PWM_M2, PB_ENC_A_M2, PB_ENC_B_M2, gear_ratio, kn_M2, voltage_max);
+
+    motor_M2.enableMotionPlanner();
+    // motor_M2.setMaxVelocity(motor_M2.getMaxPhysicalVelocity() * 0.5f);
+
+
     // attach button fall function address to user button object
     user_button.fall(&toggle_do_execute_main_fcn);
 
@@ -54,6 +90,10 @@ int main()
 
             // visual feedback that the main task is executed, setting this once would actually be enough
             led1 = 1;
+            // pwm_M1.write(0.75f);
+            motor_M1.setVelocity(motor_M1.getMaxVelocity() * 0.5f);
+            motor_M2.setVelocity(motor_M2.getMaxVelocity() * 0.5f);
+            // motor_M3.setRotation(3.0f);
         } else {
             // the following code block gets executed only once
             if (do_reset_all_once) {
@@ -63,6 +103,10 @@ int main()
 
                 // reset variables and objects
                 led1 = 0;
+                // pwm_M1.write(0.5f);
+                motor_M1.setVelocity(0.0f);
+                motor_M2.setVelocity(0.0f);
+                // motor_M1.setRotation(0.0f);
             }
         }
 
@@ -70,7 +114,11 @@ int main()
         user_led = !user_led;
 
         // --- code that runs every cycle at the end goes here ---
-
+        // printf("motor velocity: %f \n", motor_M2.getVelocity());
+        printf("left motor rotation: %f \n", motor_M1.getRotation());
+        printf("right motor rotation: %f \n", motor_M2.getRotation());
+        printf("left motor velocity: %f \n", motor_M1.getVelocity());
+        printf("right motor velocity: %f \n", motor_M2.getVelocity());
         // read timer and make the main thread sleep for the remaining time span (non blocking)
         int main_task_elapsed_time_ms = duration_cast<milliseconds>(main_task_timer.elapsed_time()).count();
         if (main_task_period_ms - main_task_elapsed_time_ms < 0)
