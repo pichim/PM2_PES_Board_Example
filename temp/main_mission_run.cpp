@@ -25,14 +25,10 @@
 #define VOLTAGE_MAX 12.0f // maximum voltage of battery packs, adjust this to 6.0f V if you only use one battery pack
 #define GEAR_RATIO 100.0f
 #define SPEED_CONSTANT 140.0f // speed constant of the motor
-#define GEAR_RATION_RACK_PINION 390.63f
-#define SPEED_CONSTANT_RACK_PINION 36.0f // speed constant of the motor with rack and pinion gear
-#define KN_RACK_PINION (SPEED_CONSTANT_RACK_PINION / VOLTAGE_MAX) // [rad/s/V] speed constant of the motor with rack and pinion gear
 #define KN (SPEED_CONSTANT / VOLTAGE_MAX) // [rad/s/V] speed constant of the motor
-#define SPEED_FACTOR 0.3f // factor to reduce the speed of the robot, e.g. 0.1f means 10% of the maximum speed
 
 // controller parameters
-#define KP 3.0f // proportional gain for the rotational velocity controller
+#define KP 5.0f // proportional gain for the rotational velocity controller
 #define KD 0 // derivative gain for the rotational velocity controller
 #define KP_NL 0.0f // proportional gain for the non-linear controller
 
@@ -51,7 +47,7 @@ void toggle_do_execute_main_fcn(); // custom function which is getting executed 
 
 void follow_line(float angle, float prev_angle, DCMotor &motor_M1, DCMotor &motor_M2, Eigen::Matrix2f &Crobot2wheel, Eigen::Vector2f &robot_velocities, Eigen::Vector2f &wheel_velocities, const float wheel_vel_max)
 {
-    robot_velocities = {SPEED_FACTOR * wheel_vel_max * WHEEL_RADIUS,
+    robot_velocities = {0.4f * wheel_vel_max * WHEEL_RADIUS,
                         KP * angle + KP_NL * angle * fabs(angle) + KD * (angle - prev_angle)};
 
     wheel_velocities = Crobot2wheel * robot_velocities;
@@ -103,9 +99,10 @@ enum RobotState
     // Motor setup
     DCMotor motor_M1(PB_PWM_M1, PB_ENC_A_M1, PB_ENC_B_M1, GEAR_RATIO, KN, VOLTAGE_MAX);
     DCMotor motor_M2(PB_PWM_M2, PB_ENC_A_M2, PB_ENC_B_M2, GEAR_RATIO, KN, VOLTAGE_MAX);
-    DCMotor motor_M3(PB_PWM_M3, PB_ENC_A_M3, PB_ENC_B_M3, GEAR_RATION_RACK_PINION, KN_RACK_PINION, VOLTAGE_MAX);
 
     DigitalOut enable_motors(PB_ENABLE_DCMOTORS);
+
+    enable_motors = 1;
     
     const float wheel_vel_max = 2.0f * M_PIf * motor_M2.getMaxPhysicalVelocity();
 
@@ -165,7 +162,6 @@ enum RobotState
                     // TODO: check if all components are working // enable motors
                     robot_state = RobotState::FIND_LINE;
                     enable_motors = 1;
-                    motor_M3.setVelocity(0.0f);
 
                     break;
                 case FIND_LINE:
@@ -288,14 +284,7 @@ enum RobotState
         printf("wheel speed M1: %f rps, wheel speed M2: %f rps\n", wheel_velocities(0) / (2.0f * M_PIf), wheel_velocities(1) / (2.0f * M_PIf));
         printf("max wheel speed M1: %f rps, max wheel speed M2: %f rps\n", motor_M1.getMaxVelocity(), motor_M2.getMaxVelocity());
         printf("sensor bar angle: %f rad, %f deg\n", angle, angle * 180.0f / M_PIf);
-        printf("Averaged Bar Raw: |  %0.2f  | %0.2f |  %0.2f |  %0.2f |  %0.2f |  %0.2f |  %0.2f |  %0.2f | ", sensor_bar.getAvgBit(0)
-                                                                                                     , sensor_bar.getAvgBit(1)
-                                                                                                     , sensor_bar.getAvgBit(2)
-                                                                                                     , sensor_bar.getAvgBit(3)
-                                                                                                     , sensor_bar.getAvgBit(4)
-                                                                                                     , sensor_bar.getAvgBit(5)
-                                                                                                     , sensor_bar.getAvgBit(6)
-                                                                                                     , sensor_bar.getAvgBit(7));
+        printf("line sensor");
 
         // --- code that runs every cycle at the end goes here ---
 
