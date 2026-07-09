@@ -15,8 +15,17 @@
 // sensor bar
 #include "SensorBar.h"
 
+// color sensor
+#include "ColorSensor.h"
+
+// imu
+#include "IMU.h"
+
+// servo
+#include "Servo.h"
+
 #define M_PIf 3.14159265358979323846f // pi
-#define MISSION_PERIOD 20 //
+#define MISSION_PERIOD 50 //
 // robot params
 #define WHEEL_DIAMETER 0.0665f // wheel diameter in meters
 #define WHEEL_RADIUS (WHEEL_DIAMETER / 2.0f) // wheel radius in meters
@@ -29,12 +38,16 @@
 #define SPEED_CONSTANT_RACK_PINION 36.0f // speed constant of the motor with rack and pinion gear
 #define KN_RACK_PINION (SPEED_CONSTANT_RACK_PINION / VOLTAGE_MAX) // [rad/s/V] speed constant of the motor with rack and pinion gear
 #define KN (SPEED_CONSTANT / VOLTAGE_MAX) // [rad/s/V] speed constant of the motor
-#define SPEED_FACTOR 0.3f // factor to reduce the speed of the robot, e.g. 0.1f means 10% of the maximum speed
-
+#define SPEED_FACTOR 0.1f // factor to reduce the speed of the robot, e.g. 0.1f means 10% of the maximum speed
+#define PINION_PITCH 8e-3f // pitch of the pinion gear in meters
 // controller parameters
-#define KP 3.0f // proportional gain for the rotational velocity controller
+#define KP 2.0f // proportional gain for the rotational velocity controller
 #define KD 0 // derivative gain for the rotational velocity controller
 #define KP_NL 0.0f // proportional gain for the non-linear controller
+
+//IMU parameters
+#define PB_IMU_SDA PC_9
+#define PB_IMU_SCL PA_8
 
 
 // mission params
@@ -58,6 +71,11 @@ void follow_line(float angle, float prev_angle, DCMotor &motor_M1, DCMotor &moto
 
     motor_M1.setVelocity(wheel_velocities(0) / (2.0f * M_PIf));
     motor_M2.setVelocity(wheel_velocities(1) / (2.0f * M_PIf));
+}
+
+float distance_to_rotations(float distance)
+{
+    return (distance / (2 * M_PIf * PINION_PITCH));
 }
 // main runs as an own thread
 int main()
@@ -105,6 +123,13 @@ enum RobotState
     DCMotor motor_M2(PB_PWM_M2, PB_ENC_A_M2, PB_ENC_B_M2, GEAR_RATIO, KN, VOLTAGE_MAX);
     DCMotor motor_M3(PB_PWM_M3, PB_ENC_A_M3, PB_ENC_B_M3, GEAR_RATION_RACK_PINION, KN_RACK_PINION, VOLTAGE_MAX);
 
+
+    motor_M1.enableMotionPlanner();
+    motor_M2.enableMotionPlanner();
+    motor_M3.enableMotionPlanner();
+    motor_M1.setMaxAcceleration(motor_M1.getMaxAcceleration() * 0.8f);
+    motor_M2.setMaxAcceleration(motor_M2.getMaxAcceleration() * 0.8f);
+    motor_M3.setMaxAcceleration(motor_M3.getMaxAcceleration() * 0.8f);
     DigitalOut enable_motors(PB_ENABLE_DCMOTORS);
     
     const float wheel_vel_max = 2.0f * M_PIf * motor_M2.getMaxPhysicalVelocity();
@@ -114,6 +139,43 @@ enum RobotState
     // sensor bar setup
     SensorBar sensor_bar(PB_9, PB_8, SENSOR_BAR_DISTANCE, true);
     float angle = 0.0f;
+
+
+    // color sensor setup
+    ColorSensor color_sensor(PB_3);
+    int color_num;
+    const char* color_string;
+    color_sensor.switchLed(ON);
+
+    // imu setup
+    ImuData imu_data;
+    IMU imu(PB_IMU_SDA, PB_IMU_SCL);
+    
+
+    // servo motors setup
+    Servo servo_roll(PB_D0);
+    Servo servo_pitch(PB_D1);
+
+    float servo_ang_min = 0.035f;
+    float servo_ang_max = 0.130f;
+
+    servo_roll.calibratePulseMinMax(servo_ang_min, servo_ang_max);
+    servo_pitch.calibratePulseMinMax(servo_ang_min, servo_ang_max);
+
+    const float angle_range_min = -M_PIf / 2.0f; // -90 deg
+    const float angle_range_max = M_PIf / 2.0f;  // 90 deg
+    
+    const float normalised_angle_gain = 1.0f / M_PIf; // normalized angle range is [-1, 1], therefore the gain is 1/pi
+    const float normalised_angle_offset = 0.5f; // normalized angle range is [-1, 1], therefore the offset is 0
+
+    static float roll_servo_width = 0.5f;
+    static float pitch_servo_width = 0.5f;
+
+    servo_roll.setPulseWidth(roll_servo_width);
+    servo_pitch.setPulseWidth(pitch_servo_width);
+
+    float rp[2] = {0.0f, 0.0f}; // roll, pitch
+
 
 
     // robot transforms
@@ -136,6 +198,7 @@ enum RobotState
     int delivery_counter = 0;
     int stop_timer = 0;
     const float action_time = 2.0f;
+    float initial_rack_position = 20e-3f;
 
     // this loop will run forever
     while (true) 
@@ -143,6 +206,7 @@ enum RobotState
         main_task_timer.reset();
 
         // --- code that runs every cycle at the start goes here ---
+        color_num = color_sensor.getColor();
 
         if (do_execute_main_task) 
         {
@@ -151,6 +215,24 @@ enum RobotState
 
             // visual feedback that the main task is executed, setting this once would actually be enough
             led1 = 1;
+            if (!servo_roll.isEnabled())
+                servo_roll.enable();
+            if (!servo_pitch.isEnabled())
+                servo_pitch.enable();
+        
+            imu_data = imu.getImuData();
+
+            rp[0] = imu_data.pry(1);
+            rp[1] = imu_data.pry(0);
+
+            roll_servo_width  = normalised_angle_gain * rp[0] + normalised_angle_offset;
+            pitch_servo_width =  normalised_angle_gain * rp[1] + normalised_angle_offset;
+            if (angle_range_min <= rp[0] && rp[0] <= angle_range_max)
+                servo_roll.setPulseWidth(roll_servo_width);
+            if (angle_range_min <= rp[1] && rp[1] <= angle_range_max)
+                servo_pitch.setPulseWidth(pitch_servo_width);
+
+
 
             float prev_angle;
             prev_angle = angle;
@@ -165,7 +247,7 @@ enum RobotState
                     // TODO: check if all components are working // enable motors
                     robot_state = RobotState::FIND_LINE;
                     enable_motors = 1;
-                    motor_M3.setVelocity(0.0f);
+                    motor_M3.setRotation(distance_to_rotations(initial_rack_position));
 
                     break;
                 case FIND_LINE:
@@ -178,9 +260,10 @@ enum RobotState
                     // follow line
                     follow_line(angle, prev_angle, motor_M1, motor_M2, Crobot2wheel, robot_velocities, wheel_velocities, wheel_vel_max);
 
-                    if ((sensor_bar.getMeanFourAvgBitsCenter() >= 0.75f)
-                        && (sensor_bar.getMeanFourAvgBitsOuter() >= 0.25f)
-                    && (pickup_counter < 4)) 
+                    // if ((sensor_bar.getMeanFourAvgBitsCenter() >= 0.75f)
+                    //     && (sensor_bar.getMeanFourAvgBitsOuter() >= 0.25f)
+                    // && (pickup_counter < 4)) 
+                    if ((color_num == 3) || (color_num == 4) || (color_num == 5) || (color_num == 7))
                     {
                         
                         robot_state = RobotState::PICKUP_ACTION;
@@ -215,9 +298,10 @@ enum RobotState
                     // code for DELIVERY_APPROACH state
                     // for now stop
                     follow_line(angle, prev_angle, motor_M1, motor_M2, Crobot2wheel, robot_velocities, wheel_velocities, wheel_vel_max);
-                    if ((sensor_bar.getMeanFourAvgBitsCenter() >= 0.75f)
-                     && (sensor_bar.getMeanFourAvgBitsOuter() <= 0.25f)
-                     && (delivery_counter < 4)) 
+                    // if ((sensor_bar.getMeanFourAvgBitsCenter() >= 0.75f)
+                    //  && (sensor_bar.getMeanFourAvgBitsOuter() <= 0.25f)
+                    //  && (delivery_counter < 4)) 
+                    if ((color_num == 3) || (color_num == 4) || (color_num == 5) || (color_num == 7))
                     {
                         robot_state = RobotState::DELIVERY_ACTION;
                     }
@@ -274,19 +358,29 @@ enum RobotState
 
                 // reset variables and objects
                 led1 = 0;
-                enable_motors = 0; // enable motors
                 robot_state = RobotState::INITIAL; // reset robot state
                 pickup_counter = 0; // reset pickup counter
                 delivery_counter = 0; // reset delivery counter
                 stop_timer = 0; // reset stop timer
+                roll_servo_width = 0.5f;
+                pitch_servo_width = 0.5f;
+                servo_roll.setPulseWidth(roll_servo_width);
+                servo_pitch.setPulseWidth(pitch_servo_width);
+                motor_M1.setVelocity(0.0f);
+                motor_M2.setVelocity(0.0f);
+                motor_M3.setRotation(0.0f);
             }
         }
 
         // toggling the user led
         user_led = !user_led;
 
+        color_string = color_sensor.getColorString(color_num);
+        printf("Detected color: %s\n Color Number: %d\n", color_string, color_num);
+
         printf("wheel speed M1: %f rps, wheel speed M2: %f rps\n", wheel_velocities(0) / (2.0f * M_PIf), wheel_velocities(1) / (2.0f * M_PIf));
-        printf("max wheel speed M1: %f rps, max wheel speed M2: %f rps\n", motor_M1.getMaxVelocity(), motor_M2.getMaxVelocity());
+        // printf("max wheel speed M1: %f rps, max wheel speed M2: %f rps\n", motor_M1.getMaxVelocity(), motor_M2.getMaxVelocity());
+        printf("rack rotations: %f", motor_M3.getRotation());
         printf("sensor bar angle: %f rad, %f deg\n", angle, angle * 180.0f / M_PIf);
         printf("Averaged Bar Raw: |  %0.2f  | %0.2f |  %0.2f |  %0.2f |  %0.2f |  %0.2f |  %0.2f |  %0.2f | ", sensor_bar.getAvgBit(0)
                                                                                                      , sensor_bar.getAvgBit(1)
