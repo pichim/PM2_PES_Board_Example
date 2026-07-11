@@ -269,6 +269,7 @@ enum ActionPhase
     int delivery_candidate_color = 0;
     int delivery_candidate_cycles = 0;
     int delivery_color_in_progress = 0;
+    int delivery_slot_index = -1;
 
     float m1_rotation;
     float m2_rotation;
@@ -416,7 +417,7 @@ enum ActionPhase
                             break;
                         case LOWER_RACK_STOP: // condition to move to initial position
                             printf("phase 3\n");
-                            if (fabs(motor_M3.getRotation() - (distance_to_rotations(package_position_by_colour[pickup_color_in_progress].height - DISTANCE_TO_GROUND)) < 0.01f))
+                            if (fabs(motor_M3.getRotation() - (distance_to_rotations(package_position_by_colour[pickup_color_in_progress].height - DISTANCE_TO_GROUND))) < 0.01f)
                             {
                                 pickup_phase = RESTORE_RACK;
                             }
@@ -479,10 +480,17 @@ enum ActionPhase
 
                             if (delivery_candidate_cycles >= DELIVERY_CONFIRMATION_CYCLES)
                             {
-                                delivery_color_in_progress = color_num;
                                 delivery_candidate_color = 0;
                                 delivery_candidate_cycles = 0;
-                                robot_state = RobotState::DELIVERY_ALIGNMENT;
+
+                                const int slot_index = findIndex(
+                                    detected_colors, detected_color_count, color_num);
+                                if (slot_index >= 0)
+                                {
+                                    delivery_color_in_progress = color_num;
+                                    delivery_slot_index = slot_index;
+                                    robot_state = RobotState::DELIVERY_ALIGNMENT;
+                                }
                             }
                         }
                         else
@@ -519,18 +527,18 @@ enum ActionPhase
                             motor_M1.setMaxVelocity(motor_M1.getMaxPhysicalVelocity() * 0.2);
                             motor_M2.setMaxVelocity(motor_M2.getMaxPhysicalVelocity() * 0.2);
                             motor_M1.setRotation(motor_M1.getRotation() - wheel_distance_to_rotations(package_position_by_colour[delivery_color_in_progress].horizontal_offset + 
-                            findIndex(detected_colors, NUMBER_OF_PICKUPS, delivery_color_in_progress) * GAP_BETWEEN_MAGNETS));
+                            delivery_slot_index * GAP_BETWEEN_MAGNETS));
                             motor_M2.setRotation(motor_M2.getRotation() - wheel_distance_to_rotations(package_position_by_colour[delivery_color_in_progress].horizontal_offset +
-                            findIndex(detected_colors, NUMBER_OF_PICKUPS, delivery_color_in_progress) * GAP_BETWEEN_MAGNETS));
+                            delivery_slot_index * GAP_BETWEEN_MAGNETS));
                             m1_rotation = motor_M1.getRotation();
                             m2_rotation = motor_M2.getRotation();
                             delivery_phase = MOVE_BACK_STOP;
                             break;
                         case MOVE_BACK_STOP:
                             if (fabs(motor_M1.getRotation() - (m1_rotation - wheel_distance_to_rotations(package_position_by_colour[delivery_color_in_progress].horizontal_offset + 
-                            findIndex(detected_colors, NUMBER_OF_PICKUPS, delivery_color_in_progress) * GAP_BETWEEN_MAGNETS))) < 0.01f
+                            delivery_slot_index * GAP_BETWEEN_MAGNETS))) < 0.01f
                                 && fabs(motor_M2.getRotation() - (m2_rotation - wheel_distance_to_rotations(package_position_by_colour[delivery_color_in_progress].horizontal_offset +
-                                findIndex(detected_colors, NUMBER_OF_PICKUPS, delivery_color_in_progress) * GAP_BETWEEN_MAGNETS))) < 0.01f)
+                                delivery_slot_index * GAP_BETWEEN_MAGNETS))) < 0.01f)
                             {
                                 motor_M1.setMaxVelocity(motor_M1.getMaxPhysicalVelocity());
                                 motor_M2.setMaxVelocity(motor_M2.getMaxPhysicalVelocity());
@@ -562,6 +570,7 @@ enum ActionPhase
                                     delivered_color_count++;
                                 }
                                 delivery_color_in_progress = 0;
+                                delivery_slot_index = -1;
                                 delivery_phase = MOVE_BACK;
                                 delivery_counter++;
                                 robot_state = RobotState::DELIVERY_RESUME;
@@ -636,6 +645,7 @@ enum ActionPhase
                 delivery_candidate_color = 0;
                 delivery_candidate_cycles = 0;
                 delivery_color_in_progress = 0;
+                delivery_slot_index = -1;
 
             }
         }
