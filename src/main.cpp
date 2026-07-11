@@ -1,4 +1,5 @@
 #include "mbed.h"
+#include <map>
 
 // pes board pin map
 #include "PESBoardPinMap.h"
@@ -38,11 +39,12 @@
 #define SPEED_CONSTANT_RACK_PINION 36.0f // speed constant of the motor with rack and pinion gear
 #define KN_RACK_PINION (SPEED_CONSTANT_RACK_PINION / VOLTAGE_MAX) // [rad/s/V] speed constant of the motor with rack and pinion gear
 #define KN (SPEED_CONSTANT / VOLTAGE_MAX) // [rad/s/V] speed constant of the motor
-#define SPEED_FACTOR 0.1f // factor to reduce the speed of the robot, e.g. 0.1f means 10% of the maximum speed
+#define SPEED_FACTOR 0.15f // factor to reduce the speed of the robot, e.g. 0.1f means 10% of the maximum speed
 #define PINION_PITCH 12e-3f // pitch of the pinion gear in meters
+#define GAP_BETWEEN_MAGNETS 37e-3f
 // controller parameters
-#define KP 2.0f // proportional gain for the rotational velocity controller
-#define KD 0 // derivative gain for the rotational velocity controller
+#define KP 1.2f // proportional gain for the rotational velocity controller
+#define KD 0.26f // derivative gain for the rotational velocity controller
 #define KP_NL 0.0f // proportional gain for the non-linear controller
 
 // color parameters
@@ -50,19 +52,33 @@
 #define YELLOW 4
 #define GREEN 5
 #define BLUE 7
-#define DELIVERY_CONFIRMATION_CYCLES 3 // 150 ms at a 50 ms mission period
+#define DELIVERY_CONFIRMATION_CYCLES 3 
 
 //IMU parameters
 #define PB_IMU_SDA PC_9
 #define PB_IMU_SCL PA_8
 
 
+struct PackagePosition 
+{
+    float height;
+    float horizontal_offset;
+};
+
+std::map<int, PackagePosition> package_position_by_colour
+{
+    {RED,    {4e-3f,  25e-3f}},
+    {BLUE,   {14e-3f, 145e-3f}},
+    {GREEN,  {4e-3f,  145e-3f}},
+    {YELLOW, {14e-3f, 25e-3f}},
+};
 // mission params
 #define NUMBER_OF_PICKUPS 4
 bool do_execute_main_task = false; // this variable will be toggled via the user button (blue button) and
                                    // decides whether to execute the main task or not
 bool do_reset_all_once = false;    // this variable is used to reset certain variables and objects and
                                    // shows how you can run a code segment only once
+
 
 // objects for user button (blue button) handling on nucleo board
 DebounceIn user_button(BUTTON1);   // create DebounceIn to evaluate the user button
@@ -102,6 +118,16 @@ bool is_color_already_detected(int color_num, const int detected_colors[], int d
     return false;
 }
 
+int findIndex(const int values[], int size, int target)
+{
+    for (int i = 0; i < size; i++) {
+        if (values[i] == target) {
+            return i;
+        }
+    }
+
+    return -1; // not found
+}
 // main runs as an own thread
 int main()
 {
@@ -111,13 +137,10 @@ enum RobotState
 {
     INITIAL, 
     FIND_LINE,
-    // FOLLOW_LINE,
     PICKUP_APPROACH,
     PICKUP_ALIGNMENT,
     PICKUP_ACTION,
     PICKUP_RESUME,
-    // STEP_APPROACH,
-    // STEP_CLIMB,
     DELIVERY_APPROACH,
     DELIVERY_ALIGNMENT,
     DELIVERY_ACTION,
@@ -232,7 +255,7 @@ enum ActionPhase
 
     int pickup_counter = 0;
     int delivery_counter = 0;
-    float initial_rack_position = 20e-3f;
+    float initial_rack_position = 30e-3f;
     int detected_colors[NUMBER_OF_PICKUPS] = {0, 0, 0, 0}; // colors detected so far, in order of detection
     int detected_color_count = 0;                          // how many unique colors detected so far
     int pickup_candidate_color = 0;
@@ -362,17 +385,23 @@ enum ActionPhase
                     switch (pickup_phase)
                     {
                         case MOVE_BACK: //move robot back
-                            motor_M1.setRotation(motor_M1.getRotation() - wheel_distance_to_rotations(50e-3f));
-                            motor_M2.setRotation(motor_M2.getRotation() - wheel_distance_to_rotations(50e-3f));
+                            motor_M1.setMaxVelocity(motor_M1.getMaxPhysicalVelocity() * 0.2);
+                            motor_M2.setMaxVelocity(motor_M2.getMaxPhysicalVelocity() * 0.2);
+                            motor_M1.setRotation(motor_M1.getRotation() - wheel_distance_to_rotations(package_position_by_colour[pickup_color_in_progress].horizontal_offset 
+                                + pickup_counter*GAP_BETWEEN_MAGNETS));
+                            motor_M2.setRotation(motor_M2.getRotation() - wheel_distance_to_rotations(package_position_by_colour[pickup_color_in_progress].horizontal_offset 
+                                + pickup_counter*GAP_BETWEEN_MAGNETS));
                             m1_rotation = motor_M1.getRotation();
                             m2_rotation = motor_M2.getRotation();
                             pickup_phase = MOVE_BACK_STOP;
                             break;
                         case MOVE_BACK_STOP: //condition to stop moving back
                             printf("phase 1\n");
-                            if (fabs(motor_M1.getRotation() - (m1_rotation - wheel_distance_to_rotations(50e-3f))) < 0.01f
-                                && fabs(motor_M2.getRotation() - (m2_rotation - wheel_distance_to_rotations(50e-3f))) < 0.01f)
+                            if (fabs(motor_M1.getRotation() - (m1_rotation - wheel_distance_to_rotations(package_position_by_colour[pickup_color_in_progress].horizontal_offset + pickup_counter*GAP_BETWEEN_MAGNETS))) < 0.01f
+                                && fabs(motor_M2.getRotation() - (m2_rotation - wheel_distance_to_rotations(package_position_by_colour[pickup_color_in_progress].horizontal_offset + pickup_counter*GAP_BETWEEN_MAGNETS))) < 0.01f)
                             {
+                                motor_M1.setMaxVelocity(motor_M1.getMaxPhysicalVelocity());
+                                motor_M2.setMaxVelocity(motor_M2.getMaxPhysicalVelocity());
                                 pickup_phase = LOWER_RACK;
                             }
                             break;
@@ -485,16 +514,24 @@ enum ActionPhase
                     switch (delivery_phase)
                     {
                         case MOVE_BACK:
-                            motor_M1.setRotation(motor_M1.getRotation() - wheel_distance_to_rotations(50e-3f));
-                            motor_M2.setRotation(motor_M2.getRotation() - wheel_distance_to_rotations(50e-3f));
+                            motor_M1.setMaxVelocity(motor_M1.getMaxPhysicalVelocity() * 0.2);
+                            motor_M2.setMaxVelocity(motor_M2.getMaxPhysicalVelocity() * 0.2);
+                            motor_M1.setRotation(motor_M1.getRotation() - wheel_distance_to_rotations(package_position_by_colour[pickup_color_in_progress].horizontal_offset + 
+                            findIndex(detected_colors, NUMBER_OF_PICKUPS, delivery_color_in_progress) * GAP_BETWEEN_MAGNETS));
+                            motor_M2.setRotation(motor_M2.getRotation() - wheel_distance_to_rotations(package_position_by_colour[pickup_color_in_progress].horizontal_offset +
+                            findIndex(detected_colors, NUMBER_OF_PICKUPS, delivery_color_in_progress) * GAP_BETWEEN_MAGNETS));
                             m1_rotation = motor_M1.getRotation();
                             m2_rotation = motor_M2.getRotation();
                             delivery_phase = MOVE_BACK_STOP;
                             break;
                         case MOVE_BACK_STOP:
-                            if (fabs(motor_M1.getRotation() - (m1_rotation - wheel_distance_to_rotations(50e-3f))) < 0.01f
-                                && fabs(motor_M2.getRotation() - (m2_rotation - wheel_distance_to_rotations(50e-3f))) < 0.01f)
+                            if (fabs(motor_M1.getRotation() - (m1_rotation - wheel_distance_to_rotations(package_position_by_colour[pickup_color_in_progress].horizontal_offset + 
+                            findIndex(detected_colors, NUMBER_OF_PICKUPS, delivery_color_in_progress) * GAP_BETWEEN_MAGNETS))) < 0.01f
+                                && fabs(motor_M2.getRotation() - (m2_rotation - wheel_distance_to_rotations(package_position_by_colour[pickup_color_in_progress].horizontal_offset +
+                                findIndex(detected_colors, NUMBER_OF_PICKUPS, delivery_color_in_progress) * GAP_BETWEEN_MAGNETS))) < 0.01f)
                             {
+                                motor_M1.setMaxVelocity(motor_M1.getMaxPhysicalVelocity());
+                                motor_M2.setMaxVelocity(motor_M2.getMaxPhysicalVelocity());
                                 delivery_phase = LOWER_RACK;
                             }
                             break;
