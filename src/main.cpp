@@ -28,6 +28,7 @@
 #define M_PIf 3.14159265358979323846f // pi
 #define MISSION_PERIOD 50 //
 // robot params
+#define MOVE_BACK_OFFSET 10e-3f
 #define WHEEL_DIAMETER 0.0665f // wheel diameter in meters
 #define WHEEL_RADIUS (WHEEL_DIAMETER / 2.0f) // wheel radius in meters
 #define WHEEL_BASE 0.153f // wheelbase, distance from wheel to wheel in meters
@@ -44,6 +45,9 @@
 #define GAP_BETWEEN_MAGNETS 37e-3f
 #define PACKAGE_HEIGHT 30e-3f
 #define DISTANCE_TO_GROUND 34e-3f
+#define FIND_LINE_EXIT_DISTANCE 0.20f // calibrated depot exit distance in metres
+#define FIND_LINE_CONFIRM_CYCLES 3
+#define FIND_LINE_LEFT_TURN_ANGLE_RAD (M_PIf/2) // 
 // controller parameters
 #define KP 1.2f // proportional gain for the rotational velocity controller
 #define KD 0.26f // derivative gain for the rotational velocity controller
@@ -163,6 +167,13 @@ enum ActionPhase
     RESTORE_RACK_STOP
 } pickup_phase = ActionPhase::MOVE_BACK;
 
+enum class FindLinePhase
+{
+    START,
+    DRIVE_OUT,
+    TURN_LEFT
+} find_line_phase = FindLinePhase::START;
+
     // Delivery currently uses the same movement sequence as pickup.
     ActionPhase delivery_phase = ActionPhase::MOVE_BACK;
 
@@ -270,10 +281,10 @@ enum ActionPhase
     int delivery_candidate_cycles = 0;
     int delivery_color_in_progress = 0;
     int delivery_slot_index = -1;
+    const float turn_wheel_rotations = (FIND_LINE_LEFT_TURN_ANGLE_RAD * WHEEL_BASE)/(4 * M_PI * WHEEL_RADIUS);
 
     float m1_rotation;
     float m2_rotation;
-    float m3_rotation;
 
     // this loop will run forever
     while (true) 
@@ -325,9 +336,55 @@ enum ActionPhase
 
                     break;
                 case FIND_LINE:
-                    // code for FIND_LINE state
-                    // TODO: move forward a bit and turn a bit to the left
-                    robot_state = RobotState::PICKUP_APPROACH;
+                    switch (find_line_phase)
+                    {
+                        case FindLinePhase::START:
+                            // Leave the depot along the calibrated initial heading.
+                            motor_M1.setMaxVelocity(motor_M1.getMaxPhysicalVelocity() * 0.2);
+                            motor_M2.setMaxVelocity(motor_M2.getMaxPhysicalVelocity() * 0.2);
+                            motor_M1.setVelocity(motor_M1.getMaxVelocity());
+                            motor_M2.setVelocity(motor_M2.getMaxVelocity());
+                            find_line_phase = FindLinePhase::DRIVE_OUT;
+                            break;
+
+                        case FindLinePhase::DRIVE_OUT:
+                            if ((sensor_bar.getMeanFourAvgBitsCenter() >= 0.5)
+                                && (sensor_bar.getMeanFourAvgBitsOuter() >= 0.5))
+                            {
+                                // find_line_confirm_cycles++;
+                                // if (find_line_confirm_cycles >= FIND_LINE_CONFIRM_CYCLES)
+                                // {
+                                    // motor_M1.setVelocity(0.0f);
+                                    // motor_M2.setVelocity(0.0f);
+                                    printf("Phase: DRIVE_OUT\n");
+                                    motor_M1.setRotation(motor_M1.getRotation() + turn_wheel_rotations);
+                                    motor_M2.setRotation(motor_M2.getRotation() - turn_wheel_rotations);
+                                    m1_rotation = motor_M1.getRotation();
+                                    m2_rotation = motor_M2.getRotation();
+                                    find_line_phase = FindLinePhase::TURN_LEFT;
+                                // }
+                            }
+                            break;
+
+                        case FindLinePhase::TURN_LEFT:
+                        {
+                            printf("Phase TURN_LEFT\n");
+                                printf("%d\n", (fabs(motor_M1.getRotation() - (m1_rotation + turn_wheel_rotations)))
+                                    && (fabs(motor_M2.getRotation() - (m2_rotation - turn_wheel_rotations))));
+
+                                if ((fabs(motor_M1.getRotation() - (m1_rotation + turn_wheel_rotations)) <= 0.01)
+                                    && (fabs(motor_M2.getRotation() - (m2_rotation - turn_wheel_rotations))<= 0.01))
+                                {
+                                    motor_M1.setMaxVelocity(motor_M1.getMaxPhysicalVelocity());
+                                    motor_M2.setMaxVelocity(motor_M2.getMaxPhysicalVelocity());
+                                    motor_M1.setVelocity(0.0f);
+                                    motor_M2.setVelocity(0.0f);
+                                    find_line_phase = FindLinePhase::START;
+                                    robot_state = RobotState::PICKUP_APPROACH;
+                                }
+                            break;
+                        }
+                    }
                     break;
                 case PICKUP_APPROACH:
                     // code for PICKUP_APPROACH state
@@ -392,17 +449,16 @@ enum ActionPhase
                             motor_M1.setMaxVelocity(motor_M1.getMaxPhysicalVelocity() * 0.2);
                             motor_M2.setMaxVelocity(motor_M2.getMaxPhysicalVelocity() * 0.2);
                             motor_M1.setRotation(motor_M1.getRotation() - wheel_distance_to_rotations(package_position_by_colour[pickup_color_in_progress].horizontal_offset 
-                                + pickup_counter*GAP_BETWEEN_MAGNETS));
+                                + pickup_counter*GAP_BETWEEN_MAGNETS + MOVE_BACK_OFFSET));
                             motor_M2.setRotation(motor_M2.getRotation() - wheel_distance_to_rotations(package_position_by_colour[pickup_color_in_progress].horizontal_offset 
-                                + pickup_counter*GAP_BETWEEN_MAGNETS));
+                                + pickup_counter*GAP_BETWEEN_MAGNETS + MOVE_BACK_OFFSET));
                             m1_rotation = motor_M1.getRotation();
                             m2_rotation = motor_M2.getRotation();
                             pickup_phase = MOVE_BACK_STOP;
                             break;
                         case MOVE_BACK_STOP: //condition to stop moving back
-                            printf("phase 1\n");
-                            if (fabs(motor_M1.getRotation() - (m1_rotation - wheel_distance_to_rotations(package_position_by_colour[pickup_color_in_progress].horizontal_offset + pickup_counter*GAP_BETWEEN_MAGNETS))) < 0.01f
-                                && fabs(motor_M2.getRotation() - (m2_rotation - wheel_distance_to_rotations(package_position_by_colour[pickup_color_in_progress].horizontal_offset + pickup_counter*GAP_BETWEEN_MAGNETS))) < 0.01f)
+                            if (fabs(motor_M1.getRotation() - (m1_rotation - wheel_distance_to_rotations(package_position_by_colour[pickup_color_in_progress].horizontal_offset + pickup_counter*GAP_BETWEEN_MAGNETS + MOVE_BACK_OFFSET))) < 0.01f
+                                && fabs(motor_M2.getRotation() - (m2_rotation - wheel_distance_to_rotations(package_position_by_colour[pickup_color_in_progress].horizontal_offset + pickup_counter*GAP_BETWEEN_MAGNETS + MOVE_BACK_OFFSET))) < 0.01f)
                             {
                                 motor_M1.setMaxVelocity(motor_M1.getMaxPhysicalVelocity());
                                 motor_M2.setMaxVelocity(motor_M2.getMaxPhysicalVelocity());
@@ -410,13 +466,10 @@ enum ActionPhase
                             }
                             break;
                         case LOWER_RACK: //lower rack to specified position
-                            printf("phase2\n");
                             motor_M3.setRotation(distance_to_rotations(package_position_by_colour[pickup_color_in_progress].height - DISTANCE_TO_GROUND));
-                            m3_rotation = motor_M3.getRotation();
                             pickup_phase = LOWER_RACK_STOP;
                             break;
                         case LOWER_RACK_STOP: // condition to move to initial position
-                            printf("phase 3\n");
                             if (fabs(motor_M3.getRotation() - (distance_to_rotations(package_position_by_colour[pickup_color_in_progress].height - DISTANCE_TO_GROUND))) < 0.01f)
                             {
                                 pickup_phase = RESTORE_RACK;
@@ -425,11 +478,8 @@ enum ActionPhase
                         case RESTORE_RACK: // move to initial position after picking up
                             motor_M3.setRotation(distance_to_rotations(initial_rack_position));
                             pickup_phase = RESTORE_RACK_STOP;
-                            printf("pickup phase 4\n");
                             break;
                         case RESTORE_RACK_STOP:  // condition to move to next phase
-                            printf("pickup phase 5");
-                            printf("condition = %f", fabs(motor_M3.getRotation() - distance_to_rotations(initial_rack_position)) < 0.001f);
                             if (fabs(motor_M3.getRotation() - distance_to_rotations(initial_rack_position)) < 0.001f)
                             {
                                 if (detected_color_count < NUMBER_OF_PICKUPS)
@@ -547,7 +597,6 @@ enum ActionPhase
                             break;
                         case LOWER_RACK:
                             motor_M3.setRotation(distance_to_rotations(package_position_by_colour[delivery_color_in_progress].height - DISTANCE_TO_GROUND));
-                            m3_rotation = motor_M3.getRotation();
                             delivery_phase = LOWER_RACK_STOP;
                             break;
                         case LOWER_RACK_STOP:
@@ -646,7 +695,7 @@ enum ActionPhase
                 delivery_candidate_cycles = 0;
                 delivery_color_in_progress = 0;
                 delivery_slot_index = -1;
-
+                find_line_phase = FindLinePhase::START;
             }
         }
 
