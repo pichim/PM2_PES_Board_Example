@@ -250,6 +250,12 @@ enum class FindLinePhase
 
     float rp[2] = {0.0f, 0.0f}; // roll, pitch
 
+    // linear 1-D mahony filter
+    const float Ts = static_cast<float>(main_task_period_ms) * 1.0e-3f; // sample time in seconds
+    const float kp = 3.0f; // time constant of the filter is 1/kp, kp > 0.0f
+    float roll_estimate = 0.0f;
+    float pitch_estimate = 0.0f;
+
 
 
     // robot transforms
@@ -260,8 +266,6 @@ enum class FindLinePhase
     Eigen::Matrix2f Crobot2wheel = Cwheel2robot.inverse();
     Eigen::Vector2f wheel_velocities{0.0f, 0.0f};
     Eigen::Vector2f robot_velocities{0.0f, 0.0f};
-
-    // TODO: position kinematics
 
     // --- adding variables and objects and applying functions starts here ---
 
@@ -295,6 +299,8 @@ enum class FindLinePhase
         // --- code that runs every cycle at the start goes here ---
         color_num = color_sensor.getColor();
 
+        
+
         if (do_execute_main_task) 
         {
 
@@ -308,8 +314,13 @@ enum class FindLinePhase
         
             imu_data = imu.getImuData();
 
-            rp[0] = imu_data.pry(1);
-            rp[1] = imu_data.pry(0);
+            // linear 1-D mahony filter
+            const float roll_acc = atan2f(imu_data.acc(1), imu_data.acc(2)); // roll angle from accelerometer
+            const float pitch_acc = atan2f(-imu_data.acc(0), imu_data.acc(2)); // pitch angle from accelerometer
+            roll_estimate  += Ts * (imu_data.gyro(0) + kp * (roll_acc  - roll_estimate ));
+            pitch_estimate += Ts * (imu_data.gyro(1) + kp * (pitch_acc - pitch_estimate));
+            rp[0] = roll_estimate; // roll angle
+            rp[1] = pitch_estimate; // pitch angle
 
             roll_servo_width  = normalised_angle_gain * rp[0] + normalised_angle_offset;
             pitch_servo_width =  normalised_angle_gain * rp[1] + normalised_angle_offset;
@@ -535,8 +546,8 @@ enum class FindLinePhase
                     if (((sensor_bar.getMeanFourAvgBitsCenter() >= 0.5f) &&
                         (sensor_bar.getMeanThreeAvgBitsLeft() <= 0.33333f) && 
                         (sensor_bar.getMeanThreeAvgBitsRight() >= 0.6f))
-                        || (sensor_bar.getMeanFourAvgBitsCenter() >= 0.5) 
-                        && (sensor_bar.getMeanFourAvgBitsOuter() >= 0.5))
+                        || ((sensor_bar.getMeanFourAvgBitsCenter() >= 0.5) 
+                        && (sensor_bar.getMeanFourAvgBitsOuter() >= 0.5)))
                         {
                             robot_state = RobotState::DELIVERY_APPROACH;
                         }
@@ -752,11 +763,13 @@ enum class FindLinePhase
         // toggling the user led
         user_led = !user_led;
 
-        color_string = color_sensor.getColorString(color_num);
-        printf("Detected color: %s\n Color Number: %d\n", color_string, color_num);
+        //debugging printing
+
+        // color_string = color_sensor.getColorString(color_num);
+        // printf("Detected color: %s\n Color Number: %d\n", color_string, color_num);
 
         // printf("wheel speed M1: %f rps, wheel speed M2: %f rps\n", wheel_velocities(0) / (2.0f * M_PIf), wheel_velocities(1) / (2.0f * M_PIf));
-        // // printf("max wheel speed M1: %f rps, max wheel speed M2: %f rps\n", motor_M1.getMaxVelocity(), motor_M2.getMaxVelocity());
+        // printf("max wheel speed M1: %f rps, max wheel speed M2: %f rps\n", motor_M1.getMaxVelocity(), motor_M2.getMaxVelocity());
         // printf("rack rotations: %f\n", motor_M3.getRotation());
         // printf("sensor bar angle: %f rad, %f deg\n", angle, angle * 180.0f / M_PIf);
         // printf("Averaged Bar Raw: |  %0.2f  | %0.2f |  %0.2f |  %0.2f |  %0.2f |  %0.2f |  %0.2f |  %0.2f | ", sensor_bar.getAvgBit(0)
@@ -768,7 +781,6 @@ enum class FindLinePhase
         //                                                                                              , sensor_bar.getAvgBit(6)
         //                                                                                              , sensor_bar.getAvgBit(7));
 
-        // --- code that runs every cycle at the end goes here ---
 
         // read timer and make the main thread sleep for the remaining time span (non blocking)
         int main_task_elapsed_time_ms = duration_cast<milliseconds>(main_task_timer.elapsed_time()).count();
